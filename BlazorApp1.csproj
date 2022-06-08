@@ -4,11 +4,52 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <WasmBuildNative>true</WasmBuildNative>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\SkiaSharpPg.razor" />
+    <Content Remove="Shared\MenuFooterLayout.razor" />
+    <NativeFileReference Include="$(SkiaSharpStaticLibraryPath)\2.0.23\*.a" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.5" PrivateAssets="all" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0" />
+    <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+ 
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\SkiaSharpPg.razor" />
+    <None Include="Shared\MenuFooterLayout.razor" />
+    <None Include="wwwroot\myjs\BootstrapModalInterop.js">
+	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\myjs\dropZone.js">
+	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\MenuFooterLayout.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\SkiaSharpPg.razor" />
+    <_ContentIncludedByDefault Remove="Shared\MenuFooterLayout.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\SkiaSharpPg.razor" />
   </ItemGroup>
 
 </Project>

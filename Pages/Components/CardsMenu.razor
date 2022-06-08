@@ -1,0 +1,85 @@
+﻿@using BlazorApp1.Data
+@using System.Collections.ObjectModel
+@inject Project colPrjct
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Cards</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="GoToMainMenu">
+            <span class="bi bi-arrow-left"></span>
+        </button>
+    </div>
+</div>
+
+    <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Card Name" aria-label="Card Name" aria-describedby="basic-addon2" @bind-value="cardTitle">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="@AddCard">Add</button>
+          </div>
+       </div>
+
+
+    <ListTemplate Items=" colPrjct.Cards">
+        <RowTemplate Context= "card">
+
+           <button type="button" class="list-group-item list-group-item-action" style="background-color:#5e92f3"  >@card.Title</button>
+
+        </RowTemplate>
+
+    </ListTemplate>
+
+    
+    
+
+ 
+@code{
+
+    [Parameter]
+    public EventCallback<string> BackToMain { get; set; }
+
+
+    private string cardTitle { get; set; }
+
+    private Task GoToMainMenu()
+    {
+
+        return BackToMain.InvokeAsync("mainmenu");
+    }
+
+
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (colPrjct.Cards == null)
+        {
+            
+            colPrjct.Cards = new List<Card>();
+            colPrjct.Cards.Add(new Card { Title = "Card 1", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 2", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 3", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 4", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 5", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 6", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 7", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 8", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 9", Selected = true });
+            colPrjct.Cards.Add(new Card { Title = "Card 10", Selected = true });
+        }
+
+    }
+
+
+    private void AddCard()
+    {
+        if (!string.IsNullOrWhiteSpace(cardTitle))
+        {
+            colPrjct.Cards.Add(new Card { Title = cardTitle, Selected = true });
+            cardTitle = "";
+        }
+        
+    }
+
+
+}

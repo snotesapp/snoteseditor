@@ -1,9 +1,34 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorApp1.Pages.Components
+@inherits LayoutComponentBase
+ 
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
+    <div class="sidebar"  >
+
+        @switch (menustatus)
+        {
+            case "mainmenu":
+            <NavMenu GoToMenu= "@SwitchMenus" />
+            break;
+            case "collection":
+            <CollectionsMenu BackToMain="@SwitchMenus"/>
+            break;
+            case "cards":
+            <CardsMenu BackToMain="@SwitchMenus"/>
+            break;
+
+            default:
+            <NavMenu GoToMenu="@SwitchMenus" />
+            break;
+        }
+
+
+    
+
+     
     </div>
+
+     
 
     <main>
         <div class="top-row px-4">
@@ -15,3 +40,24 @@
         </article>
     </main>
 </div>
+
+  <footer fixed-bottom >
+    <div class="nav-item  "  >
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-phone px-2" aria-hidden="true"></span> Mobile App
+                </NavLink>
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-cash-coin px-2" aria-hidden="true"></span> Donate
+                </NavLink>
+      </div>
+  </footer>
+  
+@code{
+    private string menustatus { get; set; } = "mainmenu";
+
+    private void SwitchMenus(string selectedMenu)
+    {
+        
+        menustatus = selectedMenu;
+    }
+}

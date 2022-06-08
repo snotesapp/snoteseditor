@@ -1,9 +1,160 @@
 ﻿@page "/"
+@using BlazorApp1.Data
+@using BlazorApp1.Pages.Components
+@using System.Collections.ObjectModel
+@inject Project newprjct;
 
-
-<PageTitle>Index</PageTitle>
+<PageTitle>@newprjct.Name</PageTitle>
 
 <h1>Hello, Word!</h1>
 Welcome to your my new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+
+<div class="d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3">
+    <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+     <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+  
+
+
+</div>
+
+
+
+
+@if (NewProjectDialogOpen)
+{
+    <ModalDialog Title="New Project"
+                 Text="Enter Project Name"
+                 OnClose="@OnNewProjectDialogClose" 
+                 OnCreate="@CreateProject">
+    </ModalDialog>
+}
+
+
+
+
+
+@code{
+
+
+
+    protected override void OnInitialized()
+    {
+        if (newprjct.Name == null)
+        {
+            OpenNewProjectDialog();
+        }
+
+    }
+
+    public bool NewProjectDialogOpen { get; set; }
+
+    private void OnNewProjectDialogClose(bool accepted)
+    {
+        NewProjectDialogOpen = false;
+        StateHasChanged();
+    }
+
+    private void OpenNewProjectDialog()
+    {
+        NewProjectDialogOpen = true;
+        StateHasChanged();
+    }
+
+    private void CreateProject(string newprojectname)
+    {
+        newprjct.Name = newprojectname;
+        /*
+        newprjct = new Project()
+            {
+                Name = newprojectname,
+                NotesCollection =  new ObservableCollection<NotesCollection>(),
+                Cards = new ObservableCollection<Card>()
+            };
+        */
+        NewProjectDialogOpen = false;
+        StateHasChanged();
+       
+    }
+}

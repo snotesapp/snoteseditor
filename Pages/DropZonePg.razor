@@ -1,0 +1,450 @@
+﻿@page "/dropzonepg"
+@using BlazorApp1.Data
+@using BlazorApp1.Helpers
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+@using System.IO;
+@using SkiaSharp
+@using System.Text.Json
+@using System.Globalization
+@using System.Drawing
+@using SkiaSharp.Views.Blazor
+
+
+
+<button @onclick = "TestClick">
+    Test Click Through
+</button>
+
+    <div @ref="@dropZoneElement" class="position-relative" style=";
+    width: @(@Wdimension.Width)px;
+    height:@(@Wdimension.Height)px;
+    border:2px dashed #0087F7;
+    border-radius:8px;
+    " 
+    @ondragover="((de) => ImgDragOver(de))">
+
+    
+
+    @if (testnote.Images != null)
+    {
+         <NoteCardsTemplate Items="testnote.Images" >
+             <ImgTemplate Context="ncimg" >
+               <span class="position-relative" style="left:@(@ncimg.X)px; 
+                        top:@(@ncimg.Y)px" >
+
+                   <div class="btn-toolbar position-absolute top-0 start-0" role="toolbar" aria-label="Basic example"
+                       style="z-index:1" 
+                   >
+                      <button type="button" class="btn btn-primary btn-sm " @onclick= "(() => ImgZoomIn(ncimg))">
+                          <span class="bi bi-zoom-in" aria-hidden="true"></span>
+                      </button>
+                      <button type="button" class="btn btn-primary btn-sm"  @onclick= "(() => ImgZoomOut(ncimg))">
+                           <span class="bi bi-zoom-out" aria-hidden="true"></span>
+
+                      </button>
+                    
+                    </div>
+   
+                    <img id="ncimage_@ncimg.NoteImageID" draggable="true"
+                    
+                    @ondragstart ="((de) => ImgDragStart(de,ncimg))"
+                    @ondragend ="((de) => ImgDragEnd(de,ncimg))"
+                    style="
+                    border:4px none #1565c0;
+                    border-radius:6px"
+                    
+                    width="@ncimg.Width" height="@ncimg.Height"
+
+                    class="rounded mx-auto d-block position-absolute  " 
+                    src="@ncimg.Location" alt="zoom image">
+                 
+               </span>
+                   
+             </ImgTemplate>
+
+         </NoteCardsTemplate>
+      
+    
+    }
+
+
+   <div style="pointer-events:@(PointerEvent); width: @(@Wdimension.Width)px;
+    height:@(@Wdimension.Height)px;
+    border:2px dashed #0087F7;
+    border-radius:8px;">
+       <SKCanvasView  @ref="skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
+                @onpointerdown=" OnPointerDown"
+                @onpointermove="OnPointerMove"
+                @onpointerup="OnPointerUp" 
+                @onpointercancel = "OnPointerCancel"
+                style="position: absolute;
+                top: 0;background-color:transparent;
+                left: 0; width:inherit;height:inherit;
+                pointer-events:inherit" >
+
+    </SKCanvasView>
+   </div>
+
+
+    <div  @ref="@inputFileContainer" >
+        <InputFile 
+        style=" width: 0;
+        height: 0;
+        overflow: hidden;" 
+          
+        OnChange="@OnChange" multiple />
+
+    </div>
+
+</div>
+
+
+
+
+
+@code {
+
+    ElementReference dropZoneElement;
+    ElementReference inputFileContainer;
+
+    IJSObjectReference _module;
+    IJSObjectReference _dropzoneInstance;
+
+
+    //New Image from Clipboard Properties
+    public Note testnote = new Note();
+    public int aiNoteID;
+    //List<NoteImage> imagelist = new List<NoteImage>();
+    string imgsrc;
+
+    //Zoom and Drag Properties
+    private int pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;    
+    NoteImage dragedNoteImage;
+    bool dragstarted = false;
+
+    string PointerEvent = "none";
+     SKCanvasView skiaView = null!;
+    SKPoint? touchLocation;
+    Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
+    List<FingerPaintPolyline> completedPolylines = new List<FingerPaintPolyline>();
+
+
+    WindowDimension Wdimension = new WindowDimension()
+    {
+        Width = 1024,
+        Height =800
+    };
+
+
+
+    protected override void OnInitialized()
+    {
+        testnote.Images = new List<NoteImage>();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //for load JS File
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
+            // For Initialize the Drop Zone
+            _dropzoneInstance = await _module.InvokeAsync<IJSObjectReference>("initializeFileDropZone", dropZoneElement, inputFileContainer);
+
+            Wdimension = await _module.InvokeAsync<WindowDimension>("getWindowDimensions");
+
+            StateHasChanged();
+        }
+    }
+
+
+    async Task OnChange(InputFileChangeEventArgs e)
+    {
+        if (dragstarted == false)
+        {
+            long maxFileSize = 1024 * 1024 * 15;
+            var files =  e.GetMultipleFiles();
+
+            foreach (var file in files)
+            {
+                using var stream = file.OpenReadStream(maxFileSize);
+
+                /*
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+              var path = Path.Combine(directoryPath, file.Name);
+                */
+
+
+                // Get the file name
+                var fileName = file.Name;
+
+                // Get the extension
+                var extension = Path.GetExtension(fileName);
+
+                // Validate the extension based on your business needs
+
+                // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
+                var newFileName = $"{Path.GetFileNameWithoutExtension(fileName)}-{Guid.NewGuid().ToString()}{extension}";
+
+                // Create the full path of the file including the directory (For this demo we will save the file insidea folder called Data within wwwroot)
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                var path = Path.Combine(directoryPath, newFileName);
+
+                // Maek sure the directory is ther bycreating it if it's not exist
+                Directory.CreateDirectory(directoryPath);
+
+                FileStream fs = File.Create(path);
+                await stream.CopyToAsync(fs);
+
+
+                stream.Close();
+                fs.Close();
+
+                SKBitmap sKBitmapImg = SKBitmap.Decode(path);
+
+                //For Reading Files
+
+                using (FileStream fileStream = File.OpenRead(path))
+                {
+                    byte[] array = new byte[fileStream.Length];
+
+                    fileStream.Read(array, 0, array.Length);
+                    imgsrc = "data:" + file.ContentType + ";base64," + Convert.ToBase64String(array);
+                    testnote.Images.Add(new NoteImage()
+                    {
+                        NoteImageID = aiNoteID++,
+                        ImgLocationType = ImgLocationType.Local,
+                        Location = imgsrc,
+                        X = 0,
+                        Y = 0,
+                        Width = sKBitmapImg.Width,
+                        Height = sKBitmapImg.Height
+
+
+
+
+                });
+
+
+
+                    //   imagelist.Add(newnoteImage);
+
+                }
+
+
+                var listfiles =Directory.GetFiles(directoryPath);
+
+            }       
+        }
+
+
+    }
+
+    // Unregister the drop zone events
+    public async ValueTask DisposeAsync()
+    {
+        if (_dropzoneInstance != null)
+        {
+            await _dropzoneInstance.InvokeVoidAsync("dispose");
+            await _dropzoneInstance.DisposeAsync();
+
+        }
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+
+
+    #region zoom
+
+    private void ImgZoomIn(NoteImage _noteImage)
+    {
+        if ((_noteImage.X + _noteImage.Width) < Wdimension.Width && (_noteImage.Y + _noteImage.Height) < Wdimension.Height)
+        {
+
+            _noteImage.Width +=  (_noteImage.Width * 2/100);
+            _noteImage.Height +=  (_noteImage.Height * 2/100);
+
+        }
+
+    }
+
+    private void ImgZoomOut(NoteImage _noteImage)
+    {
+        _noteImage.Width -= (_noteImage.Width * 2/100);;
+        _noteImage.Height -= (_noteImage.Height * 2/100);;
+
+
+    }
+
+
+
+
+    private void ImgDragStart(DragEventArgs de,NoteImage _noteImage)
+    {
+        dragstarted = true;
+
+        dragedNoteImage = _noteImage;
+
+
+        // get the mouse cursor position at startup:
+        pos3 = Convert.ToInt16( de.ClientX);
+        pos4 = Convert.ToInt16( de.ClientY);
+
+    }
+
+    private void ImgDragEnd(DragEventArgs de,NoteImage _noteImage)
+    {
+        dragstarted = false;
+        _noteImage.X = dragedNoteImage.X;
+        _noteImage.Y = dragedNoteImage.Y;
+
+
+    }
+
+    private void ImgDragOver(DragEventArgs de)
+    {
+
+        if (dragstarted)
+        {
+            de.DataTransfer.DropEffect = "move";
+            // calculate the new cursor position:
+            pos1 = pos3 -  Convert.ToInt16( de.ClientX);
+            pos2 = pos4 - Convert.ToInt16( de.ClientY);
+            pos3 = Convert.ToInt16( de.ClientX);
+            pos4 = Convert.ToInt16( de.ClientY);
+            // set the element's new position:
+            if ((dragedNoteImage.X - pos1) >=0 && (dragedNoteImage.Y - pos2)>=0 && (dragedNoteImage.X - pos1) <= (Wdimension.Width - dragedNoteImage.Width)&& (dragedNoteImage.Y - pos2) <= (Wdimension.Height - dragedNoteImage.Height))
+            {
+                dragedNoteImage.X = dragedNoteImage.X - pos1;
+                dragedNoteImage.Y = dragedNoteImage.Y - pos2;
+
+            }
+
+        }
+
+
+    }
+
+
+
+
+    #endregion
+
+    #region Drawing
+    
+    SKPaint paint = new SKPaint
+           {
+                Style = SKPaintStyle.Stroke,
+                IsAntialias = true,
+                StrokeCap = SKStrokeCap.Round,
+                StrokeJoin = SKStrokeJoin.Round
+               };
+
+    void OnPaintSurface(SKPaintSurfaceEventArgs args)
+    {
+
+
+        SKCanvas canvas = args.Surface.Canvas;
+
+        canvas.Clear();
+        foreach (FingerPaintPolyline polyline in completedPolylines)
+        {
+            paint.Color = SKColors.Black;
+            paint.StrokeWidth = 2;
+            canvas.DrawPath(polyline.Path, paint);
+
+
+        }
+
+        foreach (FingerPaintPolyline polyline in inProgressPolylines.Values)
+        {
+            paint.Color = SKColors.Black;
+            paint.StrokeWidth = 2;
+            canvas.DrawPath(polyline.Path, paint);
+        }
+
+      
+    }
+
+
+
+    void OnPointerDown(PointerEventArgs e)
+    {
+
+        if (!inProgressPolylines.ContainsKey(e.PointerId))
+        {
+            FingerPaintPolyline polyline = new FingerPaintPolyline
+            {
+
+            };
+            polyline.Path.MoveTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
+            inProgressPolylines.Add(e.PointerId, polyline);
+            skiaView.Invalidate();
+        }
+
+
+
+    }
+
+    void OnPointerMove(PointerEventArgs e)
+    {
+        if (inProgressPolylines.ContainsKey(e.PointerId))
+        {
+            FingerPaintPolyline polyline = inProgressPolylines[e.PointerId];
+            polyline.Path.LineTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
+            skiaView.Invalidate();
+        }
+
+
+    }
+
+    void OnPointerUp(PointerEventArgs e)
+    {
+        if (inProgressPolylines.ContainsKey(e.PointerId))
+        {
+            completedPolylines.Add(inProgressPolylines[e.PointerId]);
+            inProgressPolylines.Remove(e.PointerId);
+            skiaView.Invalidate();
+        }
+
+    }
+
+    void OnPointerCancel(PointerEventArgs e)
+    {
+         if (inProgressPolylines.ContainsKey(e.PointerId))
+         {
+             inProgressPolylines.Remove(e.PointerId);
+            skiaView.Invalidate();
+         }
+                            
+    }
+    #endregion
+    private void TestClick()
+    {
+        switch(PointerEvent)
+        {
+            case "none":
+                PointerEvent = "auto";
+                break;
+
+            case "auto":
+                PointerEvent = "none";
+                break;
+
+        }
+
+        StateHasChanged();
+        Console.WriteLine("Test Click, Clicked");
+    }
+  
+    public class WindowDimension
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+}

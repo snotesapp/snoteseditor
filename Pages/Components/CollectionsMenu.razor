@@ -1,0 +1,101 @@
+﻿@using BlazorApp1.Data
+@using System.Collections.ObjectModel
+@inject Project colPrjct
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Collections</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="GoToMainMenu">
+            <span class="bi bi-arrow-left"></span>
+        </button>
+    </div>
+</div>
+
+    <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2" @bind-value="collectionTitle">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="@AddCollection">Add</button>
+          </div>
+       </div>
+
+
+    <ListTemplate Items=" colPrjct.NotesCollection">
+        <RowTemplate Context= "coll">
+
+         @if (coll.Selected == true)
+        {
+            <button type="button" class="list-group-item list-group-item-action" style="background-color:#5e92f3" @onclick = "() => SetCollection(coll)" >@coll.Title</button>
+        }else
+        {
+            <button type="button" class="list-group-item list-group-item-action" style="background-color:#ffdeb8" @onclick = "() => SetCollection(coll)" >@coll.Title</button>
+
+        }
+
+        </RowTemplate>
+
+    </ListTemplate>
+
+
+
+ 
+@code{
+
+    [Parameter]
+    public EventCallback<string> BackToMain { get; set; }
+
+
+    private string collectionTitle { get; set; }
+
+    private Task GoToMainMenu()
+    {
+
+        return BackToMain.InvokeAsync("mainmenu");
+    }
+
+
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (colPrjct.NotesCollection == null)
+        {
+            colPrjct.NotesCollection = new List<NotesCollection>();
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 1", Selected = true });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 2", Selected = true });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 3", Selected = true });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 4", Selected = false });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 5", Selected = false });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 6", Selected = false });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 7", Selected = false });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 8", Selected = true });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 9", Selected = true });
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 10", Selected = true });
+        }
+
+    }
+
+
+    private void AddCollection()
+    {
+        if (!string.IsNullOrWhiteSpace(collectionTitle))
+        {
+            colPrjct.NotesCollection.Add(new NotesCollection { Title = collectionTitle, Selected = false });
+            collectionTitle = "";
+        }
+        
+    }
+
+    private void SetCollection(NotesCollection nc)
+    {
+        if (nc.Selected == true)
+        {
+            nc.Selected = false;
+        }
+        else
+        {
+            nc.Selected = true;
+        }
+    }
+
+}

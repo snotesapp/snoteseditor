@@ -1,0 +1,25 @@
+﻿@typeparam TItem
+
+<div class="list-group overflow-auto " style="height:70%">
+
+    
+   @foreach (var item in Items)
+  {
+      @RowTemplate(item)
+
+  }
+  
+
+</div>
+
+
+
+@code {
+
+    [Parameter]
+    public IReadOnlyList<TItem> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> RowTemplate { get; set; }
+
+}
