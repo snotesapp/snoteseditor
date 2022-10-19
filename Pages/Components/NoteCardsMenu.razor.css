@@ -1,0 +1,47 @@
+﻿body {
+}
+
+
+@media (min-width: 768px) {
+
+    .ul-style {
+        height: 100vh;
+        /*
+ border-style: solid;
+        border-color: burlywood;
+        */
+      
+        overflow: auto
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .ul-style {
+        height: 30vh;
+        /*
+              border-style: solid;
+        border-color: burlywood;
+        */
+       
+        overflow: auto
+    }
+}
+
+.nc-style {
+    /*
+    background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e );
+background-image: linear-gradient(to right bottom, #ff7f50,#ff6b85,#ef6eba,#b880e3,#5e92f3 );
+    */
+    background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e );
+   
+    border-radius: 6px;
+}
+
+.ncText-style {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:pre-wrap;
+    
+}

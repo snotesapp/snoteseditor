@@ -1,0 +1,45 @@
+﻿body {
+}
+
+
+@media (min-width: 768px) {
+
+    .ul-style {
+        height: 100vh;
+        /*
+                    border-style: solid;
+        border-color: slateblue;
+        */
+
+        overflow: auto
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .ul-style {
+        height: 30vh;
+        /*
+        border-style: solid;
+        border-color: burlywood;
+        */
+        
+       
+    }
+}
+
+#cards-list {
+    background-color: bisque;
+}
+
+/* width */
+#cards-list::-webkit-scrollbar {
+    width: 1px;
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+    
+}
+

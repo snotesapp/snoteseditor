@@ -1,0 +1,244 @@
+﻿@using BlazorApp1.Data
+@using BlazorApp1.Helpers
+
+@using System.IO;
+@using SkiaSharp
+@using System.Text.Json
+@using System.Globalization
+@using System.Drawing
+@using SkiaSharp.Views.Blazor
+@inject SharedDataService dataSvs
+@inject ContextMenuService contextMenuService
+
+  @if (dataSvs.SelectedNoteCard.Note != null)
+{
+    <div  class="position-absolute" style=";
+        width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
+        height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
+        border:2px dashed #0087F7;
+        border-radius:8px;
+        border-color:burlywood;
+        background-color:@dataSvs.SelectedNoteCard.Note.BackgroundColor
+
+    " 
+  >
+
+      <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images" >
+            <ImgTemplate Context="ncimg" >
+                <span class="position-relative" style="left:@(@ncimg.X)px; 
+                        top:@(@ncimg.Y)px" 
+               >
+
+
+                    <img id="ncimage_@ncimg.NoteImageID" draggable="true"
+
+
+                    style="
+                    border:4px none #1565c0;
+                    border-radius:6px"
+
+                    width="@ncimg.Width" height="@ncimg.Height"
+
+                    class="rounded mx-auto d-block position-absolute  " 
+                    src="@ncimg.Location" alt="zoom image">
+
+                </span>
+
+            </ImgTemplate>
+
+        </NoteCardsTemplate>
+
+      <div style="pointer-events:@(PointerEvent); width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
+    height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
+    border:2px dashed #0087F7;
+    border-radius:8px;">
+            <SKCanvasView  @ref="skiaView"  OnPaintSurface="OnPaintSurface"   IgnorePixelScaling="true"
+
+                style="position: absolute;
+                top: 0;background-color:transparent;
+                left: 0; width:inherit;height:inherit;
+                pointer-events:inherit" >
+
+            </SKCanvasView>
+        </div>
+
+      <div class="mb-3">
+            <textarea  id="exampleFormControlTextarea1" 
+      @bind="@(dataSvs.SelectedNoteCard.Note.Text)"
+    style=";
+    width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
+    height: 200px;
+    border:2px double #0087F7;
+    border-radius:8px;
+    border-color:grey;
+    "  
+
+
+  ></textarea>
+           
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+
+
+    //New Image from Clipboard Properties
+
+    string imgsrc;
+
+    //Zoom and Drag Properties
+    private int pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;    
+    NoteImage dragedNoteImage;
+    bool dragstarted = false;
+
+    string PointerEvent = "none";
+    SKCanvasView skiaView = null!;
+    SKPoint? touchLocation;
+    SKBitmap? saveBitmap;
+
+    Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
+    List<FingerPaintPolyline> completedPolylines = new List<FingerPaintPolyline>();
+
+
+
+
+    protected override void OnInitialized()
+    {
+        dataSvs.OnChange += StateHasChanged;
+
+    }
+
+   
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        
+        skiaView.Invalidate();
+        
+
+    }
+
+
+
+    #region Drawing
+
+    SKPaint paint = new SKPaint
+           {
+                Style = SKPaintStyle.Stroke,
+                IsAntialias = true,
+                StrokeCap = SKStrokeCap.Round,
+                StrokeJoin = SKStrokeJoin.Round,
+
+              //  BlendMode = SKBlendMode.SrcOver,
+              //   Color = SKColors.Red,
+              //   StrokeWidth = 8
+
+
+               };
+
+    void OnPaintSurface(SKPaintSurfaceEventArgs args)
+    {
+
+        SKImageInfo info = args.Info;
+        SKSurface surface = args.Surface;
+        SKCanvas canvas = args.Surface.Canvas;
+
+
+        // Create bitmap the size of the display surface
+        if (saveBitmap == null)
+        {
+            saveBitmap = new SKBitmap(info.Width, info.Height);
+        }
+        // Or create new bitmap for a new size of display surface
+        else if (saveBitmap.Width < info.Width || saveBitmap.Height < info.Height)
+        {
+            SKBitmap newBitmap = new SKBitmap(Math.Max(saveBitmap.Width, info.Width),
+                                              Math.Max(saveBitmap.Height, info.Height));
+
+            using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+            {
+                newCanvas.Clear();
+                newCanvas.DrawBitmap(saveBitmap, 0, 0);
+            }
+
+            saveBitmap = newBitmap;
+        }
+
+        canvas.Clear();
+        if (dataSvs.SelectedNoteCard.Note.MainImg is not null)
+        {
+            saveBitmap = SKBitmap.Decode(dataSvs.SelectedNoteCard.Note.MainImg);
+            canvas.DrawBitmap(saveBitmap, 0, 0);
+        }
+
+
+
+
+        foreach (FingerPaintPolyline polyline in completedPolylines)
+        {
+
+            paint.Color = polyline.StrokeColor ;
+            paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
+
+
+        }
+
+        foreach (FingerPaintPolyline polyline in inProgressPolylines.Values)
+        {
+
+            paint.Color = polyline.StrokeColor ;
+            paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
+        }
+
+
+    }
+
+
+
+    void UpdateBitmap()
+    {
+
+        using (SKCanvas saveBitmapCanvas = new SKCanvas(saveBitmap))
+        {
+
+            // saveBitmapCanvas.Clear();
+
+
+            foreach (FingerPaintPolyline FngrPaintPoly in completedPolylines)
+            {
+                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
+            }
+
+            foreach (FingerPaintPolyline FngrPaintPoly in inProgressPolylines.Values)
+            {
+                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
+            }
+        }
+
+
+
+        skiaView.Invalidate();
+    }
+
+    #endregion
+
+
+
+    public void Dispose()
+    {
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
+
+
+}
+

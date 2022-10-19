@@ -1,0 +1,23 @@
+﻿@typeparam TItem
+
+
+    
+   @foreach (var item in Items)
+  {
+      @MenuItem(item)
+
+  }
+  
+
+
+
+
+
+@code {
+    [Parameter]
+    public IReadOnlyList<TItem> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> MenuItem { get; set; }
+
+}

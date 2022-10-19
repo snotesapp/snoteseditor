@@ -12,8 +12,10 @@ namespace BlazorApp1.Helpers
 
         public SKPath Path { set; get; }
 
-        public Color StrokeColor { set; get; }
+        public SKColor StrokeColor { set; get; }
 
         public float StrokeWidth { set; get; }
+
+        public SKBlendMode StrokeBlendMode { set; get; }    
     }
 }

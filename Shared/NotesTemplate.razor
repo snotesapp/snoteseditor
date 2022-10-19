@@ -1,0 +1,44 @@
+﻿@typeparam TItem
+
+@inject DialogService DialogService
+
+<div class="d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3">
+    <!--
+          <div class="card p-2 bd-highlight" style="width: 22rem; margin:8px;">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+    -->
+  
+
+    
+   @foreach (var item in Items)
+  {
+      @NoteTemplate(item)
+
+  }
+  
+
+
+</div>
+
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public IReadOnlyList<TItem> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> NoteTemplate { get; set; }
+
+
+
+}

@@ -1,0 +1,15 @@
+﻿body {
+}
+
+.flexbtn {
+    flex: 40%; 
+    margin: 10px;
+    padding: 10px;
+    
+}
+
+.toolstyle {
+    font-family :'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size:small;
+    color:black;
+}

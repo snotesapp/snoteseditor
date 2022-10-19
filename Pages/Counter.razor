@@ -2,17 +2,20 @@
 
 @using BlazorApp1.Data
 @using System.Text.Json
+@using BlazorApp1.Helpers
 
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+
+@inject CounterService Svc
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<p role="status">Current count: @Svc.Count</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="Svc.Increment">Click me</button>
 
 <div class="container position-relative" style="width:700px; height:500px; background-color:burlywood">
  <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">

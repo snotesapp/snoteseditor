@@ -1,0 +1,214 @@
+﻿@using BlazorApp1.Helpers
+@using SkiaSharp
+@inject SharedDataService dataSvs
+
+
+
+<div class="d-flex flex-wrap justify-content-start">
+
+
+    <button type="button" class="btn btn-outline-primary flexbtn" autocomplete="off" @onclick="() => {  dataSvs.EnableDraw() ;}">
+        <span class="bi bi-pen-fill"></span>
+    </button>
+    <button type="button" class="btn btn-outline-primary flexbtn" autocomplete="off" @onclick="() => {  dataSvs.EnableTransparentColor() ;}">
+        <span class="bi bi-pen"></span>
+    </button>
+
+    <button type="button" class="btn btn-outline-primary flexbtn" autocomplete="off" @onclick="dataSvs.EnableHand">
+        <span class="bi bi-hand-index"></span>
+    </button>
+
+    <button type="button" class="btn btn-outline-primary flexbtn" autocomplete="off" @onclick="() => dataSvs.ErasePaint()">
+        <span class="bi bi-eraser"></span>
+    </button>
+
+    <button type="button" class="btn btn-outline-primary flexbtn" autocomplete="off" @onclick="dataSvs.ClearCanvas">
+        <span class="bi bi-x-lg"></span>
+    </button>
+
+    <div class="row w-100 m-2   toolstyle">
+        <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="create" Class="mr-1" />
+                    <b>Pen</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <div class="row w-100  my-1 ">
+                    <div class="col-md-4 p-0 align-items-center d-flex">
+                        <RadzenLabel Text="Thickness" Component="StylesWidthSlider" />
+
+                    </div>
+                    <div class="col-md-8 p-0 w-100">
+                        <RadzenSlider Name="StylesWidthSlider" @bind-Value=@dataSvs.strokeWidth TValue="float" Min="3" Max="40" Change=@(args => OnChangestrokeWidth(args)) Class="w-100 my-2" />
+
+                    </div>
+                </div>
+
+                <div class="row w-100 mt-2">
+                    <div class="col-md-4 p-0 align-items-center d-flex">
+                        <RadzenLabel Text="Color:" Component="StylesColor" />
+                    </div>
+                    <div class="col-md-8 p-0 w-100">
+                        <RadzenColorPicker Name="StylesColor" @bind-Value=@dataSvs.defaultColor ShowHSV=true ShowRGBA=false ShowColors=true Change=@OnChangeColor class="w-100 my-2 border-primary" />
+
+                    </div>
+                </div>
+
+            </ChildContent>
+
+
+        </RadzenFieldset>
+    </div>
+
+    <div class="row w-100 m-2   toolstyle">
+        <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <RadzenIcon Icon="tv" Class="mr-1" />
+                    <b>Background</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+
+                <div class="row w-100  ">
+                    <div class="col-md-4 p-0 align-items-center d-flex">
+                        <RadzenLabel Text="Color:" Component="BackgroundColor" />
+                    </div>
+                    <div class="col-md-8 p-0 w-100">
+                        <RadzenColorPicker Name="BackgroundColor" @bind-Value=@dataSvs.defaultBackgroundColor ShowHSV=true ShowRGBA=false ShowColors=true Change=@OnChangeBackgroundColor class="my-2 w-100 border-primary" />
+
+                    </div>
+                </div>
+
+                <div class="hstack gap-1 my-2 ">
+
+                    <div class="form-floating  ">
+                        <input type="text" class="form-control text-center border-primary" style="height:52px" id="floatingWidth" placeholder="Width" @onfocusin="SetInitialValue" @onblur="SetCanvasDim" @bind-value="dataSvs.editNote.MainImgWidth">
+                        <label for="floatingWidth">Width</label>
+                    </div>
+                    X
+                    <div class="form-floating ">
+                        <input type="text" class="form-control text-center " style="height:52px" id="floatingHeight" placeholder="Height" @onfocusin="SetInitialValue" @onblur="SetCanvasDim" @bind-value="dataSvs.editNote.MainImgHeight">
+                        <label class="toolstyle" for="floatingHeight">Height</label>
+                    </div>
+
+
+                </div>
+            </ChildContent>
+
+        </RadzenFieldset>
+
+
+    </div>
+
+
+</div>
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> BackToMain { get; set; }
+
+
+
+    protected override void OnInitialized()
+    {
+
+
+        dataSvs.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            await Task.Delay(1000);
+            StateHasChanged();
+        }
+    }
+
+
+    private Task GoToMainMenu()
+    {
+        //Don't Update new note,update existing note.
+        if (dataSvs.EditMode == true)
+        {
+            dataSvs.UpdateNote().GetAwaiter().GetResult();
+
+        }
+
+
+        dataSvs.ClearCanvas();
+        dataSvs.GetNotes().GetAwaiter().GetResult();
+        return BackToMain.InvokeAsync("collection");
+    }
+
+
+
+    void OnChangestrokeWidth(dynamic value) => dataSvs.strokeWidth = value;
+
+    void OnChangeColor(string value)
+    {
+        dataSvs.defaultColor = value;
+        dataSvs.EnableDraw();
+        /*
+        byte r = Byte.Parse(value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[0]);
+      byte g = Byte.Parse( value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[1]);
+      byte b = Byte.Parse( value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[2]);
+      dataSvs.selectedColor = new SKColor(r, g, b);
+        */
+
+
+        // Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
+    }
+
+    void SetCanvasDim(FocusEventArgs focusEventArgs)
+    {
+
+        if (dataSvs.editNote.MainImgWidth <= dataSvs.Wdimension.Width + 1000 && dataSvs.editNote.MainImgHeight <= dataSvs.Wdimension.Height + 1000)
+        {
+
+            SKBitmap newBitmap = new SKBitmap(dataSvs.editNote.MainImgWidth, dataSvs.editNote.MainImgHeight);
+            dataSvs.saveBitmap = newBitmap;
+        }
+        else
+        {
+            dataSvs.editNote.MainImgWidth = widthInitialValue;
+            dataSvs.editNote.MainImgHeight = heightInitialValue;
+
+        }
+        StateHasChanged();
+
+    }
+
+    int widthInitialValue;
+    int heightInitialValue;
+
+    void SetInitialValue(FocusEventArgs focusEventArgs)
+    {
+        widthInitialValue = dataSvs.editNote.MainImgWidth;
+        heightInitialValue = dataSvs.editNote.MainImgHeight;
+
+
+
+    }
+
+
+    void OnChangeBackgroundColor(string value)
+    {
+
+        Console.WriteLine($"Value changed to: {value}");
+        dataSvs.SetBackgroundColor(value);
+        //Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
+    }
+
+    public void Dispose()
+    {
+
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
+}

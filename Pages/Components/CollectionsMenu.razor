@@ -1,55 +1,115 @@
 ﻿@using BlazorApp1.Data
 @using System.Collections.ObjectModel
-@inject Project colPrjct
+@inject IJSRuntime JSRuntime
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Collections</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="GoToMainMenu">
-            <span class="bi bi-arrow-left"></span>
-        </button>
-    </div>
+@using BlazorApp1.Helpers
+@inject SharedDataService dataSvs
+@inject ContextMenuService contextMenuService
+
+<!--
+
+<div class="container d-flex justify-content-between py-2">
+    <a class="badge  text-wrap " style="width:100%;" href="">Collections</a>
+    <button title="Navigation menu" class="btn btn-outline-success ms-1" @onclick="GoToMainMenu">
+        <span class="bi bi-arrow-left"></span>
+    </button>
 </div>
+-->
 
-    <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2" @bind-value="collectionTitle">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onclick="@AddCollection">Add</button>
-          </div>
-       </div>
+<MContainer Style="height:calc(100vh - 140px); overflow:auto" >
+    <MRow Class="mx-0 w-100">
+        <MList >
+            <ListTemplate Items="dataSvs.MainProject.NotesCollection">
+                <RowTemplate Context="coll">
+
+                    <div class="mx-1 mb-1">
+                        @if (coll.Editable == false)
+                        {
+
+                            @if (coll.Selected == true)
+                            {
+                                <MListItem Link style="background-color:#1565c0"
+                                   @ondblclick="() => SetCollection(coll)"
+                                   @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})"
+                                   __internal_preventDefault_oncontextmenu
+                                   Color="white" Class="elevation-4  rounded-3">
+                                    <MListItemContent>
+                                        <MListItemTitle> @coll.Title </MListItemTitle>
+                                    </MListItemContent>
+                                </MListItem>
+                                <!--
 
 
-    <ListTemplate Items=" colPrjct.NotesCollection">
-        <RowTemplate Context= "coll">
+                                <button type="button" class="list-group-item  list-group-item-action  text-white shadow rounded" style="background-color:#5e92f3"
+                                @ondblclick="() => SetCollection(coll)"
+                                @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})" @oncontextmenu:preventDefault="true">
+                                @coll.Title
+                                </button>
+                                              -->
+                            }
+                            else
+                            {
 
-         @if (coll.Selected == true)
-        {
-            <button type="button" class="list-group-item list-group-item-action" style="background-color:#5e92f3" @onclick = "() => SetCollection(coll)" >@coll.Title</button>
-        }else
-        {
-            <button type="button" class="list-group-item list-group-item-action" style="background-color:#ffdeb8" @onclick = "() => SetCollection(coll)" >@coll.Title</button>
+                                <MListItem Link style="background-color:#ffb07e" 
+                                   @ondblclick="() => SetCollection(coll)"
+                                   @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})"
+                                   __internal_preventDefault_oncontextmenu
+                                   Color="black" Class="elevation-4  rounded-3">
+                                    <MListItemContent>
+                                        <MListItemTitle> @coll.Title </MListItemTitle>
+                                    </MListItemContent>
+                                </MListItem>
 
-        }
-
-        </RowTemplate>
-
-    </ListTemplate>
-
+                                <!--
 
 
- 
-@code{
+
+                                <button type="button" class="list-group-item list-group-item-action shadow rounded" style="background-color:#cbac88"
+                                @ondblclick="() => SetCollection(coll)"
+                                @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})" @oncontextmenu:preventDefault="true">
+                                @coll.Title
+                                </button>
+                                             -->
+                            }
+                        }
+                        else
+                        {
+
+                            <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
+                               placeholder="Collection Name" aria-label="Collection Name"
+                               aria-describedby="basic-addon2" @bind-value="coll.Title" @onfocusout="() => SaveCollectionName(coll)">
+
+
+                        }
+
+                    </div>
+
+                </RowTemplate>
+
+            </ListTemplate>
+
+        </MList>
+
+    </MRow>
+</MContainer>
+
+
+
+
+@code {
+
+    IJSObjectReference module;
 
     [Parameter]
-    public EventCallback<string> BackToMain { get; set; }
+    public EventCallback<string> GoToMenu { get; set; }
 
 
-    private string collectionTitle { get; set; }
+    private string editNCTitle { get; set; }
 
     private Task GoToMainMenu()
     {
 
-        return BackToMain.InvokeAsync("mainmenu");
+        return GoToMenu.InvokeAsync("mainmenu");
     }
 
 
@@ -57,45 +117,106 @@
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-        if (colPrjct.NotesCollection == null)
-        {
-            colPrjct.NotesCollection = new List<NotesCollection>();
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 1", Selected = true });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 2", Selected = true });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 3", Selected = true });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 4", Selected = false });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 5", Selected = false });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 6", Selected = false });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 7", Selected = false });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 8", Selected = true });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 9", Selected = true });
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = "Collection 10", Selected = true });
-        }
+        dataSvs.OnChange += StateHasChanged;
 
     }
 
 
-    private void AddCollection()
-    {
-        if (!string.IsNullOrWhiteSpace(collectionTitle))
-        {
-            colPrjct.NotesCollection.Add(new NotesCollection { Title = collectionTitle, Selected = false });
-            collectionTitle = "";
-        }
-        
-    }
 
-    private void SetCollection(NotesCollection nc)
+    void NCContextMenuWithContent(MouseEventArgs args, NotesCollection notesCollection) => contextMenuService.Open(args, ds =>
+
+    @<RadzenMenu>
+
+        <RadzenMenuItem Text="Add Notes" Click="() => AddNCNotes(notesCollection)">  </RadzenMenuItem>
+
+        @if (notesCollection.Selected == true)
+        {
+            <RadzenMenuItem Text="UnSelect" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
+        }
+        else
+        {
+            <RadzenMenuItem Text="Select" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
+        }
+        <RadzenMenuItem Text="Rename" Click="() => RenameCollection(notesCollection)">  </RadzenMenuItem>
+        <RadzenMenuItem Text="Delete" Click="() => DeleteNC(notesCollection)"></RadzenMenuItem>
+
+    </RadzenMenu>
+    );
+
+
+    private async Task SetCollection(NotesCollection nc)
     {
         if (nc.Selected == true)
         {
             nc.Selected = false;
+            await dataSvs.UpdateNCollection(nc);
         }
         else
         {
             nc.Selected = true;
+            await dataSvs.UpdateNCollection(nc);
         }
+        contextMenuService.Close();
+        await dataSvs.GetNotes();
     }
+
+    private Task AddNCNotes(NotesCollection notesCollection)
+    {
+        dataSvs.EditMode = false;
+
+        dataSvs.AddNotesSelectedNC = notesCollection;
+        dataSvs.editNote = new Note()
+            {
+
+                Images = new List<NoteImage>(),
+                NotePaths = new List<NotePath>(),
+
+            };
+
+        contextMenuService.Close();
+        return GoToMenu.InvokeAsync("notetools");
+
+    }
+    #region Rename Collection
+    string oldname;
+    void RenameCollection(NotesCollection notesCollection)
+    {
+
+        dataSvs.MainProject.NotesCollection.Select(ed => { ed.Editable = false; return ed; }).ToList();
+        oldname = notesCollection.Title;
+
+        notesCollection.Editable = true;
+        contextMenuService.Close();
+    }
+
+    private async Task SaveCollectionName(NotesCollection nc)
+    {
+        if (!string.IsNullOrWhiteSpace(nc.Title))
+        {
+            await dataSvs.UpdateNCollection(nc);
+
+        }
+        else
+        {
+            nc.Title = oldname;
+        }
+        nc.Editable = false;
+
+    }
+    #endregion
+
+    private async Task DeleteNC(NotesCollection notesCollection)
+    {
+        await dataSvs.DeleteNCollection(notesCollection);
+        dataSvs.MainProject = await dataSvs.GetProject();
+        contextMenuService.Close();
+
+    }
+
+    public void Dispose()
+    {
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
 
 }

@@ -1,0 +1,476 @@
+﻿@using BlazorApp1.Data
+@using BlazorApp1.Helpers
+@using BlazorApp1.Pages.Components
+@using BlazorComponent
+@using Blazored.LocalStorage
+@inject IMessageService MessageService
+
+@inherits LayoutComponentBase
+
+@inject SharedDataService dataSvs
+@inject Radzen.DialogService dialogService
+@inject ILocalStorageService localstorage
+
+
+
+<MApp Style="background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)">
+    <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini" 
+        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
+        Fixed class="overflow-hidden" Permanent>
+
+
+
+
+        <MListItem Class="px-2 mb-1 " Style="height:70px" @ondblclick="EnableRenameProject">
+            <MListItemAvatar Rounded="true" Size="40">
+                <MImage tabindex="0" Src="./images/sNotes_icon.png"></MImage>
+            </MListItemAvatar>
+
+            @if (@renameproject == false)
+            {
+                <MListItemTitle class="text-h7 text-white">
+                    @(dataSvs.MainProject.Name)
+                </MListItemTitle>
+
+            }
+            else
+            {
+
+                <input type="text" class="mb-1 p-1 shadow rounded" style="background-color:white"
+                   placeholder="Project Name" aria-label="Project Name"
+                   aria-describedby="basic-addon2" @bind-value="dataSvs.MainProject.Name" @onkeypress="@((eventArg) => RenameProject(eventArg) )" @onfocusout="RenameProject">
+            }
+
+            <MButton Icon OnClick="() => _mini = !_mini">
+                <MIcon>mdi-chevron-left</MIcon>
+            </MButton>
+        </MListItem>
+
+
+        @if (!_mini)
+        {
+            <MRow>
+                <MNavDrawerHeader GoToMenu="@(dataSvs.SwitchMenus)" />
+
+            </MRow>
+            @switch (dataSvs.menustatus)
+            {
+                case "mainmenu":
+
+
+                    <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+                    break;
+                case "collection":
+                    <MRow Class="overflow-hidden">
+
+                
+                    <CollectionsMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+                    </MRow>
+                    break;
+                case "cards":
+
+                    <MRow Class="overflow-hidden">
+                        <CardsMenu BackToMain="@(dataSvs.SwitchMenus)" />
+
+                    </MRow>
+                    break;
+                case "notetools":
+                    <NoteTools BackToMain="@(dataSvs.SwitchMenus)" />
+                    break;
+                case "notecards":
+
+                    <MRow Class="overflow-hidden">
+                        <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)" />
+
+                    </MRow>
+
+
+                    break;
+                default:
+
+                    <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+                    break;
+            }
+
+        }
+
+    </MNavigationDrawer>
+
+    <MAppBar Height="60" App>
+
+        <!--
+
+                <div class="col-2 d-flex align-items-center h-100">
+                    <button class="navbar-toggler border 2 " type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"
+        @onclick="OnCollapse"
+                            style="height:inherit; width:50px;background-color:#1565c0;">
+                        <span class="bi bi-justify text-white"></span>
+                    </button>
+
+                </div>
+                -->
+
+        <div class="col-10 d-flex align-items-center justify-content-end h-100 ">
+            <LoginDisplay />
+            <span class="border border-primary w-100 h-100 " style="background-color:#cbac88 "></span>
+        </div>
+    </MAppBar>
+
+
+    <!-- Sizes your content based upon application components -->
+    <MMain >
+        <!-- Provides the application the proper gutter -->
+        <MContainer class="mainpg-style" Fluid>
+           
+                    @Body
+            
+            
+            <!--
+                 <div class="card" style="overflow:auto;white-space:nowrap;height:100vh;width:100vw;">
+
+            @Body
+            </div>
+            -->
+           
+        </MContainer>
+    </MMain>
+
+    <MFooter App>
+        <!-- -->
+    </MFooter>
+</MApp>
+
+
+<!--
+    <div class="grid-container">
+  <div class="item1">Header</div>
+  <div class="item2">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light   " >
+                        <div class="container-fluid d-flex  align-items-start flex-column bd-highlight mb-3">
+                             <a class="navbar-brand  align-self-md-stretch " style="background-color:bisque" href="#">sNotes</a>
+
+                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent3" aria-controls="navbarSupportedContent3" aria-expanded="false" aria-label="Toggle navigation">
+                               <span class="navbar-toggler-icon"></span>
+                             </button>
+
+                             <div class="collapse navbar-collapse " style="width:100%;"  id="navbarSupportedContent3">
+
+@switch (dataSvs.menustatus)
+{
+case "mainmenu":
+                                 <SNNavMenu GoToMenu= "@(dataSvs.SwitchMenus)"  />
+break;
+case "collection":
+                                 <CollectionsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "cards":
+                                 <CardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notetools":
+                                 <NoteTools BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notecards":
+                                 <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+default:
+                                 <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+break;
+}
+
+
+                             </div>
+
+                     </div>
+
+
+
+                    </nav>
+
+
+  </div>
+  <div class="item3">
+@Body
+  </div>
+  <div class="item4">Right</div>
+  <div class="item5">Footer</div>
+</div>
+
+-->
+<!--
+    <div class="container-fluid bg-secondary " >
+
+
+<div class="row g-1" >
+
+ <RadzenSplitter Orientation="Orientation.Vertical"  style="height: 150vh; border: 1px solid rgba(0,0,0,.08);">
+        <RadzenSplitterPane >
+            <RadzenSplitter  >
+                <RadzenSplitterPane  Min="10%" Max="20%">
+                      <nav class="navbar navbar-expand-lg navbar-light bg-light   " >
+                        <div class="container-fluid d-flex  align-items-start flex-column bd-highlight mb-3">
+                             <a class="navbar-brand  align-self-md-stretch " style="background-color:bisque" href="#">sNotes</a>
+
+                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
+                               <span class="navbar-toggler-icon"></span>
+                             </button>
+
+                             <div class="collapse navbar-collapse " style="width:100%;"  id="navbarSupportedContent2">
+
+@switch (dataSvs.menustatus)
+{
+case "mainmenu":
+                                 <SNNavMenu GoToMenu= "@(dataSvs.SwitchMenus)"  />
+break;
+case "collection":
+                                 <CollectionsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "cards":
+                                 <CardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notetools":
+                                 <NoteTools BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notecards":
+                                 <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+default:
+                                 <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+break;
+}
+
+
+                             </div>
+
+                     </div>
+
+
+
+                    </nav>
+
+                </RadzenSplitterPane>
+
+                <RadzenSplitterPane >
+                <main >
+                      <div class="top-row px-4" style="background-color:burlywood; Height:60px; ">
+                          <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                      </div>
+
+                      <article class="content px-4 "  >
+@Body
+                      </article>
+                </main>
+
+                </RadzenSplitterPane>
+            </RadzenSplitter>
+        </RadzenSplitterPane>
+
+
+  </RadzenSplitter>
+
+
+</div>
+
+// ModalDialog Here
+
+
+</div>
+
+-->
+<!--
+<div class="row g-1" >
+
+
+ <div class=" col-3 " >
+
+   <nav class="navbar navbar-expand-lg navbar-light bg-light  " >
+    <div class="container-fluid d-flex  align-items-start flex-column bd-highlight mb-3">
+        <a class="navbar-brand  align-self-md-stretch " style="background-color:bisque" href="#">sNotes</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse " style="width:100%;"  id="navbarSupportedContent">
+
+@switch (dataSvs.menustatus)
+{
+case "mainmenu":
+            <SNNavMenu GoToMenu= "@(dataSvs.SwitchMenus)"  />
+break;
+case "collection":
+            <CollectionsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "cards":
+            <CardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notetools":
+            <NoteTools BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+case "notecards":
+            <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
+break;
+default:
+            <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+break;
+}
+
+
+        </div>
+
+    </div>
+
+
+
+</nav>
+
+ </div>
+
+
+
+    <div class="col-9 pe-3" style="height:100vh;">
+
+              <main >
+                <div class="top-row px-4" style="background-color:burlywood; Height:60px; ">
+                    <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+                </div>
+
+                <article class="content px-1" >
+@Body
+                </article>
+          </main>
+        </div>
+
+ </div>
+
+-->
+<!--
+
+
+
+@if (NewProjectDialogOpen)
+{
+    <ModalDialog Title="New Project"
+                 Text="Enter Project Name"
+                 OnClose="@OnNewProjectDialogClose"
+                 OnCreateProject="@CreateProject">
+    </ModalDialog>
+
+}
+-->
+
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />
+
+<!--
+
+  <footer fixed-bottom >
+    <div class="nav-item  "  >
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-phone px-2" aria-hidden="true"></span> Mobile App
+                </NavLink>
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-cash-coin px-2" aria-hidden="true"></span> Donate
+                </NavLink>
+      </div>
+  </footer>
+-->
+@code {
+
+    private bool _drawer = true;
+    private bool _mini = true;
+
+    private bool renameproject;
+
+
+    protected override void OnInitialized()
+    {
+
+
+        dialogService.OnClose -= CloseDialog;
+        dialogService.OnClose += CloseDialog;
+
+
+        dataSvs.OnChange += StateHasChanged;
+
+        MessageService.OnMessage += MessageHandler;
+
+
+
+    }
+
+    private string tempName;
+    private void EnableRenameProject()
+    {
+        renameproject = true;
+
+        tempName = dataSvs.MainProject.Name;
+
+    }
+
+    private async Task RenameProject()
+    {
+
+        if (!string.IsNullOrWhiteSpace(dataSvs.MainProject.Name))
+        {
+            await dataSvs.UpdateProject();
+
+        }
+        else
+        {
+            dataSvs.MainProject.Name = tempName;
+            await dataSvs.UpdateProject();
+        }
+        renameproject = false;
+    }
+
+    private async Task RenameProject(KeyboardEventArgs keyboardEvent)
+    {
+        if (keyboardEvent.Key == "Enter")
+        {
+
+            if (!string.IsNullOrWhiteSpace(dataSvs.MainProject.Name))
+            {
+                await dataSvs.UpdateProject();
+
+            }
+            else
+            {
+                dataSvs.MainProject.Name = tempName;
+                await dataSvs.UpdateProject();
+            }
+            renameproject = false;
+        }
+    }
+
+
+    public void CloseDialog(dynamic result)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
+
+    private void MessageHandler()
+    {
+        _mini = true;
+        _mini = false;
+
+        StateHasChanged();
+    }
+
+
+    private void OnCollapse()
+    {
+        StateHasChanged();
+    }
+
+
+}

@@ -1,6 +1,7 @@
 ﻿@page "/dropzonepg"
 @using BlazorApp1.Data
 @using BlazorApp1.Helpers
+@using BlazorComponent
 @using Microsoft.JSInterop
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
@@ -11,97 +12,190 @@
 @using System.Drawing
 @using SkiaSharp.Views.Blazor
 
-
-
-<button @onclick = "TestClick">
-    Test Click Through
-</button>
-
-    <div @ref="@dropZoneElement" class="position-relative" style=";
-    width: @(@Wdimension.Width)px;
-    height:@(@Wdimension.Height)px;
-    border:2px dashed #0087F7;
-    border-radius:8px;
-    " 
-    @ondragover="((de) => ImgDragOver(de))">
-
-    
-
-    @if (testnote.Images != null)
-    {
-         <NoteCardsTemplate Items="testnote.Images" >
-             <ImgTemplate Context="ncimg" >
-               <span class="position-relative" style="left:@(@ncimg.X)px; 
-                        top:@(@ncimg.Y)px" >
-
-                   <div class="btn-toolbar position-absolute top-0 start-0" role="toolbar" aria-label="Basic example"
-                       style="z-index:1" 
-                   >
-                      <button type="button" class="btn btn-primary btn-sm " @onclick= "(() => ImgZoomIn(ncimg))">
-                          <span class="bi bi-zoom-in" aria-hidden="true"></span>
-                      </button>
-                      <button type="button" class="btn btn-primary btn-sm"  @onclick= "(() => ImgZoomOut(ncimg))">
-                           <span class="bi bi-zoom-out" aria-hidden="true"></span>
-
-                      </button>
-                    
-                    </div>
-   
-                    <img id="ncimage_@ncimg.NoteImageID" draggable="true"
-                    
-                    @ondragstart ="((de) => ImgDragStart(de,ncimg))"
-                    @ondragend ="((de) => ImgDragEnd(de,ncimg))"
-                    style="
-                    border:4px none #1565c0;
-                    border-radius:6px"
-                    
-                    width="@ncimg.Width" height="@ncimg.Height"
-
-                    class="rounded mx-auto d-block position-absolute  " 
-                    src="@ncimg.Location" alt="zoom image">
-                 
-               </span>
-                   
-             </ImgTemplate>
-
-         </NoteCardsTemplate>
-      
-    
-    }
-
-
-   <div style="pointer-events:@(PointerEvent); width: @(@Wdimension.Width)px;
-    height:@(@Wdimension.Height)px;
-    border:2px dashed #0087F7;
-    border-radius:8px;">
-       <SKCanvasView  @ref="skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
-                @onpointerdown=" OnPointerDown"
-                @onpointermove="OnPointerMove"
-                @onpointerup="OnPointerUp" 
-                @onpointercancel = "OnPointerCancel"
-                style="position: absolute;
-                top: 0;background-color:transparent;
-                left: 0; width:inherit;height:inherit;
-                pointer-events:inherit" >
-
-    </SKCanvasView>
-   </div>
-
-
-    <div  @ref="@inputFileContainer" >
-        <InputFile 
-        style=" width: 0;
-        height: 0;
-        overflow: hidden;" 
-          
-        OnChange="@OnChange" multiple />
-
-    </div>
-
-</div>
+@inject SharedDataService dataSvs
+@inject ContextMenuService contextMenuService
 
 
 
+<MCol>
+    <MRow>
+        <MCard Elevation="3" Class=" m-1 p-0" Width="@(dataSvs.editNote.MainImgWidth )" Height="@(dataSvs.editNote.MainImgHeight -80)"
+               Style="overflow:auto;">
+
+            <div @ref="@dropZoneElement" class="position-relative "
+                 style="
+                        width: @(dataSvs.editNote.MainImgWidth)px;
+                        height:@(dataSvs.editNote.MainImgHeight)px;
+                        touch-action:none;
+                        background-color:@dataSvs.editNote.BackgroundColor;
+                        z-index:1
+                        "
+                
+                 @oncontextmenu="@(args => CanvasContextMenu(args))"
+                 @oncontextmenu:preventDefault="true"
+                 @onpointermove="((de) => ImgDragOver(de))">
+
+
+                @if (dataSvs.editNote.Images != null)
+                {
+                    <NoteCardsTemplate Items="dataSvs.editNote.Images">
+                        <ImgTemplate Context="ncimg">
+                            @if (ncimg.Selected == false)
+                            {
+                                <div class="position-absolute" style="left:@(ncimg.X)px;
+                                                                     top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
+                                    @oncontextmenu="@(args => { ImgContextMenuWithContent(args,ncimg);})"
+                                    @oncontextmenu:preventDefault="true"
+                                    @oncontextmenu:stopPropagation>
+
+                                <img id="ncimage_@ncimg.NoteImageID"
+                                 @onclick="(() => SelectImage(ncimg))"
+                                 
+                                 class="rounded mx-auto d-block  "
+                                 width="@ncimg.Width" height="@ncimg.Height"
+                                 style="
+                                        border:2px none gray;
+                                        border-radius:6px"
+                                 draggable="false"
+                                 src="@ncimg.Location">
+
+                              
+
+
+                                </div>
+
+                            }else{
+                                 <div class="position-absolute" style="left:@(ncimg.X)px;
+                                                                     top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
+                             @oncontextmenu="@(args => { ImgContextMenuWithContent(args,ncimg);})"
+                            
+                             @oncontextmenu:preventDefault="true"
+                             @oncontextmenu:stopPropagation>
+
+
+
+                                <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))"
+                                 @onpointerdown="((de) => ImgDragStart(de,ncimg))"
+                                 @onpointerup="((de) => ImgDragEnd(de,ncimg))" 
+                                 class="rounded mx-auto d-block  "
+                                 width="@ncimg.Width" height="@ncimg.Height"
+                                 style="
+
+                                        border:2px dotted gray;
+                                        border-radius:6px"
+                                 draggable="false"
+                                 src="@ncimg.Location">
+
+                                <div class="position-absolute top-100 start-100 translate-middle" draggable="true"
+                                 style="cursor:nwse-resize;border-style:none solid solid none;width:15px;height:15px"
+                                
+                                 @ondragstart="((re) => ResizeStart(re,ncimg))"
+                                 @ondrag="((re) => ResizeMove(re,ncimg))"
+                                 @ondragend="((re) => ResizeEnd(re,ncimg))">
+                                  
+                                </div>
+
+
+                            </div>
+                            }
+                           
+
+                        </ImgTemplate>
+
+                    </NoteCardsTemplate>
+
+
+                }
+
+
+                <!--
+                   <svg style="position: absolute;
+                                                           top: 0;background-color:transparent;
+                                                           left: 0; width:inherit;height:inherit;
+                                                           pointer-events:none">
+                                      <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" @onclick="Log" />
+                                      <rect x="100" y="100" width="30" height="30" stroke="black" fill="transparent" stroke-width="5" />
+                                      <image width="500" height="350"  xlink:href="https://www.tutorialspoint.com/videotutorials/images/coding_ground_home.jpg" />
+
+                                  </svg>
+                -->
+
+
+                <div style="pointer-events:@(dataSvs.PointerEvent);
+                            width: @(dataSvs.editNote.MainImgWidth)px;
+                            height:@(dataSvs.editNote.MainImgHeight)px;">
+
+
+
+                    <SKCanvasView @ref="dataSvs.skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
+                                  @onpointerdown="OnPointerDown"
+                                  @onpointermove="OnPointerMove"
+                                  @onpointerup="OnPointerUp"
+                                  @onpointercancel="OnPointerCancel"
+                                  style="position: absolute;
+                                         top: 0;background-color:transparent;
+                                         left: 0; width:inherit;height:inherit;
+                                         pointer-events:inherit">
+
+
+                    </SKCanvasView>
+                </div>
+
+                <div @ref="@inputFileContainer">
+                    <InputFile style=" width: 0;
+                                       height: 0;
+                                       position:absolute;
+                                       bottom:0px;
+                                       overflow: hidden;"
+                               OnChange="@OnChange" multiple />
+                </div>
+
+            </div>
+
+            <MExpansionPanels Class="elevation-6" Style="width:50%;position:absolute;bottom:-85px;left:25%">
+
+                <MExpansionPanel>
+                    <MExpansionPanelHeader DisableIconRotate>
+
+                        <ChildContent>
+                            Summary
+                        </ChildContent>
+
+                        <ActionsContent>
+                            @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                            {
+                                <MIcon Color="teal">
+                                    mdi-check
+                                </MIcon>
+                            }
+                            else
+                            {
+                                <MIcon Color="error">
+                                    mdi-alert-circle
+                                </MIcon>
+                            }
+
+                        </ActionsContent>
+
+                    </MExpansionPanelHeader>
+                    <MExpansionPanelContent>
+                        <MTextarea Outlined NoResize Counter="true" Clearable Rules="_rules"
+                                   @bind-Value="@(dataSvs.editNote.Text)">
+
+
+                        </MTextarea>
+
+                    </MExpansionPanelContent>
+                </MExpansionPanel>
+
+            </MExpansionPanels>
+
+        </MCard>
+
+    </MRow>
+
+
+</MCol>
 
 
 @code {
@@ -109,40 +203,55 @@
     ElementReference dropZoneElement;
     ElementReference inputFileContainer;
 
-    IJSObjectReference _module;
+    IJSObjectReference _dropZoneJS;
     IJSObjectReference _dropzoneInstance;
+    IJSObjectReference _module;
 
-
+    FilesAndDirectories filesAndDirectories;
     //New Image from Clipboard Properties
-    public Note testnote = new Note();
-    public int aiNoteID;
-    //List<NoteImage> imagelist = new List<NoteImage>();
+
     string imgsrc;
 
     //Zoom and Drag Properties
-    private int pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;    
+    private int pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     NoteImage dragedNoteImage;
     bool dragstarted = false;
 
-    string PointerEvent = "none";
-     SKCanvasView skiaView = null!;
+
     SKPoint? touchLocation;
-    Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
-    List<FingerPaintPolyline> completedPolylines = new List<FingerPaintPolyline>();
 
+    bool show = true;
+    string CollectionId = "0";
 
-    WindowDimension Wdimension = new WindowDimension()
-    {
-        Width = 1024,
-        Height =800
-    };
+    public List<Func<string, StringBoolean>> _rules = new()
+                {
+                  v =>  v is not null && v.Length <= 1500 ? true : "Max 1500 characters"
+                };
+
 
 
 
     protected override void OnInitialized()
     {
-        testnote.Images = new List<NoteImage>();
 
+        if (dataSvs.AddNotesSelectedNC is not null)
+        {
+            CollectionId = dataSvs.AddNotesSelectedNC.NotesCollectionID.ToString();
+
+        }
+
+        // dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
+        //   dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
+
+        filesAndDirectories = new FilesAndDirectories(dataSvs);
+        dataSvs.OnChange += StateHasChanged;
+
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+
+        return base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -150,15 +259,87 @@
         if (firstRender)
         {
             //for load JS File
-            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
+            _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             // For Initialize the Drop Zone
-            _dropzoneInstance = await _module.InvokeAsync<IJSObjectReference>("initializeFileDropZone", dropZoneElement, inputFileContainer);
+            _dropzoneInstance = await _dropZoneJS.InvokeAsync<IJSObjectReference>("initializeFileDropZone", dropZoneElement, inputFileContainer);
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
 
-            Wdimension = await _module.InvokeAsync<WindowDimension>("getWindowDimensions");
+            //dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
+
+
+
+            if (dataSvs.EditMode == false)
+            {
+                dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
+                dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
+
+                dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
+
+
+            }
+
+
+
+            if (dataSvs.EditMode == true && dataSvs.editNote.MainImg != null)
+            {
+                /*
+                dataSvs.Wdimension = new WindowDimension()
+                     {
+                     Width = dataSvs.editNote.MainImgWidth,
+                     Height = dataSvs.editNote.MainImgHeight
+                };
+                */
+
+
+                
+               foreach (NotePath notePath in dataSvs.editNote.NotePaths)
+                {
+                   
+                    dataSvs.completedPolylines.Add(new FingerPaintPolyline()
+                        {
+                            Path = SKPath.ParseSvgPathData(notePath.SvgPath),
+                            StrokeBlendMode =  Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode),
+                            StrokeColor = SKColor.Parse(notePath.StrokeColor),
+                            StrokeWidth = notePath.StrokeWidth
+
+                    });
+
+               
+               };
+               
+
+               dataSvs.saveBitmap = SKBitmap.Decode(dataSvs.editNote.MainImg);
+            }
+
+
+
+
+
+            /*
+            *
+            else
+            {
+            dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
+            dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
+
+            dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
+
+         }
+         *
+         */
 
             StateHasChanged();
+
         }
+
+
     }
+
+    void Change(string text)
+    {
+        Console.WriteLine(text);
+    }
+
 
 
     async Task OnChange(InputFileChangeEventArgs e)
@@ -166,82 +347,29 @@
         if (dragstarted == false)
         {
             long maxFileSize = 1024 * 1024 * 15;
-            var files =  e.GetMultipleFiles();
+            var files = e.GetMultipleFiles();
 
             foreach (var file in files)
             {
-                using var stream = file.OpenReadStream(maxFileSize);
-
-                /*
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-              var path = Path.Combine(directoryPath, file.Name);
-                */
-
+                using Stream stream = file.OpenReadStream(maxFileSize);
 
                 // Get the file name
                 var fileName = file.Name;
 
-                // Get the extension
-                var extension = Path.GetExtension(fileName);
+                string fPath = filesAndDirectories.CreateImagePath(CollectionId, fileName);
+                await filesAndDirectories.SaveImageLocaly(fPath, stream);
 
-                // Validate the extension based on your business needs
+                SaveImage(fPath, file.ContentType);
 
-                // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
-                var newFileName = $"{Path.GetFileNameWithoutExtension(fileName)}-{Guid.NewGuid().ToString()}{extension}";
+                await stream.DisposeAsync();
+            }
 
-                // Create the full path of the file including the directory (For this demo we will save the file insidea folder called Data within wwwroot)
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                var path = Path.Combine(directoryPath, newFileName);
-
-                // Maek sure the directory is ther bycreating it if it's not exist
-                Directory.CreateDirectory(directoryPath);
-
-                FileStream fs = File.Create(path);
-                await stream.CopyToAsync(fs);
-
-
-                stream.Close();
-                fs.Close();
-
-                SKBitmap sKBitmapImg = SKBitmap.Decode(path);
-
-                //For Reading Files
-
-                using (FileStream fileStream = File.OpenRead(path))
-                {
-                    byte[] array = new byte[fileStream.Length];
-
-                    fileStream.Read(array, 0, array.Length);
-                    imgsrc = "data:" + file.ContentType + ";base64," + Convert.ToBase64String(array);
-                    testnote.Images.Add(new NoteImage()
-                    {
-                        NoteImageID = aiNoteID++,
-                        ImgLocationType = ImgLocationType.Local,
-                        Location = imgsrc,
-                        X = 0,
-                        Y = 0,
-                        Width = sKBitmapImg.Width,
-                        Height = sKBitmapImg.Height
-
-
-
-
-                });
-
-
-
-                    //   imagelist.Add(newnoteImage);
-
-                }
-
-
-                var listfiles =Directory.GetFiles(directoryPath);
-
-            }       
         }
 
 
     }
+
+
 
     // Unregister the drop zone events
     public async ValueTask DisposeAsync()
@@ -252,6 +380,11 @@
             await _dropzoneInstance.DisposeAsync();
 
         }
+        if (_dropZoneJS != null)
+        {
+            await _dropZoneJS.DisposeAsync();
+        }
+
         if (_module != null)
         {
             await _module.DisposeAsync();
@@ -259,45 +392,66 @@
     }
 
 
-    #region zoom
+    #region Images
 
-    private void ImgZoomIn(NoteImage _noteImage)
+    private bool resizing;
+    private int startOffsetX;
+    private int startOffsetY;
+    private void ResizeStart(DragEventArgs re, NoteImage _noteImage)
     {
-        if ((_noteImage.X + _noteImage.Width) < Wdimension.Width && (_noteImage.Y + _noteImage.Height) < Wdimension.Height)
-        {
+        resizing = true;
 
-            _noteImage.Width +=  (_noteImage.Width * 2/100);
-            _noteImage.Height +=  (_noteImage.Height * 2/100);
+        re.DataTransfer.DropEffect = "move";
+        startOffsetX = (int)re.OffsetX;
+        startOffsetY = (int)re.OffsetY;
+
+
+    }
+    private void ResizeMove(DragEventArgs re, NoteImage _noteImage)
+    {
+        // _noteImage.Width += (int)Math.Round((double)(100 * 5) / _noteImage.Width );
+        //  _noteImage.Height += (int)Math.Round((double)(100 * 5) / _noteImage.Height);
+
+        if (resizing)
+        {
+            _noteImage.Width += (int)re.OffsetX;
+            _noteImage.Height += (int)re.OffsetY;
 
         }
 
-    }
-
-    private void ImgZoomOut(NoteImage _noteImage)
-    {
-        _noteImage.Width -= (_noteImage.Width * 2/100);;
-        _noteImage.Height -= (_noteImage.Height * 2/100);;
-
 
     }
 
-
-
-
-    private void ImgDragStart(DragEventArgs de,NoteImage _noteImage)
+    private void ResizeEnd(DragEventArgs re, NoteImage _noteImage)
     {
+        /*
+        re.DataTransfer.DropEffect = "move";
+            _noteImage.Width += (int)re.OffsetX;
+            _noteImage.Height += (int)re.OffsetY;
+            */
+
+        resizing = false;
+        // _noteImage.Width = dragedNoteImage.Width;
+        //_noteImage.Height = dragedNoteImage.Height;
+    }
+
+
+
+
+    private void ImgDragStart(PointerEventArgs de, NoteImage _noteImage)
+    {
+
         dragstarted = true;
 
         dragedNoteImage = _noteImage;
 
-
         // get the mouse cursor position at startup:
-        pos3 = Convert.ToInt16( de.ClientX);
-        pos4 = Convert.ToInt16( de.ClientY);
+        pos3 = Convert.ToInt16(de.ClientX);
+        pos4 = Convert.ToInt16(de.ClientY);
 
     }
 
-    private void ImgDragEnd(DragEventArgs de,NoteImage _noteImage)
+    private void ImgDragEnd(PointerEventArgs de, NoteImage _noteImage)
     {
         dragstarted = false;
         _noteImage.X = dragedNoteImage.X;
@@ -306,145 +460,514 @@
 
     }
 
-    private void ImgDragOver(DragEventArgs de)
+    private void ImgDragOver(PointerEventArgs de)
     {
 
         if (dragstarted)
         {
-            de.DataTransfer.DropEffect = "move";
+            // de.DataTransfer.DropEffect = "move";
             // calculate the new cursor position:
-            pos1 = pos3 -  Convert.ToInt16( de.ClientX);
-            pos2 = pos4 - Convert.ToInt16( de.ClientY);
-            pos3 = Convert.ToInt16( de.ClientX);
-            pos4 = Convert.ToInt16( de.ClientY);
+
+            pos1 = pos3 - Convert.ToInt16(de.ClientX);
+            pos2 = pos4 - Convert.ToInt16(de.ClientY);
+            pos3 = Convert.ToInt16(de.ClientX);
+            pos4 = Convert.ToInt16(de.ClientY);
             // set the element's new position:
-            if ((dragedNoteImage.X - pos1) >=0 && (dragedNoteImage.Y - pos2)>=0 && (dragedNoteImage.X - pos1) <= (Wdimension.Width - dragedNoteImage.Width)&& (dragedNoteImage.Y - pos2) <= (Wdimension.Height - dragedNoteImage.Height))
+            if ((dragedNoteImage.X - pos1) >= 0 && (dragedNoteImage.Y - pos2) >= 0 && (dragedNoteImage.X - pos1) <= (dataSvs.Wdimension.Width - dragedNoteImage.Width) && (dragedNoteImage.Y - pos2) <= (dataSvs.Wdimension.Height - dragedNoteImage.Height))
             {
                 dragedNoteImage.X = dragedNoteImage.X - pos1;
                 dragedNoteImage.Y = dragedNoteImage.Y - pos2;
 
             }
 
+
         }
+
 
 
     }
 
 
+    private void ImgZoomIn(NoteImage _noteImage)
+    {
+        if ((_noteImage.X + _noteImage.Width) < dataSvs.Wdimension.Width && (_noteImage.Y + _noteImage.Height) < dataSvs.Wdimension.Height)
+        {
+
+            _noteImage.Width += (_noteImage.Width * 2 / 100);
+            _noteImage.Height += (_noteImage.Height * 2 / 100);
+
+        }
+
+    }
+
+    private void ImgZoomOut(NoteImage _noteImage)
+    {
+        _noteImage.Width -= (_noteImage.Width * 2 / 100); ;
+        _noteImage.Height -= (_noteImage.Height * 2 / 100); ;
 
 
+    }
+
+    private void SelectImage(NoteImage _noteImage){
+
+        dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
+        _noteImage.Selected = true;
+
+
+    }
+    private void UnSelectImage(NoteImage _noteImage){
+
+        _noteImage.Selected = false;
+        // dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
+
+    }
     #endregion
 
     #region Drawing
-    
+
     SKPaint paint = new SKPaint
-           {
+            {
                 Style = SKPaintStyle.Stroke,
                 IsAntialias = true,
                 StrokeCap = SKStrokeCap.Round,
-                StrokeJoin = SKStrokeJoin.Round
-               };
+                StrokeJoin = SKStrokeJoin.Round,
+
+                //  BlendMode = SKBlendMode.SrcOver,
+                //   Color = SKColors.Red,
+                //   StrokeWidth = 8
+
+
+            };
+
 
     void OnPaintSurface(SKPaintSurfaceEventArgs args)
     {
 
-
+        SKImageInfo info = args.Info;
+        SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-        canvas.Clear();
-        foreach (FingerPaintPolyline polyline in completedPolylines)
+        if (dataSvs.EditMode == false)
         {
-            paint.Color = SKColors.Black;
-            paint.StrokeWidth = 2;
-            canvas.DrawPath(polyline.Path, paint);
+            /*
+            // Create bitmap the size of the display surface
+            if (dataSvs.saveBitmap == null)
+            {
+            dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
+            }
+            // Or create new bitmap for a new size of display surface
+                else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
+                {
+                SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
+                Math.Max(dataSvs.saveBitmap.Height, info.Height));
+
+                    using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+                    {
+                    newCanvas.Clear();
+                    newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+                }
+
+                dataSvs.saveBitmap = newBitmap;
+             }
+             */
 
 
-        }
 
-        foreach (FingerPaintPolyline polyline in inProgressPolylines.Values)
-        {
-            paint.Color = SKColors.Black;
-            paint.StrokeWidth = 2;
-            canvas.DrawPath(polyline.Path, paint);
-        }
-
-      
-    }
+            canvas.Clear(SKColors.Transparent);
 
 
-
-    void OnPointerDown(PointerEventArgs e)
-    {
-
-        if (!inProgressPolylines.ContainsKey(e.PointerId))
-        {
-            FingerPaintPolyline polyline = new FingerPaintPolyline
+            foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
             {
 
-            };
-            polyline.Path.MoveTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
-            inProgressPolylines.Add(e.PointerId, polyline);
-            skiaView.Invalidate();
+                paint.Color = polyline.StrokeColor;
+                paint.StrokeWidth = polyline.StrokeWidth;
+                paint.BlendMode = polyline.StrokeBlendMode;
+                canvas.DrawPath(polyline.Path, paint);
+
+
+            }
+
+            foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+            {
+
+                paint.Color = polyline.StrokeColor;
+                paint.StrokeWidth = polyline.StrokeWidth;
+                paint.BlendMode = polyline.StrokeBlendMode;
+
+                canvas.DrawPath(polyline.Path, paint);
+
+            }
+
+
+
+        }
+        else
+        {
+
+            if (dataSvs.BitmapDrawed == false)
+            {
+                canvas.Clear();
+               canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+
+                dataSvs.BitmapDrawed = true;
+
+            }
+
+
+
+            // canvas.Clear();
+
+
+            foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+            {
+
+                paint.Color = polyline.StrokeColor;
+                paint.StrokeWidth = polyline.StrokeWidth;
+                paint.BlendMode = polyline.StrokeBlendMode;
+                canvas.DrawPath(polyline.Path, paint);
+
+
+            }
+
+            foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+            {
+
+                paint.Color = polyline.StrokeColor;
+                paint.StrokeWidth = polyline.StrokeWidth;
+                paint.BlendMode = polyline.StrokeBlendMode;
+                canvas.DrawPath(polyline.Path, paint);
+
+
+            }
+
+
+
         }
 
 
 
+        dataSvs.paintSKCanvas = canvas;
+
     }
+
+    bool ereaseEnabled = false;
+    void OnPointerDown(PointerEventArgs e)
+    {
+        dataSvs.BitmapDrawed = false;
+        switch (dataSvs.paintMode)
+        {
+            case PaintMode.Drag:
+                break;
+            case PaintMode.Pen:
+                if (!dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
+                {
+                    SKColor strokeColor = dataSvs.selectedColor;
+
+                    FingerPaintPolyline polyline = new FingerPaintPolyline
+                            {
+                                StrokeColor = strokeColor,
+                                StrokeWidth = dataSvs.strokeWidth,
+                                StrokeBlendMode = SKBlendMode.Src,
+
+
+                            };
+
+                    polyline.Path.MoveTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
+                    dataSvs.inProgressPolylines.Add(e.PointerId, polyline);
+                    dataSvs.skiaView.Invalidate();
+                }
+
+                break;
+            case PaintMode.Eraser:
+                ereaseEnabled = true;
+                break;
+            default:
+                break;
+        }
+
+    }
+
 
     void OnPointerMove(PointerEventArgs e)
     {
-        if (inProgressPolylines.ContainsKey(e.PointerId))
+        switch (dataSvs.paintMode)
         {
-            FingerPaintPolyline polyline = inProgressPolylines[e.PointerId];
-            polyline.Path.LineTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
-            skiaView.Invalidate();
+            case PaintMode.Drag:
+                break;
+            case PaintMode.Pen:
+                if (dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
+                {
+                    FingerPaintPolyline polyline = dataSvs.inProgressPolylines[e.PointerId];
+                    polyline.Path.LineTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
+                    dataSvs.skiaView.Invalidate();
+                }
+                break;
+            case PaintMode.Eraser:
+                if (ereaseEnabled && dataSvs.completedPolylines.Count > 0)
+                {
+
+                    FingerPaintPolyline? deletePath = dataSvs.completedPolylines.Find(p => paint.GetFillPath(p.Path).Contains((float)e.OffsetX, (float)e.OffsetY));
+
+
+                    if (deletePath is not null)
+                    {
+                        dataSvs.completedPolylines.Remove(deletePath);
+                        dataSvs.skiaView.Invalidate();
+                    }
+
+
+                }
+
+                break;
+            default:
+                break;
         }
+
+
+
 
 
     }
 
     void OnPointerUp(PointerEventArgs e)
     {
-        if (inProgressPolylines.ContainsKey(e.PointerId))
+        switch (dataSvs.paintMode)
         {
-            completedPolylines.Add(inProgressPolylines[e.PointerId]);
-            inProgressPolylines.Remove(e.PointerId);
-            skiaView.Invalidate();
+            case PaintMode.Drag:
+                break;
+            case PaintMode.Pen:
+                if (dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
+                {
+
+                    dataSvs.completedPolylines.Add(dataSvs.inProgressPolylines[e.PointerId]);
+
+                    //string svgdata = dataSvs.completedPolylines[0].Path.ToSvgPathData();
+                    /*
+               
+                    */
+                   
+                    NotePath notePath = new NotePath()
+                            {
+                                SvgPath = dataSvs.inProgressPolylines[e.PointerId].Path.ToSvgPathData(),
+                                StrokeBlendMode = dataSvs.inProgressPolylines[e.PointerId].StrokeBlendMode.ToString(),
+                                StrokeColor = dataSvs.inProgressPolylines[e.PointerId].StrokeColor.ToString(),
+                                StrokeWidth = (int)dataSvs.inProgressPolylines[e.PointerId].StrokeWidth
+                            };
+
+                    dataSvs.editNote.NotePaths.Add(notePath);
+
+                    dataSvs.inProgressPolylines.Remove(e.PointerId);
+
+                    UpdateBitmap();
+
+                    
+                   
+                }
+
+                string bitmapPath;
+                if (dataSvs.editNote.MainImg is not null)
+                {
+
+                    bitmapPath = dataSvs.editNote.MainImg;
+
+                }
+                else
+                {
+                    // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
+
+                    var fileName = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
+                    var path = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+                    if (Directory.Exists(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/"))
+                    {
+                        bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/");
+                        bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+                    }
+
+                    //  bitmapPath = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
+
+                }
+
+                using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
+                {
+                    SKData data = image.Encode();
+
+                    //  SKData data = image.Encode();
+                    FileStream fs = File.Create(bitmapPath);
+                    data.SaveTo(fs);
+                    fs.Close();
+
+                    dataSvs.editNote.MainImg = bitmapPath;
+                    // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
+
+                }
+
+
+                break;
+            case PaintMode.Eraser:
+                ereaseEnabled = false;
+                break;
+            default:
+                break;
         }
+
 
     }
 
     void OnPointerCancel(PointerEventArgs e)
     {
-         if (inProgressPolylines.ContainsKey(e.PointerId))
-         {
-             inProgressPolylines.Remove(e.PointerId);
-            skiaView.Invalidate();
-         }
-                            
-    }
-    #endregion
-    private void TestClick()
-    {
-        switch(PointerEvent)
+        switch (dataSvs.paintMode)
         {
-            case "none":
-                PointerEvent = "auto";
+            case PaintMode.Drag:
                 break;
+            case PaintMode.Pen:
+                if (dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
+                {
+                    dataSvs.inProgressPolylines.Remove(e.PointerId);
+                    dataSvs.skiaView.Invalidate();
+                }
+                break;
+            case PaintMode.Eraser:
+                ereaseEnabled = false;
+                break;
+            default:
+                break;
+        }
 
-            case "auto":
-                PointerEvent = "none";
-                break;
+
+
+    }
+
+    void UpdateBitmap()
+    {
+
+        using (SKCanvas saveBitmapCanvas = new SKCanvas(dataSvs.saveBitmap))
+        {
+
+            //saveBitmapCanvas.Clear();
+
+
+            foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.completedPolylines)
+            {
+
+                paint.Color = FngrPaintPoly.StrokeColor;
+                paint.StrokeWidth = FngrPaintPoly.StrokeWidth;
+                paint.BlendMode = FngrPaintPoly.StrokeBlendMode;
+
+
+                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
+            }
+            /*
+                foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.inProgressPolylines.Values)
+            {
+                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
+            }
+
+             */
+
+
+
+
 
         }
 
-        StateHasChanged();
-        Console.WriteLine("Test Click, Clicked");
+
+
+
+        dataSvs.skiaView.Invalidate();
     }
-  
-    public class WindowDimension
+
+    #endregion
+
+    void ImgContextMenuWithContent(MouseEventArgs args, NoteImage noteImage) => contextMenuService.Open(args, ds =>
+
+    @<RadzenMenu>
+                 <RadzenMenuItem Text="Remove" Icon="delete_outline" Click="() => RemoveNoteImg(noteImage)"></RadzenMenuItem>
+                 <RadzenMenuItem Text="ZoomIn" Icon="zoom_in" Click="() => ImgZoomIn(noteImage)"></RadzenMenuItem>
+                 <RadzenMenuItem Text="ZoomOut" Icon="zoom_out" Click="() => ImgZoomOut(noteImage)"></RadzenMenuItem>
+       
+    </RadzenMenu>
+        );
+
+    private async Task RemoveNoteImg(NoteImage noteImage)
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        if (dataSvs.editNote.NoteID == 0)
+        {
+            dataSvs.editNote.Images.Remove(noteImage);
+
+        }
+        else
+        {
+
+            await dataSvs.DeleteNoteImg(noteImage);
+        }
+
+        contextMenuService.Close();
     }
+
+
+
+
+    void CanvasContextMenu(MouseEventArgs args) => contextMenuService.Open(args, ds =>
+    @<RadzenMenu>
+                <RadzenMenuItem Text="Past Image" Click="PastClipboardImg" Value="1"></RadzenMenuItem>
+
+    </RadzenMenu>
+    );
+
+
+    async Task PastClipboardImg(MenuItemEventArgs args)
+    {
+
+        String imgBase64 = await _module.InvokeAsync<String>("pasteImage");
+        byte[] bitArrayImg = Convert.FromBase64String(imgBase64.Substring(imgBase64.LastIndexOf(',') + 1));
+
+        string fPath = filesAndDirectories.CreateImagePath(CollectionId, "clipedimage");
+        await filesAndDirectories.SaveImageLocaly(fPath, bitArrayImg);
+
+        Stream stream = new MemoryStream(bitArrayImg);
+        var dotnetImageStream = new DotNetStreamReference(stream);
+        //var urlstrng = await _module.InvokeAsync<string>("imgPathToSrc", fPath);
+        var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
+
+        SaveImage(fPath, "image/png");
+        contextMenuService.Close();
+
+    }
+
+    private void SaveImage(string fPath, string ContentType)
+    {
+        SKBitmap sKBitmapImg = SKBitmap.Decode(fPath);
+
+        dataSvs.editNote.Images.Add(new NoteImage()
+            {
+                ImgLocationType = ImgLocationType.Local,
+                X = 0,
+                Y = 0,
+                ImgContentType = ContentType,
+                ImgURI = fPath,
+                Width = sKBitmapImg.Width,
+                Height = sKBitmapImg.Height
+
+
+            });
+        StateHasChanged();
+    }
+
+    public void Log()
+    {
+        Console.WriteLine("shape clicked");
+    }
+
+    public void Dispose()
+    {
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
 }

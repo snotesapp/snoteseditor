@@ -1,4 +1,10 @@
 ﻿
+export function GetNCTitle(element) {
+    return element.innerHTML;
+
+}
+
+
 export function CloseModal(modalId) {
     $(modalId).modal('hide');
 
@@ -10,6 +16,49 @@ export function showPrompt(message) {
     return prompt(message, 'Type anything here');
 }
 
+export function copyTextToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .catch(function (error) {
+            alert(error);
+        });
+}
+
+
+//destinationImage.addEventListener('click', pasteImage);
+
+function blobToBase64(blob) {
+    return new Promise((resolve, _) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+    });
+}
+
+
+
+
+export async function pasteImage() {
+    try {
+        
+        const permission = await navigator.permissions.query({ name: 'clipboard-read' });
+        if (permission.state === 'denied') {
+            throw new Error('Not allowed to read clipboard.');
+        }
+       
+        const clipboardContents = await navigator.clipboard.read();
+        for (const item of clipboardContents) {
+            if (!item.types.includes('image/png')) {
+                throw new Error('Clipboard contains non-image data.');
+            }
+            const blob = await item.getType('image/png');
+
+            return blobToBase64(blob);
+        }
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+}
 
 
 export function enablepanzoompg() {
@@ -30,7 +79,6 @@ export function enablepanzoompg() {
 
 
 }
-
 
 export function enablepanzoom2(imgelementid, xValue, yValue) {
 
@@ -73,9 +121,6 @@ export function enablepanzoom(imgelementid, zoominbtn, zoomoutbtn) {
   
 }
 
-
-
-
 export function disablepanzoom2(panzoomobject, imgelementid) {
 
     const imgelement = document.getElementById(imgelementid)
@@ -96,8 +141,6 @@ export function disablepanzoom(panzoomobject, imgelementid, zoominbtn, zoomoutbt
 
 }
 
-
-
 export function getpanzoomdata(panzoomobject, imgelementid) {
 
     const imgelement = document.getElementById(imgelementid)
@@ -109,7 +152,6 @@ export function getpanzoomdata(panzoomobject, imgelementid) {
     return jsondata
   
 }
-
 
 export function zoomInelement(elementid) {
     /*
@@ -136,5 +178,41 @@ export function zoomOutelement(elementid) {
     panzoom.zoomOut()
     */
 
+}
+
+export function blazorDownloadFile1(filename, contentType, content) {
+    // Create the URL
+    const file = new File([content], filename, { type: contentType });
+    const exportUrl = URL.createObjectURL(file);
+
+    // Create the <a> element and click on it
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.href = exportUrl;
+    a.download = filename;
+    a.target = "_self";
+    a.click();
+
+
+    // We don't need to keep the object URL, let's release the memory
+    // On older versions of Safari, it seems you need to comment this line...
+    URL.revokeObjectURL(exportUrl);
+
+}
+
+export function blazorDownloadFile2(fileName, url) {
+    const anchorElement = document.createElement('a');
+    anchorElement.href = url;
+    anchorElement.download = fileName ?? '';
+    anchorElement.click();
+    anchorElement.remove();
+}
+
+export async function imgStreamToSrc(imageStream) {
+    const arrayBuffer = await imageStream.arrayBuffer();
+    const blob = new Blob([arrayBuffer]);
+    const url = URL.createObjectURL(blob);
+
+    return url;
 }
 

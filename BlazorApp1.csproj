@@ -8,21 +8,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
     <Content Remove="Pages\SkiaSharpPg.razor" />
     <Content Remove="Shared\MenuFooterLayout.razor" />
     <NativeFileReference Include="$(SkiaSharpStaticLibraryPath)\2.0.23\*.a" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.ContextMenu" Version="1.14.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
+    <PackageReference Include="BuildWebCompiler2022" Version="1.14.8" />
+    <PackageReference Include="Masa.Blazor" Version="0.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Radzen.Blazor" Version="3.18.16" />
     <PackageReference Include="SkiaSharp" Version="2.88.0" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
  
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="compilerconfig.json" />
     <None Include="Pages\SkiaSharpPg.razor" />
     <None Include="Shared\MenuFooterLayout.razor" />
     <None Include="wwwroot\myjs\BootstrapModalInterop.js">
@@ -45,11 +61,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <UpToDateCheckInput Remove="Pages\SkiaSharpPg.razor" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

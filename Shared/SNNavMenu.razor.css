@@ -1,0 +1,35 @@
+﻿
+
+
+@media (min-width: 768px) {
+    .navbar-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ul-style {
+        height: 100vh;
+        /*
+        border-style: solid;
+        
+           border-color:blue;
+       */
+    }
+   
+}
+
+
+
+.navbar-nav .nav-link {
+    color: black;
+    font-size: 1.1em;
+}
+
+.list-group-item {
+
+}
+
+
+
+body {
+}
