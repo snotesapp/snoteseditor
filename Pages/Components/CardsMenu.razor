@@ -378,9 +378,6 @@ else
     private async Task SelectCard(Card selectedCard)
     {
 
-        dataSvs.menuCols = 3;
-        dataSvs.bodyCols = 9;
-
 
 
         await dataSvs.GetCard(selectedCard);
@@ -429,7 +426,7 @@ else
                                             </MenuItem>
                                         </RadzenMenuTemplate>
                                     </RadzenMenuItem>
-    </RadzenMenu>
+        </RadzenMenu>
     );
 
 
@@ -441,9 +438,12 @@ else
     private async Task SetParentCard(Card parentCard, Card childCard)
     {
         childCard.ParentID = parentCard.CardID;
+        childCard.Parent = null;
         childCard.Selected = false;
         await dataSvs.UpdateCard(childCard);
+
         dataSvs.MainProject = await dataSvs.GetProject();
+       
         contextMenuService.Close();
     }
 

@@ -83,10 +83,9 @@ namespace BlazorApp1.Data
 
         public string? MainImg { get; set; }
 
-        //   public string? Thumbnail { get; set; }
+       // public string? Thumbnail { get; set; }
 
-        
-
+       
         private string _thumbnail;
 
         public string? Thumbnail
@@ -96,9 +95,10 @@ namespace BlazorApp1.Data
                 {
                     using (SKImage image = SKImage.FromBitmap(SKBitmap.Decode(MainImg)))
                     {
-                        SKRectI sKRectI = new SKRectI(0, 0,500,281);
-                        SKImage subImage = image.Subset(sKRectI);
-                        SKData thdata = subImage.Encode();
+                       
+                        //SKRectI sKRectI = new SKRectI(0, 0,500,281);
+                        //SKImage subImage = image.Subset(sKRectI);
+                        SKData thdata = image.Encode();
                        _thumbnail = "data:image/jpeg;base64," + Convert.ToBase64String(thdata.ToArray());
                        
                     }
@@ -108,7 +108,7 @@ namespace BlazorApp1.Data
            
         }
 
-
+      
 
         public string? BackgroundColor { get; set; }
 

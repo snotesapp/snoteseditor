@@ -133,14 +133,18 @@
 
     private Task GoToMainMenu()
     {
+        /*
+         
         //Don't Update new note,update existing note.
         if (dataSvs.EditMode == true)
         {
             dataSvs.UpdateNote().GetAwaiter().GetResult();
 
         }
+        * 
+         */
 
-
+        dataSvs.UpdateNote().GetAwaiter().GetResult();
         dataSvs.ClearCanvas();
         dataSvs.GetNotes().GetAwaiter().GetResult();
         return BackToMain.InvokeAsync("collection");

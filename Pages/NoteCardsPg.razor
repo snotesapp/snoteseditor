@@ -235,6 +235,11 @@
     {
         MessageService.OnMessage += MessageHandler;
         dataSvs.OnChange += StateHasChanged;
+
+
+        StateHasChanged();
+
+
     }
 
     public void Dispose()
@@ -260,8 +265,6 @@
     SKPoint? touchLocation;
     SKBitmap? saveBitmap;
 
-    Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
-    List<FingerPaintPolyline> completedPolylines = new List<FingerPaintPolyline>();
 
 
 
@@ -286,86 +289,57 @@
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-
+        /*
         // Create bitmap the size of the display surface
         if (saveBitmap == null)
-        {
+            {
             saveBitmap = new SKBitmap(info.Width, info.Height);
-        }
-        // Or create new bitmap for a new size of display surface
-        else if (saveBitmap.Width < info.Width || saveBitmap.Height < info.Height)
-        {
+            }
+            // Or create new bitmap for a new size of display surface
+            else if (saveBitmap.Width < info.Width || saveBitmap.Height < info.Height)
+            {
             SKBitmap newBitmap = new SKBitmap(Math.Max(saveBitmap.Width, info.Width),
-                                          Math.Max(saveBitmap.Height, info.Height));
+            Math.Max(saveBitmap.Height, info.Height));
 
             using (SKCanvas newCanvas = new SKCanvas(newBitmap))
-            {
-                newCanvas.Clear();
-                newCanvas.DrawBitmap(saveBitmap, 0, 0);
-            }
+        {
+        newCanvas.Clear();
+        newCanvas.DrawBitmap(saveBitmap, 0, 0);
+        }
 
-            saveBitmap = newBitmap;
+        saveBitmap = newBitmap;
         }
 
         canvas.Clear();
         if (dataSvs.SelectedNoteCard.Note.MainImg is not null)
-        {
+            {
             saveBitmap = SKBitmap.Decode(dataSvs.SelectedNoteCard.Note.MainImg);
             canvas.DrawBitmap(saveBitmap, 0, 0);
         }
+        */
 
+        canvas.Clear();
 
-
-
-        foreach (FingerPaintPolyline polyline in completedPolylines)
+        foreach (NotePath notePath in dataSvs.SelectedNoteCard.Note.NotePaths)
         {
 
-            paint.Color = polyline.StrokeColor;
-            paint.StrokeWidth = polyline.StrokeWidth;
-            paint.BlendMode = polyline.StrokeBlendMode;
-            canvas.DrawPath(polyline.Path, paint);
 
 
+            paint.BlendMode = Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode);
+            paint.Color = SKColor.Parse(notePath.StrokeColor);
+            paint.StrokeWidth = notePath.StrokeWidth;
+            canvas.DrawPath(SKPath.ParseSvgPathData(notePath.SvgPath), paint);
+
+
+           
         }
 
-        foreach (FingerPaintPolyline polyline in inProgressPolylines.Values)
-        {
-
-            paint.Color = polyline.StrokeColor;
-            paint.StrokeWidth = polyline.StrokeWidth;
-            paint.BlendMode = polyline.StrokeBlendMode;
-            canvas.DrawPath(polyline.Path, paint);
-        }
-
+       
 
     }
 
 
 
-    void UpdateBitmap()
-    {
-
-        using (SKCanvas saveBitmapCanvas = new SKCanvas(saveBitmap))
-        {
-
-            // saveBitmapCanvas.Clear();
-
-
-            foreach (FingerPaintPolyline FngrPaintPoly in completedPolylines)
-            {
-                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
-            }
-
-            foreach (FingerPaintPolyline FngrPaintPoly in inProgressPolylines.Values)
-            {
-                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
-            }
-        }
-
-
-
-        skiaView.Invalidate();
-    }
 
     #endregion
 

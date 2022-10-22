@@ -201,7 +201,10 @@ namespace BlazorApp1.Helpers
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
-              SelectedCard =  await cardsContext.Cards.Where(c => c.CardID == card.CardID).Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images).Include(p => p.Parent).FirstOrDefaultAsync();
+              SelectedCard =  await cardsContext.Cards.Where(c => c.CardID == card.CardID)
+                    .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
+                    .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
+                    .Include(p => p.Parent).FirstOrDefaultAsync();
               ChildCards = await GetChildCards(card);
                 NotifyStateChanged();
                 return SelectedCard;
@@ -548,6 +551,21 @@ namespace BlazorApp1.Helpers
             }
         }
 
+        public async Task<bool> DeleteNotePath(NotePath notePath)
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+                var tracking = notesContext.Remove(notePath);
+                await notesContext.SaveChangesAsync();
+                var isDeleted = tracking.State == EntityState.Deleted;
+                NotifyStateChanged();
+
+                return isDeleted;
+            }
+        }
+
+
+
         public void StyleSelectNote(Note note)
         {
             if (note.Selected == false)
@@ -576,7 +594,8 @@ namespace BlazorApp1.Helpers
         public SKCanvas? paintSKCanvas;
        
 
-        public bool EditMode = false;
+       // public bool EditMode = false;
+
         public bool BitmapDrawed = false;
 
         public float strokeWidth = 8;
@@ -811,10 +830,26 @@ namespace BlazorApp1.Helpers
 
             Width = 1024;
             Height = 800;
-              
+
         }
         public int Width { get; set; }
         public int Height { get; set; }
+
+        public int ThumbWidth
+        {
+            get
+            {
+
+                return (int)Math.Round((35 * Width) / 100d);
+            }
+        }
+        public int ThumbHeight { 
+            get
+            {
+                return (int)Math.Round((9 * ThumbWidth) / 16d);
+            }
+                
+            }
     }
     
     public enum PaintMode

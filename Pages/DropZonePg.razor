@@ -19,9 +19,11 @@
 
 <MCol>
     <MRow>
-        <MCard Elevation="3" Class=" m-1 p-0" Width="@(dataSvs.editNote.MainImgWidth )" Height="@(dataSvs.editNote.MainImgHeight -80)"
+       
+        <MCard Elevation="3" Class=" m-1 p-0 " Width="@(dataSvs.editNote.MainImgWidth )" Height="@(dataSvs.editNote.MainImgHeight -80)"
+            
                Style="overflow:auto;">
-
+          
             <div @ref="@dropZoneElement" class="position-relative "
                  style="
                         width: @(dataSvs.editNote.MainImgWidth)px;
@@ -151,10 +153,10 @@
                 </div>
 
             </div>
+           
+            <MExpansionPanels  id="summarypannel" Class="elevation-6" Style="width:50%;position:absolute;bottom:-85px;left:25%">
 
-            <MExpansionPanels Class="elevation-6" Style="width:50%;position:absolute;bottom:-85px;left:25%">
-
-                <MExpansionPanel>
+                <MExpansionPanel >
                     <MExpansionPanelHeader DisableIconRotate>
 
                         <ChildContent>
@@ -180,6 +182,7 @@
                     </MExpansionPanelHeader>
                     <MExpansionPanelContent>
                         <MTextarea Outlined NoResize Counter="true" Clearable Rules="_rules"
+                                  Placeholder="Write something"
                                    @bind-Value="@(dataSvs.editNote.Text)">
 
 
@@ -189,7 +192,7 @@
                 </MExpansionPanel>
 
             </MExpansionPanels>
-
+           
         </MCard>
 
     </MRow>
@@ -217,6 +220,7 @@
     NoteImage dragedNoteImage;
     bool dragstarted = false;
 
+    int thumbWidth, thumbHeight;
 
     SKPoint? touchLocation;
 
@@ -268,47 +272,38 @@
 
 
 
-            if (dataSvs.EditMode == false)
+
+            dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
+            dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
+
+            dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
+
+
+
+
+
+
+
+
+            foreach (NotePath notePath in dataSvs.editNote.NotePaths)
             {
-                dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
-                dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
 
-                dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
-
-
-            }
-
-
-
-            if (dataSvs.EditMode == true && dataSvs.editNote.MainImg != null)
-            {
-                /*
-                dataSvs.Wdimension = new WindowDimension()
-                     {
-                     Width = dataSvs.editNote.MainImgWidth,
-                     Height = dataSvs.editNote.MainImgHeight
-                };
-                */
-
-
-                
-               foreach (NotePath notePath in dataSvs.editNote.NotePaths)
-                {
-                   
-                    dataSvs.completedPolylines.Add(new FingerPaintPolyline()
+                dataSvs.completedPolylines.Add(new FingerPaintPolyline()
                         {
                             Path = SKPath.ParseSvgPathData(notePath.SvgPath),
                             StrokeBlendMode =  Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode),
                             StrokeColor = SKColor.Parse(notePath.StrokeColor),
                             StrokeWidth = notePath.StrokeWidth
 
+
+
                     });
 
-               
-               };
-               
 
-               dataSvs.saveBitmap = SKBitmap.Decode(dataSvs.editNote.MainImg);
+
+
+
+                //  dataSvs.saveBitmap = SKBitmap.Decode(dataSvs.editNote.MainImg);
             }
 
 
@@ -547,29 +542,30 @@
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-        if (dataSvs.EditMode == false)
-        {
             /*
+            if (dataSvs.EditMode == false)
+            {
+
             // Create bitmap the size of the display surface
             if (dataSvs.saveBitmap == null)
             {
             dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-            }
-            // Or create new bitmap for a new size of display surface
+                }
+                // Or create new bitmap for a new size of display surface
                 else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
                 {
                 SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
-                Math.Max(dataSvs.saveBitmap.Height, info.Height));
+        Math.Max(dataSvs.saveBitmap.Height, info.Height));
 
-                    using (SKCanvas newCanvas = new SKCanvas(newBitmap))
-                    {
-                    newCanvas.Clear();
-                    newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+        using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+         {
+            newCanvas.Clear();
+            newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+            }
+
+            dataSvs.saveBitmap = newBitmap;
                 }
 
-                dataSvs.saveBitmap = newBitmap;
-             }
-             */
 
 
 
@@ -577,75 +573,98 @@
 
 
             foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
-            {
+        {
 
-                paint.Color = polyline.StrokeColor;
-                paint.StrokeWidth = polyline.StrokeWidth;
-                paint.BlendMode = polyline.StrokeBlendMode;
-                canvas.DrawPath(polyline.Path, paint);
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
 
 
             }
 
             foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-            {
+        {
 
-                paint.Color = polyline.StrokeColor;
-                paint.StrokeWidth = polyline.StrokeWidth;
-                paint.BlendMode = polyline.StrokeBlendMode;
+        paint.Color = polyline.StrokeColor;
+    paint.StrokeWidth = polyline.StrokeWidth;
+        paint.BlendMode = polyline.StrokeBlendMode;
 
                 canvas.DrawPath(polyline.Path, paint);
 
+          }
+
+
+
             }
-
-
-
-        }
-        else
-        {
+            else
+            {
 
             if (dataSvs.BitmapDrawed == false)
             {
-                canvas.Clear();
-               canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+        canvas.Clear();
+        // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
 
-                dataSvs.BitmapDrawed = true;
+        dataSvs.BitmapDrawed = true;
 
-            }
-
-
-
-            // canvas.Clear();
+        }
 
 
-            foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+
+        // canvas.Clear();
+
+
+        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
             {
 
-                paint.Color = polyline.StrokeColor;
-                paint.StrokeWidth = polyline.StrokeWidth;
-                paint.BlendMode = polyline.StrokeBlendMode;
-                canvas.DrawPath(polyline.Path, paint);
+            paint.Color = polyline.StrokeColor;
+            paint.StrokeWidth = polyline.StrokeWidth;
+        paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
 
 
-            }
+        }
 
-            foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
             {
 
-                paint.Color = polyline.StrokeColor;
-                paint.StrokeWidth = polyline.StrokeWidth;
-                paint.BlendMode = polyline.StrokeBlendMode;
-                canvas.DrawPath(polyline.Path, paint);
-
-
-            }
-
+            paint.Color = polyline.StrokeColor;
+            paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
 
 
         }
 
 
 
+        }
+
+        */
+        canvas.Clear(SKColors.Transparent);
+
+
+        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+        {
+
+            paint.Color = polyline.StrokeColor;
+            paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+            canvas.DrawPath(polyline.Path, paint);
+
+
+        }
+
+        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+        {
+
+            paint.Color = polyline.StrokeColor;
+            paint.StrokeWidth = polyline.StrokeWidth;
+            paint.BlendMode = polyline.StrokeBlendMode;
+
+            canvas.DrawPath(polyline.Path, paint);
+
+        }
         dataSvs.paintSKCanvas = canvas;
 
     }
@@ -712,6 +731,9 @@
                     if (deletePath is not null)
                     {
                         dataSvs.completedPolylines.Remove(deletePath);
+                        NotePath notePath = dataSvs.editNote.NotePaths.Where(pth => pth.SvgPath == deletePath.Path.ToSvgPathData()).FirstOrDefault();
+                        dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
+                        // dataSvs.editNote.NotePaths.RemoveAll(pth => pth.SvgPath == deletePath.Path.ToSvgPathData());
                         dataSvs.skiaView.Invalidate();
                     }
 
@@ -759,58 +781,16 @@
                     dataSvs.inProgressPolylines.Remove(e.PointerId);
 
                     UpdateBitmap();
-
-                    
-                   
+      
                 }
+                
 
-                string bitmapPath;
-                if (dataSvs.editNote.MainImg is not null)
-                {
-
-                    bitmapPath = dataSvs.editNote.MainImg;
-
-                }
-                else
-                {
-                    // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
-
-                    var fileName = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-                    var path = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-                    if (Directory.Exists(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/"))
-                    {
-                        bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/");
-                        bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-                    }
-
-                    //  bitmapPath = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-
-                }
-
-                using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-                {
-                    SKData data = image.Encode();
-
-                    //  SKData data = image.Encode();
-                    FileStream fs = File.Create(bitmapPath);
-                    data.SaveTo(fs);
-                    fs.Close();
-
-                    dataSvs.editNote.MainImg = bitmapPath;
-                    // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
-
-                }
-
+               
+                
 
                 break;
             case PaintMode.Eraser:
+                UpdateBitmap();
                 ereaseEnabled = false;
                 break;
             default:
