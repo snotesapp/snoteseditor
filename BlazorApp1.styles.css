@@ -1,3 +1,177 @@
+/* /Pages/Components/CardsMenu.razor.rz.scp.css */
+body[b-qrno289psk] {
+}
+
+
+@media (min-width: 768px) {
+
+    .ul-style[b-qrno289psk] {
+        height: 100vh;
+        /*
+                    border-style: solid;
+        border-color: slateblue;
+        */
+
+        overflow: auto
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .ul-style[b-qrno289psk] {
+        height: 30vh;
+        /*
+        border-style: solid;
+        border-color: burlywood;
+        */
+        
+       
+    }
+}
+
+#cards-list[b-qrno289psk] {
+    background-color: bisque;
+}
+
+/* width */
+#cards-list[b-qrno289psk]::-webkit-scrollbar {
+    width: 1px;
+}
+
+[b-qrno289psk]::-webkit-scrollbar {
+    width: 1px;
+    
+}
+
+/* /Pages/Components/CollectionsMenu.razor.rz.scp.css */
+body[b-vle9q6oerg] {
+}
+
+@media (min-width: 768px) {
+
+    .ul-style[b-vle9q6oerg] {
+        height: 100vh;
+        /*
+ border-style: solid;
+        border-color: burlywood;
+        */
+
+        overflow: auto
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .ul-style[b-vle9q6oerg] {
+        height: 30vh;
+        /*
+              border-style: solid;
+        border-color: burlywood;
+        */
+
+        overflow: auto
+    }
+}
+
+[b-vle9q6oerg]::-webkit-scrollbar {
+    width: 1px;
+}
+/* /Pages/Components/NoteCardsMenu.razor.rz.scp.css */
+body[b-z1ve5mkxkt] {
+}
+
+
+@media (min-width: 768px) {
+
+    .ul-style[b-z1ve5mkxkt] {
+        height: 100vh;
+        /*
+ border-style: solid;
+        border-color: burlywood;
+        */
+      
+        overflow: auto
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .ul-style[b-z1ve5mkxkt] {
+        height: 30vh;
+        /*
+              border-style: solid;
+        border-color: burlywood;
+        */
+       
+        overflow: auto
+    }
+}
+
+.nc-style[b-z1ve5mkxkt] {
+    /*
+    background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e );
+background-image: linear-gradient(to right bottom, #ff7f50,#ff6b85,#ef6eba,#b880e3,#5e92f3 );
+    */
+    background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e );
+   
+    border-radius: 6px;
+}
+
+.ncText-style[b-z1ve5mkxkt] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:pre-wrap;
+    
+}
+/* /Pages/Components/NoteTools.razor.rz.scp.css */
+body[b-bpqwveuwv6] {
+}
+
+.flexbtn[b-bpqwveuwv6] {
+    flex: 40%; 
+    margin: 10px;
+    padding: 10px;
+    
+}
+
+.toolstyle[b-bpqwveuwv6] {
+    font-family :'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size:small;
+    color:black;
+}
+/* /Pages/DropZonePg.razor.rz.scp.css */
+body[b-skfs493v7z] {
+}
+
+
+@media (min-width: 768px) {
+
+    .dropzone-style[b-skfs493v7z] {
+        overflow: auto;
+        white-space: nowrap;
+    }
+}
+/* /Pages/FetchData.razor.rz.scp.css */
+
+h1[b-a9n1frdwkj] {
+    color: burlywood;
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body[b-a9n1frdwkj] {
+}
+/* /Pages/NoteCardsPg.razor.rz.scp.css */
+body[b-3hcsrndfyc] {
+}
+
+ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc] 
+{
+    display: inline-block;
+   
+}
 /* /Shared/MainLayout.razor.rz.scp.css */
 .page[b-d3cbnxfwwv] {
     position: relative;
@@ -142,4 +316,79 @@ main[b-d3cbnxfwwv] {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+}
+/* /Shared/SNMainLayout.razor.rz.scp.css */
+
+
+
+
+
+@media (min-width: 768px) {
+    .navbar .container-fluid[b-7dgyrkm5s7], .navbar-collapse[b-7dgyrkm5s7], .navbar-nav[b-7dgyrkm5s7] {
+        /*
+  flex-direction: column;
+        align-items: flex-start;
+       */
+    }
+
+   
+    .navbar-brand[b-7dgyrkm5s7]{
+        margin-left: .5rem;
+        
+    }
+
+    
+}
+
+
+.navbar .navbar-nav .nav-link[b-7dgyrkm5s7] {
+    color: black;
+    font-size: 1.1em;
+}
+
+.navbar-brand[b-7dgyrkm5s7] {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+
+
+body[b-7dgyrkm5s7] {
+
+}
+/* /Shared/SNNavMenu.razor.rz.scp.css */
+
+
+
+@media (min-width: 768px) {
+    .navbar-nav[b-5iz0rivyh9] {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ul-style[b-5iz0rivyh9] {
+        height: 100vh;
+        /*
+        border-style: solid;
+        
+           border-color:blue;
+       */
+    }
+   
+}
+
+
+
+.navbar-nav .nav-link[b-5iz0rivyh9] {
+    color: black;
+    font-size: 1.1em;
+}
+
+.list-group-item[b-5iz0rivyh9] {
+
+}
+
+
+
+body[b-5iz0rivyh9] {
 }
