@@ -185,7 +185,7 @@ else
 
     string? authValue;
 
-   
+
 
     protected override void OnInitialized()
     {
@@ -197,8 +197,8 @@ else
     protected override async Task OnInitializedAsync()
     {
 
+        //New gDrive Storage
         authValue = await sessionStorage.GetItemAsync<string>("auth");
-
         if (authValue == "authenticating")
         {
             await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
@@ -216,19 +216,15 @@ else
         {
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
 
-           
-
-
-
         }
 
-
-        if (firstRender && gdriveFileID is null && authValue is null)
+        //New Project(Local or gDrive)
+        if (firstRender && gdriveFileID is null && authValue is null && dataSvs.MainProject.ProjectID ==0)
         {
+
             await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
       new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
         }
@@ -238,11 +234,11 @@ else
     protected override async Task OnParametersSetAsync()
     {
 
+        //Download gDrive Project
         if (gdriveFileID is not null)
         {
-
             await DialogService.OpenAsync<NewProjectWizard>("New Project", new Dictionary<string, object>() { { "FileID", gdriveFileID } },
-        new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
+              new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
 
         }
 
