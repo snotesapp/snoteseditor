@@ -21,14 +21,17 @@
     case "Storage":
 
         <div class="hstack gap-3 my-3">
-            <button type="button" class="btn btn-secondary" title="Local" @onclick="@(() => SetStep("Project"))">
-                <img src="./Images/download_icon.png" width="40" height="40" />
-                Local
-            </button>
-            <button type="button" class="btn btn-secondary" title="gDrive" @onclick="AuthenticateGDriveUser">
-                <img src="./Images/gDrive_icon.png" width="40" height="40" />
-                G-Drive
-            </button>          
+             
+            <MButton title="Local" Height="50" OnClick="@(() => SetStep("Project"))" >
+                <MImage Src="./Images/download_icon.png"  Width="40" Height="40" ></MImage>
+                
+             </MButton>
+
+            <MButton title="gDrive" Height="50" OnClick="AuthenticateGDriveUser">
+                <MImage Src="./Images/gDrive_icon.png" Width="40" Height="40"></MImage>
+                
+             </MButton>
+           
         </div>
 
         break;

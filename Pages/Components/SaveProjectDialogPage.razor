@@ -6,56 +6,60 @@
 
 <h3>SaveProjectDialogPage </h3>
 
-@switch(CurrentStep){
+@switch (CurrentStep)
+{
 
     case "Storage":
 
-     @switch (dataSvs.storageType)
+        @switch (dataSvs.storageType)
         {
             case "local":
-                <button type="button" class="btn btn-secondary" title="Download" @onclick="DownloadProject">
-                    <img src="./Images/download_icon.png" width="40" height="30" />
-                    Download
-                </button>
-            
-            break;
+
+
+                <MButton title="Download" Height="50" OnClick="DownloadProject">
+                    <MImage Src="./Images/download_icon.png" Width="40" Height="40"></MImage>
+
+                </MButton>
+
+                break;
             case "gdrive":
 
-                <button type="button" class="btn btn-secondary" title="Upload" @onclick="ShareProject">
-                    <img src="./Images/gDrive_icon.png" width="40" height="30" />
-                    Upload
-                </button>
-            break;
+                <MButton title="Upload" Height="50" OnClick="ShareProject">
+                    <MImage Src="./Images/gDrive_icon.png" Width="40" Height="40"></MImage>
+
+                </MButton>
+
+                break;
 
             default:
-                <button type="button" class="btn btn-secondary" title="Download" @onclick="DownloadProject">
-                    <img src="./Images/download_icon.png" width="40" height="30" />
-                    Download
-                </button>
-            break;
+                <MButton title="Download" Height="50" OnClick="DownloadProject">
+                    <MImage Src="./Images/download_icon.png" Width="40" Height="40"></MImage>
+
+                </MButton>
+                break;
         }
-    <!--
+        <!--
 
-        <div class="hstack gap-3 my-3">
-            <button type="button" class="btn btn-secondary" title="Local" @onclick="DownloadProject">
-                    <img src="./Images/download_icon.svg" width="40" height="40"/>
-                    Local
-            </button>
-
-           
-            <button type="button" class="btn btn-secondary" title="Share" @onclick="ShareProject">
-                <img src="./Images/gDrive_icon.svg" width="40" height="40" />
-                Google Drive
-            </button>
-
-            <button type="button" class="btn btn-secondary" title="Download GDrive File" @onclick="DownloadGDriveFile">
-                Download From GDrive
-            </button>
+            <div class="hstack gap-3 my-3">
+                <button type="button" class="btn btn-secondary" title="Local" @onclick="DownloadProject">
+                        <img src="./Images/download_icon.svg" width="40" height="40"/>
+                        Local
+                </button>
 
 
+                <button type="button" class="btn btn-secondary" title="Share" @onclick="ShareProject">
+                    <img src="./Images/gDrive_icon.svg" width="40" height="40" />
+                    Google Drive
+                </button>
 
-        </div>
-        -->
+                <button type="button" class="btn btn-secondary" title="Download GDrive File" @onclick="DownloadGDriveFile">
+                    Download From GDrive
+                </button>
+
+
+
+            </div>
+            -->
         break;
 
     case "Progress":
@@ -67,7 +71,7 @@
     case "GenerateLink":
         <div class="col-md-12">
 
-            <button class="btn btn-outline-primary" type="button" @onclick = "GenerateLink" >Generate Sharable Link</button>
+            <button class="btn btn-outline-primary" type="button" @onclick="GenerateLink">Generate Sharable Link</button>
 
 
         </div>
@@ -75,7 +79,7 @@
     case "CopyLink":
         <div class="input-group mb-3">
             <input type="text" readonly class="form-control" aria-describedby="button-copylink" @bind-value="generatedLink">
-            <button class="btn btn-outline-secondary" type="button" id="button-copylink" @onclick = "CopyLinkToClipBoard" >Copy</button>
+            <button class="btn btn-outline-secondary" type="button" id="button-copylink" @onclick="CopyLinkToClipBoard">Copy</button>
         </div>
         break;
 
@@ -89,8 +93,8 @@
         <RadzenButton Click="@((args) => dialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Style="width: 120px" Class="mr-1" />
         <RadzenButton Click="@((args) => dialogService.Close(true))" Text="OK" Style="width: 120px" />
     </div>
-   
-    
+
+
 </div>
 
 
@@ -120,7 +124,8 @@
     }
 
 
-    private async Task DownloadProject(){
+    private async Task DownloadProject()
+    {
         CurrentStep = "Progress";
         SetProgres(10);
 
@@ -149,8 +154,10 @@
         if (foldersList.files.Length == 0)
         {
             var folderProps = JsonContent.Create(new { mimeType = "application/vnd.google-apps.folder", name = "sNotesEditor" });
-            var createsNotesFolder = await gDriveApiclient.PostAsync("files",folderProps);
-        }else{
+            var createsNotesFolder = await gDriveApiclient.PostAsync("files", folderProps);
+        }
+        else
+        {
             gDriveFolderIds.Add(foldersList.files[0].id);
         }
 
@@ -178,14 +185,14 @@
 
 
         #region Upload File (in chunks)
-       // IEnumerable<byte[]> chunksEnum = dataSvs.fileArray.Chunk(256 * 1024 * 2);
+        // IEnumerable<byte[]> chunksEnum = dataSvs.fileArray.Chunk(256 * 1024 * 2);
 
-       
+
         Stream stream = new MemoryStream(dataSvs.fileArray);
         var streamContent = new StreamContent(stream);
         var uploadresult = await gDriveApiUploadclient.PutAsync(jsonresult, streamContent);
 
-       
+
         /*
          *
 
@@ -201,7 +208,7 @@
          */
         #endregion
 
-      //  var uploaresult = await gDriveApiUploadclient.PutAsJsonAsync(jsonresult, "");
+        //  var uploaresult = await gDriveApiUploadclient.PutAsJsonAsync(jsonresult, "");
 
         SetProgres(100);
 
@@ -230,7 +237,8 @@
         #endregion
     }
 
-    private async Task GenerateLink(){
+    private async Task GenerateLink()
+    {
         var gDriveApiclient = ClientFactory.CreateClient("GDriveApi");
         #region Set File as public
         var permissionContent = JsonContent.Create(new { role = "reader", type = "anyone" });
@@ -241,14 +249,16 @@
         #endregion
 
     }
-    
-    private async Task CopyLinkToClipBoard(){
+
+    private async Task CopyLinkToClipBoard()
+    {
 
         await _module.InvokeVoidAsync("copyTextToClipboard", generatedLink);
 
     }
 
-    private void SetProgres(double progressValue){
+    private void SetProgres(double progressValue)
+    {
 
         progress = progressValue;
         StateHasChanged();

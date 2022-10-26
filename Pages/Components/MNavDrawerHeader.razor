@@ -13,15 +13,18 @@
             @switch (dataSvs.storageType)
             {
                 case "local":
-                    <button title="Download" class="btn btn-outline-success " @onclick="DownloadProject">
-                        <img src="./Images/download_icon.png" height="30" />
-                    </button>
+                    <MButton title="Download" Height="45" OnClick="DownloadProject">
+                        <MImage Src="./Images/download_icon.png" Contain Width="40" Height="40"></MImage>
+
+                    </MButton>
 
                     break;
                 case "gdrive":
-                    <button title="Upload" class="btn btn-outline-success " @onclick="DownloadProject">
-                        <img src="./Images/gDrive_icon.png" height="30" />
-                    </button>
+                    <MButton title="Upload" Height="45" OnClick="DownloadProject">
+                        <MImage Src="./Images/gDrive_icon.png" Contain Width="40" Height="40"></MImage>
+
+                    </MButton>
+
                     break;
 
 
@@ -86,7 +89,7 @@
 
             <MDivider></MDivider>
         </MContainer>
-       
+
         break;
     case "cards":
 
@@ -149,22 +152,22 @@
         break;
     case "notetools":
 
-            <MContainer Class="py-0 mt-2" Style="height:45px">
-
-           
-                <MRow>
+        <MContainer Class="py-0 mt-2" Style="height:45px">
 
 
-                    <div class="d-flex justify-content-between  align-items-center">
+            <MRow>
+
+
+                <div class="d-flex justify-content-between  align-items-center">
 
 
                     <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("collection"))">
-                            <span class="bi bi-arrow-left"></span>
-                        </button>
+                        <span class="bi bi-arrow-left"></span>
+                    </button>
                     <p class="text-center flex-fill my-1 text-white">
-                            Note
+                        Note
 
-                        </p>
+                    </p>
 
 
                     @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
@@ -181,23 +184,23 @@
                         </button>
                     }
 
-                    
-                   
 
 
 
-                  
-                    </div>
-                </MRow>
 
-           
+
+
+                </div>
+            </MRow>
+
+
 
             <MDivider></MDivider>
         </MContainer>
 
         <!--
 
-        
+
         <div class="row m-2">
             <button title="Collections" class="btn btn-outline-success" @onclick="@(() => SwitchMenu("collection"))">
                 <span class="bi bi-arrow-left"></span>
@@ -219,7 +222,7 @@
         <MContainer Class="py-0 mt-2" Style="height:45px">
 
 
-            <MRow >
+            <MRow>
 
 
                 <div class="d-flex justify-content-between   align-items-center">
@@ -445,7 +448,7 @@
 
     public async Task SaveNote()
     {
-        
+
         string bitmapPath;
         if (dataSvs.editNote.MainImg is not null)
         {
@@ -518,12 +521,14 @@
             dataSvs.BitmapDrawed = false;
             dataSvs.ClearCanvas();
 
-        }else{
+        }
+        else
+        {
             await dataSvs.UpdateNote();
         }
 
 
-    
+
         /*
         using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
         {
