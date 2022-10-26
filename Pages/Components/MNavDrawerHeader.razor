@@ -13,16 +13,14 @@
             @switch (dataSvs.storageType)
             {
                 case "local":
-                    <MButton title="Download" Height="45" OnClick="DownloadProject">
-                        <MImage Src="./Images/download_icon.png" Contain Width="40" Height="40"></MImage>
-
+                    <MButton title="Download" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45" OnClick="DownloadProject">
+                        
                     </MButton>
 
                     break;
                 case "gdrive":
-                    <MButton title="Upload" Height="45" OnClick="DownloadProject">
-                        <MImage Src="./Images/gDrive_icon.png" Contain Width="40" Height="40"></MImage>
-
+                    <MButton title="Upload" Style="background-image:url(./images/gDrive_icon.png);background-size:contain;background-position: center center" Height="45" OnClick="DownloadProject">
+                      
                     </MButton>
 
                     break;
