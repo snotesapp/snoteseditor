@@ -210,6 +210,9 @@
     IJSObjectReference _dropzoneInstance;
     IJSObjectReference _module;
 
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
     FilesAndDirectories filesAndDirectories;
     //New Image from Clipboard Properties
 
@@ -365,7 +368,7 @@
     }
 
 
-
+    
     // Unregister the drop zone events
     public async ValueTask DisposeAsync()
     {
@@ -542,96 +545,96 @@
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-            /*
-            if (dataSvs.EditMode == false)
+        /*
+        if (dataSvs.EditMode == false)
             {
 
-            // Create bitmap the size of the display surface
-            if (dataSvs.saveBitmap == null)
+        // Create bitmap the size of the display surface
+        if (dataSvs.saveBitmap == null)
+        {
+        dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
+            }
+            // Or create new bitmap for a new size of display surface
+            else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
             {
-            dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-                }
-                // Or create new bitmap for a new size of display surface
-                else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
-                {
-                SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
-        Math.Max(dataSvs.saveBitmap.Height, info.Height));
+            SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
+    Math.Max(dataSvs.saveBitmap.Height, info.Height));
 
-        using (SKCanvas newCanvas = new SKCanvas(newBitmap))
-         {
-            newCanvas.Clear();
-            newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+    using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+        {
+        newCanvas.Clear();
+        newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
             }
 
-            dataSvs.saveBitmap = newBitmap;
+        dataSvs.saveBitmap = newBitmap;
                 }
 
 
 
 
-            canvas.Clear(SKColors.Transparent);
+        canvas.Clear(SKColors.Transparent);
 
 
-            foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
         {
 
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-            paint.BlendMode = polyline.StrokeBlendMode;
-            canvas.DrawPath(polyline.Path, paint);
-
-
-            }
-
-            foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-        {
-
-        paint.Color = polyline.StrokeColor;
+    paint.Color = polyline.StrokeColor;
     paint.StrokeWidth = polyline.StrokeWidth;
         paint.BlendMode = polyline.StrokeBlendMode;
+        canvas.DrawPath(polyline.Path, paint);
 
-                canvas.DrawPath(polyline.Path, paint);
+
+            }
+
+        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+        {
+
+    paint.Color = polyline.StrokeColor;
+    paint.StrokeWidth = polyline.StrokeWidth;
+    paint.BlendMode = polyline.StrokeBlendMode;
+
+            canvas.DrawPath(polyline.Path, paint);
 
           }
 
 
 
-            }
-            else
+        }
+        else
             {
 
-            if (dataSvs.BitmapDrawed == false)
-            {
-        canvas.Clear();
-        // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+        if (dataSvs.BitmapDrawed == false)
+    {
+    canvas.Clear();
+    // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
 
-        dataSvs.BitmapDrawed = true;
+    dataSvs.BitmapDrawed = true;
 
         }
 
 
 
-        // canvas.Clear();
+    // canvas.Clear();
 
 
-        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+    foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
             {
 
-            paint.Color = polyline.StrokeColor;
-            paint.StrokeWidth = polyline.StrokeWidth;
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
+    paint.BlendMode = polyline.StrokeBlendMode;
+        canvas.DrawPath(polyline.Path, paint);
+
+
+        }
+
+    foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+            {
+
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
         paint.BlendMode = polyline.StrokeBlendMode;
-            canvas.DrawPath(polyline.Path, paint);
-
-
-        }
-
-        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-            {
-
-            paint.Color = polyline.StrokeColor;
-            paint.StrokeWidth = polyline.StrokeWidth;
-            paint.BlendMode = polyline.StrokeBlendMode;
-            canvas.DrawPath(polyline.Path, paint);
+        canvas.DrawPath(polyline.Path, paint);
 
 
         }
@@ -709,30 +712,40 @@
 
     void OnPointerMove(PointerEventArgs e)
     {
-        switch (dataSvs.paintMode)
+
+        try
         {
-            case PaintMode.Drag:
-                break;
-            case PaintMode.Pen:
-                if (dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
-                {
-                    FingerPaintPolyline polyline = dataSvs.inProgressPolylines[e.PointerId];
-                    polyline.Path.LineTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
-                    dataSvs.skiaView.Invalidate();
-                }
-                break;
-            case PaintMode.Eraser:
-                if (ereaseEnabled && dataSvs.completedPolylines.Count > 0)
-                {
-
-                    FingerPaintPolyline? deletePath = dataSvs.completedPolylines.Find(p => paint.GetFillPath(p.Path).Contains((float)e.OffsetX, (float)e.OffsetY));
-
-
-                    if (deletePath is not null)
+            switch (dataSvs.paintMode)
+            {
+                case PaintMode.Drag:
+                    break;
+                case PaintMode.Pen:
+                    if (dataSvs.inProgressPolylines.ContainsKey(e.PointerId))
                     {
-                        dataSvs.completedPolylines.Remove(deletePath);
-                        NotePath notePath = dataSvs.editNote.NotePaths.Where(pth => pth.SvgPath == deletePath.Path.ToSvgPathData()).FirstOrDefault();
-                        dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
+                        FingerPaintPolyline polyline = dataSvs.inProgressPolylines[e.PointerId];
+                        polyline.Path.LineTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
+                        dataSvs.skiaView.Invalidate();
+                    }
+                    break;
+                case PaintMode.Eraser:
+                    if (ereaseEnabled && dataSvs.completedPolylines.Count > 0)
+                    {
+
+                        FingerPaintPolyline? deletePath = dataSvs.completedPolylines.Find(p => paint.GetFillPath(p.Path).Contains((float)e.OffsetX, (float)e.OffsetY));
+
+
+                        if (deletePath is not null)
+                        {
+
+                            dataSvs.completedPolylines.Remove(deletePath);
+                            NotePath notePath = dataSvs.editNote.NotePaths.Where(pth => pth.SvgPath == deletePath.Path.ToSvgPathData()).FirstOrDefault();
+                            if (notePath.PathID == 0)
+                            {
+                                dataSvs.editNote.NotePaths.Remove(notePath);
+                            }else{
+                                dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
+                            }
+                        
                         // dataSvs.editNote.NotePaths.RemoveAll(pth => pth.SvgPath == deletePath.Path.ToSvgPathData());
                         dataSvs.skiaView.Invalidate();
                     }
@@ -745,6 +758,14 @@
                 break;
         }
 
+        }
+        catch (Exception ex)
+        {
+            
+            Error?.ProcessError(ex);
+        }
+
+       
 
 
 
@@ -895,8 +916,8 @@
 
 
     void CanvasContextMenu(MouseEventArgs args) => contextMenuService.Open(args, ds =>
-    @<RadzenMenu>
-                <RadzenMenuItem Text="Past Image" Click="PastClipboardImg" Value="1"></RadzenMenuItem>
+    @<RadzenMenu Style="width:200px">
+                <RadzenMenuItem Text="Past Image" Icon="image" Click="PastClipboardImg" Value="1"></RadzenMenuItem>
 
     </RadzenMenu>
     );

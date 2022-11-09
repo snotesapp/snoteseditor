@@ -263,6 +263,9 @@
     ElementReference inputTextRef;
     string CollectionId = "0";
 
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
     protected override void OnInitialized()
     {
         if (dataSvs.AddNotesSelectedNC is not null)
@@ -279,7 +282,7 @@
 
 
         await DialogService.OpenAsync<SaveProjectDialogPage>("Save Project", null,
-                new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
+                new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = true });
 
         /*
 
@@ -337,23 +340,31 @@
 
     private async Task SwitchMenu(string menu)
     {
-        if (menu == "collection")
+        try
         {
-            /*
-            //Don't Update new note,update existing note.
-            if (dataSvs.EditMode == true)
-                {
-                dataSvs.UpdateNote().GetAwaiter().GetResult();
+            if (menu == "collection")
+            {
+                /*
+                //Don't Update new note,update existing note.
+                if (dataSvs.EditMode == true)
+                    {
+                    dataSvs.UpdateNote().GetAwaiter().GetResult();
 
+                }
+                */
+                //dataSvs.UpdateNote().GetAwaiter().GetResult();
+                dataSvs.ClearCanvas();
+                await dataSvs.GetNotes();
             }
-            */
-            //dataSvs.UpdateNote().GetAwaiter().GetResult();
-            dataSvs.ClearCanvas();
-            await dataSvs.GetNotes();
+            await GoToMenu.InvokeAsync(menu);
+
         }
-
-
-        await GoToMenu.InvokeAsync(menu);
+        catch (Exception ex)
+        {
+            
+             Error?.ProcessError(ex);
+        }
+       
     }
 
     private async Task AddCard()

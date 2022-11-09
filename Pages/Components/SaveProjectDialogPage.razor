@@ -4,7 +4,6 @@
 @inject IJSRuntime JSRuntime
 @inject IHttpClientFactory ClientFactory
 
-<h3>SaveProjectDialogPage </h3>
 
 @switch (CurrentStep)
 {
@@ -16,23 +15,36 @@
             case "local":
 
 
-                <MButton title="Download" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="50" OnClick="DownloadProject">
-                  
-                </MButton>
+                <div class="hstack gap-3 my-3 justify-content-evenly">
+
+                    <MButton title="Download" Height="60" Width="200" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" OnClick="DownloadProject">
+
+                    </MButton>
+
+                </div>
+
 
                 break;
             case "gdrive":
+                <div class="hstack gap-3 my-3 justify-content-evenly">
 
-                <MButton title="Upload" Style="background-image:url(./images/gDrive_icon.png);background-size:contain;background-position: center center" Height="50" OnClick="ShareProject">
-                   
-                </MButton>
+                    <MButton title="Upload" Height="60" Width="200" Style="background-image:url(./images/gDrive_icon.png);background-size:contain;background-position: center center" OnClick="ShareProject">
+
+                    </MButton>
+
+                </div>
+
 
                 break;
 
             default:
-                <MButton title="Download" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="50" OnClick="DownloadProject">
-                    
-                </MButton>
+                <div class="hstack gap-3 my-3 justify-content-evenly">
+
+                    <MButton title="Download" Height="60" Width="200" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" OnClick="DownloadProject">
+
+                    </MButton>
+
+                </div>
                 break;
         }
         <!--
@@ -84,7 +96,7 @@
 }
 
 
-
+<!--
 <div class="row">
     <div class="col-md-12 text-right">
         <RadzenButton Click="@((args) => dialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Style="width: 120px" Class="mr-1" />
@@ -93,6 +105,8 @@
 
 
 </div>
+
+-->
 
 
 @code {

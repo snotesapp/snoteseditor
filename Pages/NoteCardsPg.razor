@@ -229,7 +229,7 @@
     IJSObjectReference _module;
 
     string PointerEvent = "none";
-    SKCanvasView skiaView = null!;
+    SKCanvasView skiaView =  new SKCanvasView();
 
     protected override void OnInitialized()
     {
@@ -242,12 +242,8 @@
 
     }
 
-    public void Dispose()
-    {
-        MessageService.OnMessage -= MessageHandler;
-        dataSvs.OnChange -= StateHasChanged;
-    }
-
+    
+   
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -350,7 +346,7 @@
 
         <RadzenMenuItem Text="Remove" Click="() => DeleteNoteCard(noteCard)"></RadzenMenuItem>
 
-    </RadzenMenu>
+        </RadzenMenu>
     );
 
 
@@ -398,7 +394,7 @@
         }else{
             card.Selected = true;
         }
-        
+
         await dataSvs.UpdateCard(card);
         dataSvs.MainProject = await dataSvs.GetProject();
         contextMenuService.Close();
@@ -406,9 +402,28 @@
     }
     private void MessageHandler()
     {
-            
+
         StateHasChanged();
     }
+
+
+  
+
+    public void Dispose()
+    {
+
+       
+            MessageService.OnMessage -= MessageHandler;
+            dataSvs.OnChange -= StateHasChanged;
+            if (skiaView != null)
+            {
+                skiaView.Dispose();
+
+            }
+       
+        
+    }
+
 
 
 }

@@ -125,20 +125,20 @@
 
     void NCContextMenuWithContent(MouseEventArgs args, NotesCollection notesCollection) => contextMenuService.Open(args, ds =>
 
-    @<RadzenMenu>
+    @<RadzenMenu Style="width:200px">
 
-        <RadzenMenuItem Text="Add Notes" Click="() => AddNCNotes(notesCollection)">  </RadzenMenuItem>
+        <RadzenMenuItem Text="Add Notes" Icon="add_circle_outline" Click="() => AddNCNotes(notesCollection)">  </RadzenMenuItem>
 
         @if (notesCollection.Selected == true)
         {
-            <RadzenMenuItem Text="UnSelect" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
+            <RadzenMenuItem Text="UnSelect" Icon="label_off" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
         }
         else
         {
-            <RadzenMenuItem Text="Select" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
+            <RadzenMenuItem Text="Select" Icon="label_outline" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
         }
-        <RadzenMenuItem Text="Rename" Click="() => RenameCollection(notesCollection)">  </RadzenMenuItem>
-        <RadzenMenuItem Text="Delete" Click="() => DeleteNC(notesCollection)"></RadzenMenuItem>
+        <RadzenMenuItem Text="Rename" Icon="drive_file_rename_outline" Click="() => RenameCollection(notesCollection)">  </RadzenMenuItem>
+        <RadzenMenuItem Text="Delete" Icon="delete_outline" Click="() => DeleteNC(notesCollection)"></RadzenMenuItem>
 
     </RadzenMenu>
     );

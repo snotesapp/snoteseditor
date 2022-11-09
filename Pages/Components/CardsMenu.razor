@@ -414,12 +414,12 @@ else
 
     void CardContextMenuWithContent(MouseEventArgs args, Card chCard) => contextMenuService.Open(args, ds =>
 
-    @<RadzenMenu>
+    @<RadzenMenu Style="width:200px">
 
-                                    <RadzenMenuItem Text="Rename" Click="() => RenameCard(chCard)"></RadzenMenuItem>
-                                    <RadzenMenuItem Text="Delete" Click="() => DeleteCard(chCard)"></RadzenMenuItem>
+        <RadzenMenuItem Icon="drive_file_rename_outline" Text="Rename" Click="() => RenameCard(chCard)"></RadzenMenuItem>
+                                    <RadzenMenuItem Icon="delete_outline" Text="Delete" Click="() => DeleteCard(chCard)"></RadzenMenuItem>
 
-                                    <RadzenMenuItem Text="Move To" Click="() => GetSelectionCards(chCard)" Value="3">
+                                    <RadzenMenuItem Text="Move To" Icon="input" Click="() => GetSelectionCards(chCard)" Value="3">
                                         <RadzenMenuTemplate Items="dataSvs.SelectionCards">
                                             <MenuItem Context="card">
                                                 <RadzenMenuItem Text="@card.Title" Click="()=> SetParentCard(card,chCard)" Value="5"></RadzenMenuItem>

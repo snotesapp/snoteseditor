@@ -25,6 +25,7 @@
 @inject IJSRuntime JSRuntime
 
 
+
 <PageTitle>@dataSvs.MainProject.Name</PageTitle>
 <!--
 <h4>
@@ -35,8 +36,6 @@
     Test
 </button>
 -->
-
-
 
 
 @if (dataSvs.menustatus == "notetools")
@@ -52,9 +51,11 @@
 else if (dataSvs.menustatus == "cards")
 {
     <MRow>
+        <!--
 
+      
     <NoteCardsPg />
-
+          -->
     </MRow>
 }
 else if (dataSvs.menustatus == "notecards")
@@ -70,13 +71,7 @@ else if (dataSvs.menustatus == "notecards")
 else
 {
 
-    @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
-    {
-        <button class="btn btn-primary me-2" @onclick="() => ShowInlineDialog()">
-            Add To
-        </button>
-    }
-
+   
     <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
         <NoteTemplate Context="note">
             @if (note.Selected)
@@ -166,6 +161,27 @@ else
         </NoteTemplate>
     </NotesTemplate>
 
+   
+    <MDialog @bind-Value="@dataSvs.newProjectDialog"
+          HideOverlay MaxWidth="500" >
+        <NewPrjctWizard CloseDialoge="OpenCloseDialog" FileID="@gdriveFileID">
+
+           </NewPrjctWizard>
+        </MDialog>
+  
+
+ @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
+    {
+
+        <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " OnClick="() => ShowInlineDialog()"
+             title = "Add To Packet"
+             Fab
+             Dark
+             Color="#1565c0">
+            <MIcon>mdi-plus-box-multiple </MIcon>
+    </MButton>
+
+    }
 
 }
 
@@ -185,7 +201,7 @@ else
 
     string? authValue;
 
-
+    
 
     protected override void OnInitialized()
     {
@@ -196,17 +212,19 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        dataSvs.newProjectDialog = true;
+        
+        #region New gDrive Storage
+        //authValue = await sessionStorage.GetItemAsync<string>("auth");
+        //if (authValue == "authenticating")
+        //{
+        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
+        //new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
 
-        //New gDrive Storage
-        authValue = await sessionStorage.GetItemAsync<string>("auth");
-        if (authValue == "authenticating")
-        {
-            await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
-        new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
+        //}
 
-        }
-
-        await sessionStorage.RemoveItemAsync("auth");
+        //await sessionStorage.RemoveItemAsync("auth");
+        #endregion
     }
 
 
@@ -221,30 +239,34 @@ else
 
         }
 
-        //New Project(Local or gDrive)
-        if (firstRender && gdriveFileID is null && authValue is null && dataSvs.MainProject.ProjectID ==0)
-        {
+        
+        #region New Project(Local or gDrive)
+        //if (firstRender && gdriveFileID is null && authValue is null && dataSvs.MainProject.ProjectID ==0)
+        //{
 
-            await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
-      new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
-        }
+        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
+        //    new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
+        //}
+        #endregion
 
     }
 
     protected override async Task OnParametersSetAsync()
     {
 
-        //Download gDrive Project
-        if (gdriveFileID is not null)
-        {
-            await DialogService.OpenAsync<NewProjectWizard>("New Project", new Dictionary<string, object>() { { "FileID", gdriveFileID } },
-              new DialogOptions() { Width = "700px", Height = "300px", Resizable = true, Draggable = true, ShowClose = false });
+        
+        #region Download gDrive Project
+        //if (gdriveFileID is not null)
+        //{
+        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", new Dictionary<string, object>() { { "FileID", gdriveFileID } },
+        //      new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
 
-        }
+        //}
+        #endregion
 
     }
 
-
+    
 
     public void Dispose()
     {
@@ -294,14 +316,14 @@ else
 
     void NoteContextMenuWithContent(MouseEventArgs args, Note note) => contextMenuService.Open(args, ds =>
 
-    @<RadzenMenu>
+    @<RadzenMenu Style="width:200px">
 
-        <RadzenMenuItem Text="Edit" Click="() => EditNote(note)"></RadzenMenuItem>
+        <RadzenMenuItem Text="Edit" Icon="edit" Click="() => EditNote(note)"></RadzenMenuItem>
 
-        <RadzenMenuItem Text="Delete" Click="() => DeleteNote(note)"></RadzenMenuItem>
+        <RadzenMenuItem Text="Delete" Icon="delete_outline" Click="() => DeleteNote(note)"></RadzenMenuItem>
 
-    </RadzenMenu>
-     );
+        </RadzenMenu>
+    );
 
     public async Task AddUserSelectedNotes(Card card)
     {
@@ -359,6 +381,17 @@ else
 
         DialogService.Refresh();
     }
+
+    protected void OpenCloseDialog(bool dialogState)
+    {
+        
+        
+            dataSvs.newProjectDialog = dialogState;
+       
+
+       
+    }
+
 
     @inject HttpClient Http
 

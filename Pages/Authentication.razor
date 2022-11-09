@@ -3,13 +3,33 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 
-<h3>Authentication</h3>
-
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView  Action="@Action">
+    <LogInFailed>
+        @strLogInFailed
+    </LogInFailed>
+    <LogOut>
+      @strLogOut
+    </LogOut>
+    <LogOutSucceeded>
+       @strLogOutSucceeded
+    </LogOutSucceeded>
+    <LoggingIn>
+        <div class="position-absolute top-50 start-50 spinner-border text-primary " role="status">
+            <span class="visually-hidden">Redirecting...</span>
+        </div>
+    </LoggingIn>
+    <CompletingLoggingIn>
+        @strCompletingLoggingIn
+    </CompletingLoggingIn>
+</RemoteAuthenticatorView>
 
 
 @code {
     [Parameter] public string Action { get; set; }
 
-    
+    string strLogInFailed = "Your login was not successful.";
+    string strLogOut = "Trying to close your session.";
+    string strLogOutSucceeded = "Your session has been closed successfully.";
+    string strLoggingIn = "Redirecting to the login screen.";
+    string strCompletingLoggingIn = "authorization successful.";
 }

@@ -243,8 +243,8 @@
 
     @<RadzenMenu>
 
-                <RadzenMenuItem Text="Remove" Click="() => DeleteNoteCard(noteCard)"></RadzenMenuItem>
-                <RadzenMenuItem Text="Enable Sorting Mode" Click="() => SetDragMode()"></RadzenMenuItem>
+                <RadzenMenuItem Text="Remove" Icon="clear" Click="() => DeleteNoteCard(noteCard)"></RadzenMenuItem>
+                <RadzenMenuItem Text="Enable Sorting Mode" Icon="swap_vert" Click="() => SetDragMode()"></RadzenMenuItem>
 
     </RadzenMenu>
     );
@@ -253,7 +253,7 @@
 
     @<RadzenMenu>
 
-                <RadzenMenuItem Text="Disable Sorting Mode" Click="() => SetDragMode()"></RadzenMenuItem>
+        <RadzenMenuItem Text="Disable Sorting Mode" Icon="highlight_off" Click="() => SetDragMode()"></RadzenMenuItem>
 
     </RadzenMenu>
         );
@@ -330,14 +330,16 @@
     @<RadzenMenu>
                 @if (chCard.Selected == true)
         {
-                    <RadzenMenuItem Text="UnPin Packet" Click="() => PinPacket(chCard)"></RadzenMenuItem>
-                    <RadzenMenuItem Text="Remove" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
+            <RadzenMenuItem Text="UnPin Packet" Icon="bookmark_remove" Click="() => PinPacket(chCard)">
+              
+            </RadzenMenuItem>
+           <RadzenMenuItem Text="Remove" Icon="clear" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
 
         }
         else
         {
-                    <RadzenMenuItem Text="Pin Packet" Click="() => PinPacket(chCard)"></RadzenMenuItem>
-                    <RadzenMenuItem Text="Remove" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
+            <RadzenMenuItem Text="Pin Packet" Icon="bookmark" Click="() => PinPacket(chCard)"></RadzenMenuItem>
+            <RadzenMenuItem Text="Remove" Icon="clear" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
 
         }
 

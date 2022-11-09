@@ -27,6 +27,7 @@ namespace BlazorApp1.Helpers
         public int menuCols = 2;
         public int bodyCols = 10;
 
+        public bool newProjectDialog;
 
 
         #endregion
@@ -80,9 +81,12 @@ namespace BlazorApp1.Helpers
 
         public void SwitchMenus(string selectedMenu)
         {
-
-            menustatus = selectedMenu;
-            NotifyStateChanged();
+           
+                menustatus = selectedMenu;
+                NotifyStateChanged();
+           
+            
+           
         }
 
         #region Project Crud
