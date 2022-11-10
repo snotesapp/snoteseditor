@@ -1,5 +1,4 @@
 ﻿@page "/"
-@page "/gdrive/{gdriveFileID}"
 @using BlazorApp1.Data
 @using BlazorApp1.Pages.Components
 @using System.Collections.ObjectModel
@@ -9,6 +8,7 @@
 
 @using BlazorApp1.Helpers
 @using System.IO.Compression
+@using BlazorComponent
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -16,7 +16,7 @@
 @using System.ComponentModel
 @inject SharedDataService dataSvs
 
-@inject DialogService DialogService
+
 @inject ContextMenuService contextMenuService
 
 @inject ILocalStorageService localstorage1
@@ -36,16 +36,14 @@
     Test
 </button>
 -->
-
-
 @if (dataSvs.menustatus == "notetools")
 {
     <MRow>
-        
-       <DropZonePg/>
+
+        <DropZonePg />
     </MRow>
-    
-    
+
+
 
 }
 else if (dataSvs.menustatus == "cards")
@@ -53,9 +51,9 @@ else if (dataSvs.menustatus == "cards")
     <MRow>
         <!--
 
-      
-    <NoteCardsPg />
-          -->
+
+        <NoteCardsPg />
+              -->
     </MRow>
 }
 else if (dataSvs.menustatus == "notecards")
@@ -71,70 +69,69 @@ else if (dataSvs.menustatus == "notecards")
 else
 {
 
-   
+
     <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
         <NoteTemplate Context="note">
             @if (note.Selected)
             {
                 <!--
 
-               
-                <div class="card p-2 bd-highlight border-3 border-primary" style="width: 30rem; margin:4px;"
-             @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
-             @onclick="() => dataSvs.StyleSelectNote(note)">
 
-                    <div class="d-flex flex-row">
+                   <div class="card p-2 bd-highlight border-3 border-primary" style="width: 30rem; margin:4px;"
+                @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
+                @onclick="() => dataSvs.StyleSelectNote(note)">
 
-                        <img src="@note.Thumbnail"  class="card-img-top" style="height:150px;width:150px" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title </h5>
-                            <p class="card-text">@note.Text</p>
-                            <a class="btn btn-primary">Add To Card</a>
-                        </div>
+                       <div class="d-flex flex-row">
 
-                    </div>
+                           <img src="@note.Thumbnail"  class="card-img-top" style="height:150px;width:150px" alt="...">
+                           <div class="card-body">
+                               <h5 class="card-title">Card title </h5>
+                               <p class="card-text">@note.Text</p>
+                               <a class="btn btn-primary">Add To Card</a>
+                           </div>
+
+                       </div>
 
 
 
-                </div>
-                    -->
-                  <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
-                           Dark
+                   </div>
+                       -->
+                <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
+               Dark
                OnClick="() => dataSvs.StyleSelectNote(note)"
                @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" __internal_preventDefault_oncontextmenu>
 
-                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                            <MCardText Class="lh-sm text-body"
+                    <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
+                        <MCardText Class="lh-sm text-body"
                            Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
-                                @note.Text
-                            </MCardText>
+                            @note.Text
+                        </MCardText>
 
-                        </MImage>
+                    </MImage>
 
 
 
-                    </MCard>
+                </MCard>
 
             }
             else
             {
-                  <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
-                           Dark
+                <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
+               Dark
                OnClick="() => dataSvs.StyleSelectNote(note)"
                @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" __internal_preventDefault_oncontextmenu>
 
-                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                            <MCardText Class="lh-sm text-body"
-                           Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;"
-                            >
-                                @note.Text
-                            </MCardText>
+                    <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
+                        <MCardText Class="lh-sm text-body"
+                           Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
+                            @note.Text
+                        </MCardText>
 
-                        </MImage>
-
+                    </MImage>
 
 
-                    </MCard>
+
+                </MCard>
                 <!--
                 <div class="card p-2 bd-highlight " style="width: 30rem; margin:4px;"
                 @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
@@ -154,33 +151,90 @@ else
                                    </div>
                                </div>
                 -->
-               
             }
 
 
         </NoteTemplate>
     </NotesTemplate>
 
-   
+
     <MDialog @bind-Value="@dataSvs.newProjectDialog"
-          HideOverlay MaxWidth="500" >
-        <NewPrjctWizard CloseDialoge="OpenCloseDialog" FileID="@gdriveFileID">
+         HideOverlay MaxWidth="600">
+        <NewPrjctWizard CloseDialoge="OpenCloseDialog">
 
-           </NewPrjctWizard>
-        </MDialog>
-  
+        </NewPrjctWizard>
+    </MDialog>
 
- @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
+    
+
+
+    @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
     {
 
-        <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " OnClick="() => ShowInlineDialog()"
-             title = "Add To Packet"
-             Fab
-             Dark
-             Color="#1565c0">
+       
+        <div class="text-center">
+            <MDialog @bind-Value="addcard_dialog" HideOverlay
+             Width="500">
+                <ActivatorContent>
+                   
+       <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs" OnClick="() => addcard_dialog = true"
+         title="Add To Packet"
+         Fab
+         Dark
+         Color="#1565c0">
             <MIcon>mdi-plus-box-multiple </MIcon>
-    </MButton>
+        </MButton>
+                </ActivatorContent>
 
+                <ChildContent>
+                    <MCard >
+                        <MCardTitle Class=" p-2 grey lighten-2">
+                             <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
+                                <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
+                                    Add
+                                </button>
+
+                            </div>
+                       
+                        </MCardTitle>
+                      
+                       
+
+             <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+                            
+                            <ListTemplate Items="dataSvs.MainProject.Cards">
+                                <RowTemplate Context="card">
+
+                                    <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
+                                    @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); addcard_dialog=false; })">
+                                        @card.Title
+                                    </button>
+
+                                </RowTemplate>
+
+                            </ListTemplate>
+
+            </MList>
+
+         
+      
+                        <MDivider Class="my-1"></MDivider>
+
+                        <MCardActions>
+                            <MSpacer></MSpacer>
+                            <MButton Color="primary"
+                             Text
+                             OnClick="() => addcard_dialog = false">
+                                Close
+                            </MButton>
+                        </MCardActions>
+                    </MCard>
+
+
+                </ChildContent>
+            </MDialog>
+        </div>
     }
 
 }
@@ -194,14 +248,12 @@ else
     [Parameter]
     public EventCallback<string> BackToMain { get; set; }
 
-    [Parameter]
-    public string? gdriveFileID { get; set; }
+
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
-    string? authValue;
+    bool addcard_dialog;
 
-    
 
     protected override void OnInitialized()
     {
@@ -213,18 +265,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         dataSvs.newProjectDialog = true;
-        
-        #region New gDrive Storage
-        //authValue = await sessionStorage.GetItemAsync<string>("auth");
-        //if (authValue == "authenticating")
-        //{
-        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
-        //new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
 
-        //}
-
-        //await sessionStorage.RemoveItemAsync("auth");
-        #endregion
     }
 
 
@@ -239,80 +280,18 @@ else
 
         }
 
-        
-        #region New Project(Local or gDrive)
-        //if (firstRender && gdriveFileID is null && authValue is null && dataSvs.MainProject.ProjectID ==0)
-        //{
-
-        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", null,
-        //    new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
-        //}
-        #endregion
 
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
 
-        
-        #region Download gDrive Project
-        //if (gdriveFileID is not null)
-        //{
-        //    await DialogService.OpenAsync<NewProjectWizard>("New Project", new Dictionary<string, object>() { { "FileID", gdriveFileID } },
-        //      new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = false });
 
-        //}
-        #endregion
-
-    }
-
-    
 
     public void Dispose()
     {
 
         dataSvs.OnChange -= StateHasChanged;
     }
-
-    async Task ShowInlineDialog()
-    {
-        dataSvs.AllCards = await dataSvs.GetCards();
-        var result = await DialogService.OpenAsync("Select Card", ds =>
-    @<div>
-
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="New Card" @bind-value="cardTitle" aria-describedby="btnGroupAddon">
-            <button class="btn btn-primary" id="btnGroupAddon" onclick="@AddCard">
-                Add
-            </button>
-
-        </div>
-
-        <ul class="list-group px-1">
-
-            <ListTemplate Items="dataSvs.MainProject.Cards">
-                <RowTemplate Context="card">
-
-                    <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
-                            @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); ds.Close(true); })">
-                        @card.Title
-                    </button>
-
-                </RowTemplate>
-
-            </ListTemplate>
-
-        </ul>
-        <div class="row">
-            <div class="col-md-12">
-                <RadzenButton Text="Ok" Click="() => ds.Close(true)" Style="margin-bottom: 10px; width: 150px" />
-                <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Secondary" Style="margin-bottom: 10px; width: 150px" />
-            </div>
-        </div>
-    </div>
-         );
-    }
-
+   
 
     void NoteContextMenuWithContent(MouseEventArgs args, Note note) => contextMenuService.Open(args, ds =>
 
@@ -379,17 +358,33 @@ else
 
         //  await dataSvs.GetCards();
 
-        DialogService.Refresh();
+
+    }
+
+    private async Task AddCard(KeyboardEventArgs keyboardEvent)
+    {
+        if (keyboardEvent.Key == "Enter"){
+            await Task.Delay(100);
+            if (!string.IsNullOrWhiteSpace(cardTitle))
+            {
+               
+                // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
+                // await  dataSvs.UpdateProject();
+                await dataSvs.AddCard(new Card { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                cardTitle = "";
+
+
+            }
+        }
+        
     }
 
     protected void OpenCloseDialog(bool dialogState)
     {
-        
-        
-            dataSvs.newProjectDialog = dialogState;
-       
 
-       
+
+        dataSvs.newProjectDialog = dialogState;
+      
     }
 
 
@@ -418,11 +413,11 @@ else
          await File.WriteAllBytesAsync("path", bitArrayImg);
          */
 
-        
+
         Stream imageStream = await GetImageStreamAsync();
         var dotnetImageStream = new DotNetStreamReference(imageStream);
         var urlstrng = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
-       
+
 
     }
 

@@ -108,7 +108,7 @@
         if (authValue == "authenticating")
         {
             CurrentStep = "Project";
-            dataSvs.storageType = "gdrive";
+          //  dataSvs.storageType = "gdrive";
             // await sessionStorage.SetItemAsync("storage", "gdrive");
 
         }
@@ -189,13 +189,13 @@
             await dataSvs.GetNotes();
             await Task.Delay(20);
             await SetProgres(100);
-
+/*
             if (dataSvs.storageType is null)
             {
                 dataSvs.storageType = "local";
 
             }
-
+            */
             dialogService.Close();
         }
 
@@ -257,11 +257,13 @@
         await dataSvs.GetNotes();
         await Task.Delay(20);
         await SetProgres(100);
+        /*
         if (dataSvs.storageType is null)
         {
             dataSvs.storageType = "local";
 
         }
+         */
         dialogService.Close();
 
     }
@@ -295,12 +297,13 @@
             });
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
         await dataSvs.InsertProject(dataSvs.MainProject);
-
+        /*
         if (dataSvs.storageType is null)
         {
             dataSvs.storageType = "local";
 
         }
+        */
         dialogService.Close();
 
     }

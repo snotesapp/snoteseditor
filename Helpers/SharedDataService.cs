@@ -18,7 +18,6 @@ namespace BlazorApp1.Helpers
     {
         #region global parameters
       
-        public string? storageType;
 
         public event Action OnChange;
         public string menustatus { get; private set; } = "mainmenu";
@@ -28,8 +27,7 @@ namespace BlazorApp1.Helpers
         public int bodyCols = 10;
 
         public bool newProjectDialog;
-
-
+      
         #endregion
 
         public PaintMode paintMode = PaintMode.Drag;

@@ -4,123 +4,66 @@
 @inject IJSRuntime JSRuntime
 @inject IHttpClientFactory ClientFactory
 
-
-@switch (CurrentStep)
-{
-
-    case "Storage":
-
-        @switch (dataSvs.storageType)
-        {
-            case "local":
+<MCard Class="p-1" >
+    <MCardTitle Class="text-h5 grey lighten-2">
+        Download Project
+    </MCardTitle>
 
 
-                <div class="hstack gap-3 my-3 justify-content-evenly">
+    @switch (CurrentStep)
+    {
 
-                    <MButton title="Download" Height="60" Width="200" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" OnClick="DownloadProject">
+        case "Storage":
+            <div class="hstack gap-3 my-3 justify-content-evenly">
 
-                    </MButton>
+                <MButton title="Download" Height="60" Width="200" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" OnClick="DownloadProject">
 
-                </div>
-
-
-                break;
-            case "gdrive":
-                <div class="hstack gap-3 my-3 justify-content-evenly">
-
-                    <MButton title="Upload" Height="60" Width="200" Style="background-image:url(./images/gDrive_icon.png);background-size:contain;background-position: center center" OnClick="ShareProject">
-
-                    </MButton>
-
-                </div>
-
-
-                break;
-
-            default:
-                <div class="hstack gap-3 my-3 justify-content-evenly">
-
-                    <MButton title="Download" Height="60" Width="200" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" OnClick="DownloadProject">
-
-                    </MButton>
-
-                </div>
-                break;
-        }
-        <!--
-
-            <div class="hstack gap-3 my-3">
-                <button type="button" class="btn btn-secondary" title="Local" @onclick="DownloadProject">
-                        <img src="./Images/download_icon.svg" width="40" height="40"/>
-                        Local
-                </button>
-
-
-                <button type="button" class="btn btn-secondary" title="Share" @onclick="ShareProject">
-                    <img src="./Images/gDrive_icon.svg" width="40" height="40" />
-                    Google Drive
-                </button>
-
-                <button type="button" class="btn btn-secondary" title="Download GDrive File" @onclick="DownloadGDriveFile">
-                    Download From GDrive
-                </button>
-
-
+                </MButton>
 
             </div>
-            -->
-        break;
 
-    case "Progress":
-        <div class="col-md-12">
-            <RadzenProgressBar @bind-Value="@progress" />
+            <MDivider></MDivider>
 
-        </div>
-        break;
-    case "GenerateLink":
-        <div class="col-md-12">
+            <MCardActions>
+                <MSpacer></MSpacer>
+                <MButton Color="primary"
+                 Text
+                 OnClick="CloseSaveDialg">
+                    Close
+                </MButton>
+            </MCardActions>
 
-            <button class="btn btn-outline-primary" type="button" @onclick="GenerateLink">Generate Sharable Link</button>
+            break;
 
+        case "Progress":
+            <div class="col-md-12" style="background-color:whitesmoke">
 
-        </div>
-        break;
-    case "CopyLink":
-        <div class="input-group mb-3">
-            <input type="text" readonly class="form-control" aria-describedby="button-copylink" @bind-value="generatedLink">
-            <button class="btn btn-outline-secondary" type="button" id="button-copylink" @onclick="CopyLinkToClipBoard">Copy</button>
-        </div>
-        break;
+                <MProgressLinear Value="@progress" Height="25" Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3">
+                    <strong>@($"{context}%")</strong>
+                </MProgressLinear>
 
-
-}
+            </div>
+            break;
 
 
-<!--
-<div class="row">
-    <div class="col-md-12 text-right">
-        <RadzenButton Click="@((args) => dialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Style="width: 120px" Class="mr-1" />
-        <RadzenButton Click="@((args) => dialogService.Close(true))" Text="OK" Style="width: 120px" />
-    </div>
 
+    }
 
-</div>
+</MCard>
 
--->
 
 
 @code {
 
     private string CurrentStep { get; set; } = "Storage";
-    private string generatedLink { get; set; }
-
-
+    
     IJSObjectReference _module;
 
-    List<string> gDriveFolderIds = new(1);
+  
     double progress;
 
-    GDriveFileId idContent = new();
+    [Parameter]
+    public EventCallback<bool> CloseDialoge { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -147,124 +90,16 @@
         var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
         await _module.InvokeVoidAsync("blazorDownloadFile1", fileName, "application/zip", dataSvs.fileArray);
         SetProgres(100);
-        dialogService.Close();
+        //dialogService.Close();
+        CurrentStep = "Storage";
+        await CloseDialoge.InvokeAsync(false);
         #endregion
     }
 
-    private async Task ShareProject()
-    {
-        CurrentStep = "Progress";
-        var gDriveApiclient = ClientFactory.CreateClient("GDriveApi");
-        SetProgres(10);
-        #region Test if folder Exist
-
-        gDriveFolderIds.Clear();
-
-        //'application/vnd.google-apps.folder'
-        GDriveFilesDto foldersList = await gDriveApiclient.GetFromJsonAsync<GDriveFilesDto>("files?q=mimeType='application/vnd.google-apps.folder' and name = 'sNotesEditor'");
-        if (foldersList.files.Length == 0)
-        {
-            var folderProps = JsonContent.Create(new { mimeType = "application/vnd.google-apps.folder", name = "sNotesEditor" });
-            var createsNotesFolder = await gDriveApiclient.PostAsync("files", folderProps);
-        }
-        else
-        {
-            gDriveFolderIds.Add(foldersList.files[0].id);
-        }
-
-        #endregion
-
-        SetProgres(30);
-        #region Get Upload Location Uri
-
-        //Create File ID
-
-        idContent = await gDriveApiclient.GetFromJsonAsync<GDriveFileId>("files/generateIds?count=1");
-
-        //Get Upload Location Uri
-        var gDriveApiUploadclient = ClientFactory.CreateClient("GDriveApiUpload");
-        var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-        var metaContent = JsonContent.Create(new { name = fileName, mimeType = "application/zip", id = idContent.ids[0], parents = gDriveFolderIds });
-        HttpResponseMessage result = await gDriveApiUploadclient.PostAsync("?uploadType=resumable", metaContent);
-        var jsonresult = result.Headers.Location.Query;
-        #endregion
-        SetProgres(40);
-
-        //Generate File byteArray (fileArray)
-        await dataSvs.DownloadProjectFile();
-        SetProgres(70);
-
-
-        #region Upload File (in chunks)
-        // IEnumerable<byte[]> chunksEnum = dataSvs.fileArray.Chunk(256 * 1024 * 2);
-
-
-        Stream stream = new MemoryStream(dataSvs.fileArray);
-        var streamContent = new StreamContent(stream);
-        var uploadresult = await gDriveApiUploadclient.PutAsync(jsonresult, streamContent);
-
-
-        /*
-         *
-
-        foreach (byte[] chunk in chunksEnum)
-        {
-            Stream stream = new MemoryStream(chunk);
-            var streamContent = new StreamContent(stream);
-
-            var uploadresult = await gDriveApiUploadclient.PutAsync(jsonresult, streamContent);
-
-
-        }
-         */
-        #endregion
-
-        //  var uploaresult = await gDriveApiUploadclient.PutAsJsonAsync(jsonresult, "");
-
-        SetProgres(100);
-
-        CurrentStep = "GenerateLink";
-
-        // Console.WriteLine("File Uploaded");
-    }
-
-    private async Task DownloadGDriveFile()
-    {
-        string fileID = "15a7W94bDiJaTzX1AYZPIdURjJOEMJbAl";
-        string apiKey = "AIzaSyBl_QdS1lMUgHW2BY6blYTJWejuMeMjnMM";
-        #region Download file from GDrive as bitArray
-        HttpClient httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri("https://www.googleapis.com/drive/v3/files/")
-            };
-        byte[] downloadFile = await httpClient.GetByteArrayAsync($"{fileID}?key={apiKey}&alt=media");
-        #endregion
-
-        #region convert bitArray to zip and download it
-        //Download Localy For Testing Only
-        var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-
-        await _module.InvokeVoidAsync("blazorDownloadFile1", fileName, "application/zip", downloadFile);
-        #endregion
-    }
-
-    private async Task GenerateLink()
-    {
-        var gDriveApiclient = ClientFactory.CreateClient("GDriveApi");
-        #region Set File as public
-        var permissionContent = JsonContent.Create(new { role = "reader", type = "anyone" });
-        var setPermission = await gDriveApiclient.PostAsync($"files/{idContent.ids[0]}/permissions", permissionContent);
-
-        generatedLink = $"https://localhost:7240/gdrive/{idContent.ids[0]}";
-        CurrentStep = "CopyLink";
-        #endregion
-
-    }
-
-    private async Task CopyLinkToClipBoard()
+    private async Task CloseSaveDialg()
     {
 
-        await _module.InvokeVoidAsync("copyTextToClipboard", generatedLink);
+        await CloseDialoge.InvokeAsync(false);
 
     }
 

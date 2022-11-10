@@ -9,27 +9,32 @@
 @switch (dataSvs.menustatus)
 {
     case "mainmenu":
-        <div class="row m-2">
-            @switch (dataSvs.storageType)
-            {
-                case "local":
-                    <MButton title="Download" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45" OnClick="DownloadProject">
-                        
-                    </MButton>
+      
+    <MDialog HideOverlay OnOutsideClick="() => download_dialog = false"
+        @bind-Value="download_dialog"
+        MaxWidth="600">
+        <ActivatorContent >
+              <div class="row m-2 ">
 
-                    break;
-                case "gdrive":
-                    <MButton title="Upload" Style="background-image:url(./images/gDrive_icon.png);background-size:contain;background-position: center center" Height="45" OnClick="DownloadProject">
-                      
-                    </MButton>
+  
+            <MButton title="Download"  @attributes="@context.Attrs" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45" >
 
-                    break;
+            </MButton>
+            
+             </div>       
+
+        <MDivider Class="mt-0"></MDivider>
+        </ActivatorContent>
+
+        <ChildContent  >
+                        <SaveProjectDialogPage CloseDialoge="OpenCloseDialog">
+
+                        </SaveProjectDialogPage>
+        </ChildContent>
+    </MDialog>
 
 
-            }
-        </div>
-
-        <MDivider></MDivider>
+       
 
         break;
     case "collection":
@@ -263,6 +268,11 @@
     ElementReference inputTextRef;
     string CollectionId = "0";
 
+    
+    bool download_dialog;
+
+
+
     [CascadingParameter]
     public Error? Error { get; set; }
 
@@ -277,6 +287,14 @@
         dataSvs.OnChange += StateHasChanged;
 
     }
+
+    protected void OpenCloseDialog(bool dialogState)
+    {
+
+        download_dialog = dialogState;
+       
+    }
+
     private async Task DownloadProject()
     {
 
