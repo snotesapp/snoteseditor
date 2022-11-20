@@ -17,7 +17,6 @@
 @inject SharedDataService dataSvs
 
 
-@inject ContextMenuService contextMenuService
 
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
@@ -99,7 +98,7 @@ else
                 <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                Dark
                OnClick="() => dataSvs.StyleSelectNote(note)"
-               @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" __internal_preventDefault_oncontextmenu>
+               @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
 
                     <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
                         <MCardText Class="lh-sm text-body"
@@ -119,7 +118,7 @@ else
                 <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
                Dark
                OnClick="() => dataSvs.StyleSelectNote(note)"
-               @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" __internal_preventDefault_oncontextmenu>
+               @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
 
                     <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
                         <MCardText Class="lh-sm text-body"
@@ -153,7 +152,7 @@ else
                 -->
             }
 
-
+            
         </NoteTemplate>
     </NotesTemplate>
 
@@ -165,7 +164,46 @@ else
         </NewPrjctWizard>
     </MDialog>
 
-    
+@if(ContextMenuNote != null){
+        <MMenu @bind-Value="ShowNoteContext"
+       PositionX="X"
+       PositionY="Y"
+       Absolute
+       OffsetY
+       CloseOnContentClick>
+            <MList Dense Width="200">
+
+                <MListItem OnClick="() => EditNote(ContextMenuNote)">
+                    <MListItemIcon>
+                        <MIcon>
+                            mdi-pencil-outline
+                        </MIcon>
+                    </MListItemIcon>
+                    <MListItemContent>
+                        <MListItemTitle>
+                            Edit
+                        </MListItemTitle>
+                    </MListItemContent>
+                </MListItem>
+
+                <MListItem OnClick="() => DeleteNote(ContextMenuNote)">
+                    <MListItemIcon>
+                        <MIcon>
+                            mdi-delete-outline
+                        </MIcon>
+                    </MListItemIcon>
+                    <MListItemContent>
+
+                        <MListItemTitle>
+                            Delete
+                        </MListItemTitle>
+                    </MListItemContent>
+                </MListItem>
+
+            </MList>
+        </MMenu>
+
+}
 
 
     @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
@@ -237,6 +275,7 @@ else
         </div>
     }
 
+   
 }
 
 
@@ -253,6 +292,11 @@ else
     IJSObjectReference _dropZoneJS;
 
     bool addcard_dialog;
+
+    private Note? ContextMenuNote= null;
+    private bool ShowNoteContext;
+    double X = 0;
+    double Y = 0;
 
 
     protected override void OnInitialized()
@@ -291,18 +335,19 @@ else
 
         dataSvs.OnChange -= StateHasChanged;
     }
-   
 
-    void NoteContextMenuWithContent(MouseEventArgs args, Note note) => contextMenuService.Open(args, ds =>
+    private void ShowNoteContextMenu(MouseEventArgs args,Note note)
+    {
+        ShowNoteContext = false;
+        ContextMenuNote = null;
+        // await Task.Delay(16);
 
-    @<RadzenMenu Style="width:200px">
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextMenuNote = note;
+        ShowNoteContext = true;
+    }
 
-        <RadzenMenuItem Text="Edit" Icon="edit" Click="() => EditNote(note)"></RadzenMenuItem>
-
-        <RadzenMenuItem Text="Delete" Icon="delete_outline" Click="() => DeleteNote(note)"></RadzenMenuItem>
-
-        </RadzenMenu>
-    );
 
     public async Task AddUserSelectedNotes(Card card)
     {
@@ -324,8 +369,7 @@ else
 
         await dataSvs.DeleteNote(note);
         await dataSvs.GetNotes();
-        contextMenuService.Close();
-
+       
     }
 
     private async Task EditNote(Note note)
@@ -339,8 +383,7 @@ else
         //dataSvs.EditMode = true;
         dataSvs.SwitchMenus("notetools");
 
-        contextMenuService.Close();
-
+       
 
     }
 

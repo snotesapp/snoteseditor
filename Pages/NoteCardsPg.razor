@@ -3,7 +3,7 @@
 @using BlazorApp1.Pages.Components
 @inject SharedDataService dataSvs
 @inject IMessageService MessageService
-@inject ContextMenuService contextMenuService
+
 
 @using Microsoft.JSInterop
 @using SkiaSharp
@@ -340,16 +340,6 @@
     #endregion
 
 
-    void NoteCardContextMenuWithContent(MouseEventArgs args, NoteCard noteCard) => contextMenuService.Open(args, ds =>
-
-    @<RadzenMenu>
-
-        <RadzenMenuItem Text="Remove" Click="() => DeleteNoteCard(noteCard)"></RadzenMenuItem>
-
-        </RadzenMenu>
-    );
-
-
 
 
 
@@ -357,7 +347,7 @@
     {
         dataSvs.SelectedNoteCard = null;
         await dataSvs.RemoveNoteCard(noteCard);
-        contextMenuService.Close();
+       
 
     }
 
@@ -397,7 +387,7 @@
 
         await dataSvs.UpdateCard(card);
         dataSvs.MainProject = await dataSvs.GetProject();
-        contextMenuService.Close();
+       
 
     }
     private void MessageHandler()

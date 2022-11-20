@@ -26,82 +26,165 @@
         <span class="bi bi-x-lg"></span>
     </button>
 
+    <div class="row w-100 m-2 toolstyle"
+         style="display:inline-block;border-radius: 5px;border: 1px solid #003c8f;  ">
+       <label for="stylesWidthSlider" class="mb-0 ">Thickness: @dataSvs.strokeWidth</label>
+        <input type="range" class="form-range w-100 px-3 " id="stylesWidthSlider" @bind=@dataSvs.strokeWidth @bind:event="oninput" min="3" max="40"  />
+         
+    </div>
+    <div class="row w-100 m-2 toolstyle"
+         style="display:inline-block;border-radius: 5px;border: 1px solid #003c8f;  "
+    >
+         <label  class="form-label" for="pencolor">Pen Color:</label>
+         <input type="color" style="height:20px; " id="pencolor" name="PenColor" value="@dataSvs.defaultColor" @onchange="@(chArgs => OnChangeColor(chArgs) )">
+
+    </div>
+
+        <div class="row w-100 m-2 toolstyle"
+         style="display:inline-block;border-radius: 5px;border: 1px solid #003c8f;  "
+    >
+        <label for="background">Background:</label>
+        <input type="color" style="height:20px;" id="background" aria-describedby="backgroundcolorgrp" name="BackgroundColor" value="@dataSvs.editNote.BackgroundColor" @onchange="@(chArgs => OnChangeBackgroundColor(chArgs) )">
+
+    </div>
+
+
+             
+
+    <!--
+        <div class="row w-100 m-2   toolstyle">
+            <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
+                <HeaderTemplate>
+                    <span class="d-inline-flex align-items-center align-middle">
+                        <RadzenIcon Icon="create" Class="mr-1" />
+                        <b>Pen</b>
+                    </span>
+                </HeaderTemplate>
+                <ChildContent>
+                    <div class="row w-100  my-1 ">
+                        <div class="col-md-4 p-0 align-items-center d-flex">
+                            <RadzenLabel Text="Thickness" Component="StylesWidthSlider" />
+
+                        </div>
+                        <div class="col-md-8 p-0 w-100">
+                            <RadzenSlider Name="StylesWidthSlider" @bind-Value=@dataSvs.strokeWidth TValue="float" Min="3" Max="40" Change=@(args => OnChangestrokeWidth(args)) Class="w-100 my-2" />
+
+                        </div>
+                    </div>
+
+                    <div class="row w-100 mt-2">
+                        <div class="col-md-4 p-0 align-items-center d-flex">
+                            <RadzenLabel Text="Color:" Component="StylesColor" />
+                        </div>
+                        <div class="col-md-8 p-0 w-100">
+
+    @*   <RadzenColorPicker Name="StylesColor" @bind-Value=@dataSvs.defaultColor ShowHSV=true ShowRGBA=false ShowColors=true Change=@OnChangeColor class="w-100 my-2 border-primary" />
+                            <input type="color" id="pencolor" name="PenColor" @bind-value="@dataSvs.defaultColor"  @oninput="@(dataSvs.EnableDraw)"><br><br>
+    *@
+
+                            <input style="width:100%" type="color" id="pencolor" name="PenColor" value="@dataSvs.defaultColor" @onchange="@(chArgs => OnChangeColor(chArgs) )"><br><br>
+
+                        </div>
+                    </div>
+
+                </ChildContent>
+
+
+            </RadzenFieldset>
+        </div>
+
+
+        <div class="row w-100 m-2   toolstyle">
+            <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
+                <HeaderTemplate>
+                    <span class="d-inline-flex align-items-center align-middle">
+                        <RadzenIcon Icon="tv" Class="mr-1" />
+                        <b>Background</b>
+                    </span>
+                </HeaderTemplate>
+                <ChildContent>
+
+                    <div class="row w-100  ">
+
+                        <div class="input-group mb-3 " style="width:100%">
+                            <span class="input-group-text" id="backgroundcolorgrp">Color:</span>
+                            <input class="w-50" type="color" id="background" aria-describedby="backgroundcolorgrp" name="BackgroundColor" value="@dataSvs.editNote.BackgroundColor" @onchange="@(chArgs => OnChangeBackgroundColor(chArgs) )"><br><br>
+
+    </div>
+
+                    </div>
+
+                    <div class="hstack gap-1 my-2 ">
+                        <MTextField Label="Width" Placeholder="Width" Value="@(dataSvs.editNote.MainImgWidth)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
+
+
+                        X
+
+                        <MTextField Label="Height" Placeholder="Height" Value="@(dataSvs.editNote.MainImgHeight)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
+
+
+                    </div>
+                </ChildContent>
+
+            </RadzenFieldset>
+
+
+        </div>
+
+    -->
+    <!--
     <div class="row w-100 m-2   toolstyle">
-        <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
-            <HeaderTemplate>
-                <span class="d-inline-flex align-items-center align-middle">
-                    <RadzenIcon Icon="create" Class="mr-1" />
-                    <b>Pen</b>
-                </span>
-            </HeaderTemplate>
+
+        <SNExpandable Label="Pen"  >
             <ChildContent>
-                <div class="row w-100  my-1 ">
-                    <div class="col-md-4 p-0 align-items-center d-flex">
-                        <RadzenLabel Text="Thickness" Component="StylesWidthSlider" />
 
-                    </div>
-                    <div class="col-md-8 p-0 w-100">
-                        <RadzenSlider Name="StylesWidthSlider" @bind-Value=@dataSvs.strokeWidth TValue="float" Min="3" Max="40" Change=@(args => OnChangestrokeWidth(args)) Class="w-100 my-2" />
+                <label for="stylesWidthSlider" class="form-label mb-0">Thickness: @dataSvs.strokeWidth</label>
+                <input type="range" class="form-range mb-2" id="stylesWidthSlider" @bind=@dataSvs.strokeWidth @bind:event="oninput" min="3" max="40"  />
 
-                    </div>
-                </div>
+                <span style="display:inline-block;width:100%;border-radius: 5px;border: 1px solid #003c8f; padding-bottom:1px; padding-left:2px;margin-bottom:10px;">
 
-                <div class="row w-100 mt-2">
-                    <div class="col-md-4 p-0 align-items-center d-flex">
-                        <RadzenLabel Text="Color:" Component="StylesColor" />
-                    </div>
-                    <div class="col-md-8 p-0 w-100">
-                        <RadzenColorPicker Name="StylesColor" @bind-Value=@dataSvs.defaultColor ShowHSV=true ShowRGBA=false ShowColors=true Change=@OnChangeColor class="w-100 my-2 border-primary" />
+                    <label for="pencolor">Color:</label>
 
-                    </div>
-                </div>
+                    <input type="color" style="height:20px;width:80%;position:relative;top:3px; " id="pencolor" name="PenColor" value="@dataSvs.defaultColor" @onchange="@(chArgs => OnChangeColor(chArgs) )">
+
+                </span>
+
 
             </ChildContent>
 
-
-        </RadzenFieldset>
+        </SNExpandable>
     </div>
 
-    <div class="row w-100 m-2   toolstyle">
-        <RadzenFieldset AllowCollapse="true" class="p-0   border-primary">
-            <HeaderTemplate>
-                <span class="d-inline-flex align-items-center align-middle">
-                    <RadzenIcon Icon="tv" Class="mr-1" />
-                    <b>Background</b>
-                </span>
-            </HeaderTemplate>
+
+     <div class="row w-100 m-2   toolstyle">
+
+        <SNExpandable Label="Background"  >
             <ChildContent>
 
-                <div class="row w-100  ">
-                    <div class="col-md-4 p-0 align-items-center d-flex">
-                        <RadzenLabel Text="Color:" Component="BackgroundColor" />
-                    </div>
-                    <div class="col-md-8 p-0 w-100">
-                        <RadzenColorPicker Name="BackgroundColor" @bind-Value=@dataSvs.defaultBackgroundColor ShowHSV=true ShowRGBA=false ShowColors=true Change=@OnChangeBackgroundColor class="my-2 w-100 border-primary" />
 
-                    </div>
-                </div>
+
+                <span style="display:inline-block;width:100%;border-radius: 5px;border: 1px solid #003c8f;  padding-bottom:1px; padding-left:2px">
+
+
+                    <label for="background">Color:</label>
+                    <input type="color" style="height:20px;width:80%;position:relative;top:3px; " id="background" aria-describedby="backgroundcolorgrp" name="BackgroundColor" value="@dataSvs.editNote.BackgroundColor" @onchange="@(chArgs => OnChangeBackgroundColor(chArgs) )">
+
+                </span>
 
                 <div class="hstack gap-1 my-2 ">
+                    <MTextField Label="Width" Placeholder="Width" Value="@(dataSvs.editNote.MainImgWidth)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
 
-                    <div class="form-floating  ">
-                        <input type="text" class="form-control text-center border-primary" style="height:52px" id="floatingWidth" placeholder="Width" @onfocusin="SetInitialValue" @onblur="SetCanvasDim" @bind-value="dataSvs.editNote.MainImgWidth">
-                        <label for="floatingWidth">Width</label>
-                    </div>
-                    X
-                    <div class="form-floating ">
-                        <input type="text" class="form-control text-center " style="height:52px" id="floatingHeight" placeholder="Height" @onfocusin="SetInitialValue" @onblur="SetCanvasDim" @bind-value="dataSvs.editNote.MainImgHeight">
-                        <label class="toolstyle" for="floatingHeight">Height</label>
-                    </div>
+                    &ensp;  X &ensp;
+
+                    <MTextField Label="Height" Placeholder="Height" Value="@(dataSvs.editNote.MainImgHeight)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
 
 
                 </div>
             </ChildContent>
 
-        </RadzenFieldset>
-
-
+        </SNExpandable>
     </div>
+    -->
 
 
 </div>
@@ -116,7 +199,7 @@
     protected override void OnInitialized()
     {
 
-
+        var editnt = dataSvs.editNote;
         dataSvs.OnChange += StateHasChanged;
     }
 
@@ -126,6 +209,7 @@
         if (firstRender)
         {
             await Task.Delay(1000);
+           
             StateHasChanged();
         }
     }
@@ -154,9 +238,9 @@
 
     void OnChangestrokeWidth(dynamic value) => dataSvs.strokeWidth = value;
 
-    void OnChangeColor(string value)
+    void OnChangeColor(ChangeEventArgs chArgs)
     {
-        dataSvs.defaultColor = value;
+        dataSvs.defaultColor = chArgs?.Value?.ToString();
         dataSvs.EnableDraw();
         /*
         byte r = Byte.Parse(value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[0]);
@@ -201,11 +285,11 @@
     }
 
 
-    void OnChangeBackgroundColor(string value)
+    void OnChangeBackgroundColor(ChangeEventArgs chArgs)
     {
 
-        Console.WriteLine($"Value changed to: {value}");
-        dataSvs.SetBackgroundColor(value);
+        //Console.WriteLine($"Value changed to: {value}");
+        dataSvs.SetBackgroundColor(chArgs?.Value?.ToString());
         //Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
     }
 

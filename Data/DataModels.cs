@@ -108,9 +108,9 @@ namespace BlazorApp1.Data
            
         }
 
-      
 
-        public string? BackgroundColor { get; set; }
+
+        public string? BackgroundColor { get; set; } 
 
         public int MainImgWidth { get; set; }
         public int MainImgHeight { get; set; }

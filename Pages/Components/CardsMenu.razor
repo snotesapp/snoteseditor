@@ -4,8 +4,6 @@
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
 
-@inject ContextMenuService contextMenuService
-
 @using BlazorComponent
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
@@ -32,7 +30,7 @@
                     @if (card.Editable == false)
                     {
                         <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
-                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); CardContextMenuWithContent(args,card);})">
+                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,card);})">
                          @if(card.Parent is null){
                                 <MListItem Link style="background-color:#1565c0"
                                            OnClick="() => SelectCard(card)"
@@ -134,6 +132,106 @@
     </MRow>
      -->
 </MContainer>
+
+@if(ContextMenuCard != null){
+    <MMenu @bind-Value="ShowCardContext"
+       PositionX="X"
+       PositionY="Y"
+       Absolute
+       OffsetY
+       CloseOnContentClick>
+    <MList Dense Width="200">
+
+
+
+       
+            <MListItem OnClick="() => RenameCard(ContextMenuCard)">
+            <MListItemIcon>
+                <MIcon>
+                    mdi-form-textbox
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+
+                <MListItemTitle>
+                    Rename
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+            <MListItem OnClick="() => DeleteCard(ContextMenuCard)">
+            <MListItemIcon>
+                <MIcon>
+                    mdi-delete-outline
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+                <MListItemTitle>
+                    Delete
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+     
+            <MDialog @bind-Value="dialog" HideOverlay
+                 Width="500">
+                <ActivatorContent>
+                    <MListItem @attributes="@context.Attrs" OnClick="() => GetSelectionCards(ContextMenuCard)">
+            <MListItemIcon>
+                <MIcon>
+                   mdi-subdirectory-arrow-right 
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+
+                <MListItemTitle>
+                    Move To
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+                   
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MCard>
+                        <MCardTitle Class="text-h5 grey lighten-2">
+                            Select Destination Packet
+                        </MCardTitle>
+
+                           <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+                            
+                            <ListTemplate Items="dataSvs.SelectionCards">
+                                <RowTemplate Context="card">
+
+                                    <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
+                                    @onclick="@(() => {SetParentCard(card,ContextMenuCard); dialog = false;})">
+                                        @card.Title
+                                    </button>
+
+                                </RowTemplate>
+
+                            </ListTemplate>
+
+            </MList>
+
+                        <MDivider></MDivider>
+
+                        <MCardActions>
+                            <MSpacer></MSpacer>
+                            <MButton Color="primary"
+                                 Text
+                                 OnClick="() => dialog = false">
+                                Close
+                            </MButton>
+                        </MCardActions>
+                    </MCard>
+                </ChildContent>
+            </MDialog>
+    </MList>
+</MMenu>
+
+}
 
 
 <!--
@@ -315,11 +413,17 @@ else
 
     IJSObjectReference _module;
 
+    private Card? ContextMenuCard = null;
+    private bool ShowCardContext;
+    double X = 0;
+    double Y = 0;
+
+    bool dialog;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
 
         _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-
 
     }
 
@@ -388,15 +492,15 @@ else
             // NoteCard snoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
             /*
             foreach (NoteCard noteCard in dataSvs.SelectedCard.NoteCards)
-            {
-                foreach (NoteImage ncimg in noteCard.Note.Images)
                 {
+                foreach (NoteImage ncimg in noteCard.Note.Images)
+                    {
                     string imgLoc = await StreamToObjectURL(ncimg.ImgURI);
 
                    ncimg.Location = imgLoc;
 
 
-                }
+            }
             }
             */
 
@@ -410,25 +514,19 @@ else
         await BackToMain.InvokeAsync("notecards");
     }
 
+    private void ShowCardContextMenu(MouseEventArgs args, Card card)
+    {
+        ShowCardContext = false;
+        ContextMenuCard = null;
+        // await Task.Delay(16);
 
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextMenuCard = card;
+        ShowCardContext = true;
+    }
 
-    void CardContextMenuWithContent(MouseEventArgs args, Card chCard) => contextMenuService.Open(args, ds =>
-
-    @<RadzenMenu Style="width:200px">
-
-        <RadzenMenuItem Icon="drive_file_rename_outline" Text="Rename" Click="() => RenameCard(chCard)"></RadzenMenuItem>
-                                    <RadzenMenuItem Icon="delete_outline" Text="Delete" Click="() => DeleteCard(chCard)"></RadzenMenuItem>
-
-                                    <RadzenMenuItem Text="Move To" Icon="input" Click="() => GetSelectionCards(chCard)" Value="3">
-                                        <RadzenMenuTemplate Items="dataSvs.SelectionCards">
-                                            <MenuItem Context="card">
-                                                <RadzenMenuItem Text="@card.Title" Click="()=> SetParentCard(card,chCard)" Value="5"></RadzenMenuItem>
-                                            </MenuItem>
-                                        </RadzenMenuTemplate>
-                                    </RadzenMenuItem>
-        </RadzenMenu>
-    );
-
+    
 
     private async Task GetSelectionCards(Card chCard)
     {
@@ -444,7 +542,7 @@ else
 
         dataSvs.MainProject = await dataSvs.GetProject();
        
-        contextMenuService.Close();
+       
     }
 
     #region Rename Card
@@ -456,7 +554,7 @@ else
         oldname = card.Title;
 
         card.Editable = true;
-        contextMenuService.Close();
+      
     }
 
     private async Task SaveCardName(Card card)
@@ -481,6 +579,6 @@ else
 
         await dataSvs.DeleteCard(card);
 
-        contextMenuService.Close();
+       
     }
 }

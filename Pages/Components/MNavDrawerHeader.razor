@@ -4,8 +4,6 @@
 @inject SharedDataService dataSvs
 
 
-@inject DialogService DialogService
-
 @switch (dataSvs.menustatus)
 {
     case "mainmenu":
@@ -297,10 +295,17 @@
 
     private async Task DownloadProject()
     {
-
+        #region after radzen
+        /*
 
         await DialogService.OpenAsync<SaveProjectDialogPage>("Save Project", null,
                 new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = true });
+
+         */
+        #endregion
+        
+    
+
 
         /*
 

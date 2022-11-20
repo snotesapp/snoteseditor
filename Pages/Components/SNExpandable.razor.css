@@ -1,0 +1,88 @@
+﻿body {
+    
+}
+
+div {
+    border: 1px solid #003c8f;
+   
+}
+span {
+   
+    
+   display:inline-block;
+   width:85%;
+   text-align:center;
+  
+   
+}
+
+.expanded {
+    background-color: transparent;
+    animation-name: expandedanimation;
+    animation-duration: 0.8s;
+    height: 120px;
+   
+}
+
+
+@keyframes expandedanimation {
+    0% {
+        height: 20px;
+      
+    }
+
+
+    100% {
+        height: 120px;
+        
+    }
+}
+
+.unexpanded {
+    background-color: transparent;
+    height: 20px;
+    animation-name: unexpandedanimation;
+    animation-duration: 0.8s;
+    
+}
+
+@keyframes unexpandedanimation {
+    0% {
+        height: 120px;
+    
+    }
+
+
+    100% {
+        
+
+        height: 20px;
+       
+    }
+}
+
+.childcontent {
+    position: relative;
+    animation-name: contentanim;
+    animation-duration: 0.7s;
+    border: none
+}
+@keyframes contentanim {
+    0% {
+        left: 0px;
+        top: -25px;
+    }
+
+    100% {
+        left: 0px;
+        top: 0px;
+    }
+}
+
+#label {
+    position: relative;
+    top: -10px;
+    border: none;
+    background-color: #5e92f3;
+    border-radius: 3px;
+}

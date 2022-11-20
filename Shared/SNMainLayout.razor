@@ -8,7 +8,7 @@
 @inherits LayoutComponentBase
 
 @inject SharedDataService dataSvs
-@inject Radzen.DialogService dialogService
+
 @inject ILocalStorageService localstorage
 
 
@@ -196,86 +196,6 @@ break;
 
 -->
 <!--
-    <div class="container-fluid bg-secondary " >
-
-
-<div class="row g-1" >
-
- <RadzenSplitter Orientation="Orientation.Vertical"  style="height: 150vh; border: 1px solid rgba(0,0,0,.08);">
-        <RadzenSplitterPane >
-            <RadzenSplitter  >
-                <RadzenSplitterPane  Min="10%" Max="20%">
-                      <nav class="navbar navbar-expand-lg navbar-light bg-light   " >
-                        <div class="container-fluid d-flex  align-items-start flex-column bd-highlight mb-3">
-                             <a class="navbar-brand  align-self-md-stretch " style="background-color:bisque" href="#">sNotes</a>
-
-                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
-                               <span class="navbar-toggler-icon"></span>
-                             </button>
-
-                             <div class="collapse navbar-collapse " style="width:100%;"  id="navbarSupportedContent2">
-
-@switch (dataSvs.menustatus)
-{
-case "mainmenu":
-                                 <SNNavMenu GoToMenu= "@(dataSvs.SwitchMenus)"  />
-break;
-case "collection":
-                                 <CollectionsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
-break;
-case "cards":
-                                 <CardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
-break;
-case "notetools":
-                                 <NoteTools BackToMain="@(dataSvs.SwitchMenus)"/>
-break;
-case "notecards":
-                                 <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)"/>
-break;
-default:
-                                 <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
-break;
-}
-
-
-                             </div>
-
-                     </div>
-
-
-
-                    </nav>
-
-                </RadzenSplitterPane>
-
-                <RadzenSplitterPane >
-                <main >
-                      <div class="top-row px-4" style="background-color:burlywood; Height:60px; ">
-                          <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-                      </div>
-
-                      <article class="content px-4 "  >
-@Body
-                      </article>
-                </main>
-
-                </RadzenSplitterPane>
-            </RadzenSplitter>
-        </RadzenSplitterPane>
-
-
-  </RadzenSplitter>
-
-
-</div>
-
-// ModalDialog Here
-
-
-</div>
-
--->
-<!--
 <div class="row g-1" >
 
 
@@ -358,10 +278,6 @@ break;
 -->
 
 
-<RadzenDialog />
-<RadzenNotification />
-<RadzenContextMenu />
-<RadzenTooltip />
 
 <!--
 
@@ -387,16 +303,9 @@ break;
     protected override void OnInitialized()
     {
 
-
-        dialogService.OnClose -= CloseDialog;
-        dialogService.OnClose += CloseDialog;
-
-
         dataSvs.OnChange += StateHasChanged;
 
         MessageService.OnMessage += MessageHandler;
-
-
 
     }
 

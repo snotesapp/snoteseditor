@@ -13,17 +13,14 @@
 @using SkiaSharp.Views.Blazor
 
 @inject SharedDataService dataSvs
-@inject ContextMenuService contextMenuService
-
 
 
 <MCol>
     <MRow>
-       
+
         <MCard Elevation="3" Class=" m-1 p-0 " Width="@(dataSvs.editNote.MainImgWidth )" Height="@(dataSvs.editNote.MainImgHeight -80)"
-            
                Style="overflow:auto;">
-          
+
             <div @ref="@dropZoneElement" class="position-relative "
                  style="
                         width: @(dataSvs.editNote.MainImgWidth)px;
@@ -32,8 +29,7 @@
                         background-color:@dataSvs.editNote.BackgroundColor;
                         z-index:1
                         "
-                
-                 @oncontextmenu="@(args => CanvasContextMenu(args))"
+                 @oncontextmenu="@(args => ShowCanvasContextMenu(args))"
                  @oncontextmenu:preventDefault="true"
                  @onpointermove="((de) => ImgDragOver(de))">
 
@@ -46,13 +42,12 @@
                             {
                                 <div class="position-absolute" style="left:@(ncimg.X)px;
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
-                                    @oncontextmenu="@(args => { ImgContextMenuWithContent(args,ncimg);})"
-                                    @oncontextmenu:preventDefault="true"
-                                    @oncontextmenu:stopPropagation>
+                             @oncontextmenu="@(args => ShowImgContextMenu(args,ncimg))"
+                             @oncontextmenu:preventDefault="true"
+                             @oncontextmenu:stopPropagation>
 
-                                <img id="ncimage_@ncimg.NoteImageID"
+                                    <img id="ncimage_@ncimg.NoteImageID"
                                  @onclick="(() => SelectImage(ncimg))"
-                                 
                                  class="rounded mx-auto d-block  "
                                  width="@ncimg.Width" height="@ncimg.Height"
                                  style="
@@ -61,24 +56,24 @@
                                  draggable="false"
                                  src="@ncimg.Location">
 
-                              
+
 
 
                                 </div>
 
-                            }else{
-                                 <div class="position-absolute" style="left:@(ncimg.X)px;
+                            }
+                            else
+                            {
+                                <div class="position-absolute" style="left:@(ncimg.X)px;
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
-                             @oncontextmenu="@(args => { ImgContextMenuWithContent(args,ncimg);})"
-                            
+                             @oncontextmenu="@(args =>  ShowImgContextMenu(args,ncimg))"
                              @oncontextmenu:preventDefault="true"
                              @oncontextmenu:stopPropagation>
 
 
-
-                                <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))"
+                                    <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))"
                                  @onpointerdown="((de) => ImgDragStart(de,ncimg))"
-                                 @onpointerup="((de) => ImgDragEnd(de,ncimg))" 
+                                 @onpointerup="((de) => ImgDragEnd(de,ncimg))"
                                  class="rounded mx-auto d-block  "
                                  width="@ncimg.Width" height="@ncimg.Height"
                                  style="
@@ -88,19 +83,17 @@
                                  draggable="false"
                                  src="@ncimg.Location">
 
-                                <div class="position-absolute top-100 start-100 translate-middle" draggable="true"
+                                    <div class="position-absolute top-100 start-100 translate-middle" draggable="true"
                                  style="cursor:nwse-resize;border-style:none solid solid none;width:15px;height:15px"
-                                
                                  @ondragstart="((re) => ResizeStart(re,ncimg))"
                                  @ondrag="((re) => ResizeMove(re,ncimg))"
                                  @ondragend="((re) => ResizeEnd(re,ncimg))">
-                                  
+                                    </div>
+
+
                                 </div>
-
-
-                            </div>
                             }
-                           
+
 
                         </ImgTemplate>
 
@@ -153,10 +146,10 @@
                 </div>
 
             </div>
-           
-            <MExpansionPanels  id="summarypannel" Class="elevation-6" Style="width:50%;position:absolute;bottom:-85px;left:25%">
 
-                <MExpansionPanel >
+            <MExpansionPanels id="summarypannel" Class="elevation-6" Style="width:50%;position:absolute;bottom:-85px;left:25%">
+
+                <MExpansionPanel>
                     <MExpansionPanelHeader DisableIconRotate>
 
                         <ChildContent>
@@ -182,7 +175,7 @@
                     </MExpansionPanelHeader>
                     <MExpansionPanelContent>
                         <MTextarea Outlined NoResize Counter="true" Clearable Rules="_rules"
-                                  Placeholder="Write something"
+                                   Placeholder="Write something"
                                    @bind-Value="@(dataSvs.editNote.Text)">
 
 
@@ -192,13 +185,92 @@
                 </MExpansionPanel>
 
             </MExpansionPanels>
-           
+
+            @if (ContextImg != null)
+            {
+                <MMenu @bind-Value="ShowImgContext"
+                   PositionX="X"
+                   PositionY="Y"
+                   Absolute
+                   CloseOnContentClick="false">
+                    <MList Dense Width="200">
+
+                        <MListItem OnClick="() =>  ImgZoomIn(ContextImg)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-magnify-plus-outline
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    ZoomIn
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+                        <MListItem OnClick="() => ImgZoomOut(ContextImg)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-magnify-minus-outline
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    ZoomOut
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+                        <MListItem OnClick="() => RemoveNoteImg(ContextImg)">
+                            <MListItemIcon>
+                                <MIcon>
+
+                                    mdi-image-remove
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    Remove
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+                    </MList>
+                </MMenu>
+
+            }
+
+            <MMenu @bind-Value="ShowCanvasContext"
+                   PositionX="X"
+                   PositionY="Y"
+                   Absolute
+                   CloseOnContentClick>
+                <MList Dense Width="200">
+                    <MListItem OnClick="() => PastClipboardImg()">
+                        <MListItemIcon>
+                            <MIcon>
+                                mdi-image-plus
+                            </MIcon>
+                        </MListItemIcon>
+                        <MListItemContent>
+
+                            <MListItemTitle>
+                                Past Image
+                            </MListItemTitle>
+                        </MListItemContent>
+                    </MListItem>
+
+                </MList>
+            </MMenu>
+
         </MCard>
 
     </MRow>
 
 
 </MCol>
+
 
 
 @code {
@@ -235,7 +307,11 @@
                   v =>  v is not null && v.Length <= 1500 ? true : "Max 1500 characters"
                 };
 
-
+    private NoteImage? ContextImg = null;
+    private bool ShowImgContext;
+    double X = 0;
+    double Y = 0;
+    private bool ShowCanvasContext;
 
 
     protected override void OnInitialized()
@@ -251,6 +327,8 @@
         //   dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
 
         filesAndDirectories = new FilesAndDirectories(dataSvs);
+
+
         dataSvs.OnChange += StateHasChanged;
 
     }
@@ -265,6 +343,7 @@
     {
         if (firstRender)
         {
+
             //for load JS File
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             // For Initialize the Drop Zone
@@ -275,7 +354,6 @@
 
 
 
-
             dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
             dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
 
@@ -283,35 +361,21 @@
 
 
 
-
-
-
-
-
             foreach (NotePath notePath in dataSvs.editNote.NotePaths)
             {
 
                 dataSvs.completedPolylines.Add(new FingerPaintPolyline()
-                        {
-                            Path = SKPath.ParseSvgPathData(notePath.SvgPath),
-                            StrokeBlendMode =  Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode),
-                            StrokeColor = SKColor.Parse(notePath.StrokeColor),
-                            StrokeWidth = notePath.StrokeWidth
-
-
+                    {
+                        Path = SKPath.ParseSvgPathData(notePath.SvgPath),
+                        StrokeBlendMode = Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode),
+                        StrokeColor = SKColor.Parse(notePath.StrokeColor),
+                        StrokeWidth = notePath.StrokeWidth
 
                     });
 
 
-
-
-
                 //  dataSvs.saveBitmap = SKBitmap.Decode(dataSvs.editNote.MainImg);
             }
-
-
-
-
 
             /*
             *
@@ -368,7 +432,7 @@
     }
 
 
-    
+
     // Unregister the drop zone events
     public async ValueTask DisposeAsync()
     {
@@ -419,7 +483,6 @@
 
 
     }
-
     private void ResizeEnd(DragEventArgs re, NoteImage _noteImage)
     {
         /*
@@ -432,10 +495,6 @@
         // _noteImage.Width = dragedNoteImage.Width;
         //_noteImage.Height = dragedNoteImage.Height;
     }
-
-
-
-
     private void ImgDragStart(PointerEventArgs de, NoteImage _noteImage)
     {
 
@@ -448,7 +507,6 @@
         pos4 = Convert.ToInt16(de.ClientY);
 
     }
-
     private void ImgDragEnd(PointerEventArgs de, NoteImage _noteImage)
     {
         dragstarted = false;
@@ -457,7 +515,6 @@
 
 
     }
-
     private void ImgDragOver(PointerEventArgs de)
     {
 
@@ -484,8 +541,6 @@
 
 
     }
-
-
     private void ImgZoomIn(NoteImage _noteImage)
     {
         if ((_noteImage.X + _noteImage.Width) < dataSvs.Wdimension.Width && (_noteImage.Y + _noteImage.Height) < dataSvs.Wdimension.Height)
@@ -497,7 +552,6 @@
         }
 
     }
-
     private void ImgZoomOut(NoteImage _noteImage)
     {
         _noteImage.Width -= (_noteImage.Width * 2 / 100); ;
@@ -505,15 +559,16 @@
 
 
     }
-
-    private void SelectImage(NoteImage _noteImage){
+    private void SelectImage(NoteImage _noteImage)
+    {
 
         dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
         _noteImage.Selected = true;
 
 
     }
-    private void UnSelectImage(NoteImage _noteImage){
+    private void UnSelectImage(NoteImage _noteImage)
+    {
 
         _noteImage.Selected = false;
         // dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
@@ -524,18 +579,18 @@
     #region Drawing
 
     SKPaint paint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                IsAntialias = true,
-                StrokeCap = SKStrokeCap.Round,
-                StrokeJoin = SKStrokeJoin.Round,
+        {
+            Style = SKPaintStyle.Stroke,
+            IsAntialias = true,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
 
-                //  BlendMode = SKBlendMode.SrcOver,
-                //   Color = SKColors.Red,
-                //   StrokeWidth = 8
+            //  BlendMode = SKBlendMode.SrcOver,
+            //   Color = SKColors.Red,
+            //   StrokeWidth = 8
 
 
-            };
+        };
 
 
     void OnPaintSurface(SKPaintSurfaceEventArgs args)
@@ -547,27 +602,27 @@
 
         /*
         if (dataSvs.EditMode == false)
-            {
+        {
 
         // Create bitmap the size of the display surface
         if (dataSvs.saveBitmap == null)
         {
         dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-            }
-            // Or create new bitmap for a new size of display surface
-            else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
-            {
-            SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
-    Math.Max(dataSvs.saveBitmap.Height, info.Height));
-
-    using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+        }
+        // Or create new bitmap for a new size of display surface
+        else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
         {
-        newCanvas.Clear();
-        newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
-            }
+        SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
+          Math.Max(dataSvs.saveBitmap.Height, info.Height));
+
+          using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+        {
+          newCanvas.Clear();
+          newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+        }
 
         dataSvs.saveBitmap = newBitmap;
-                }
+        }
 
 
 
@@ -578,58 +633,47 @@
         foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
         {
 
-    paint.Color = polyline.StrokeColor;
-    paint.StrokeWidth = polyline.StrokeWidth;
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
         paint.BlendMode = polyline.StrokeBlendMode;
         canvas.DrawPath(polyline.Path, paint);
 
 
-            }
+        }
 
         foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
         {
 
-    paint.Color = polyline.StrokeColor;
-    paint.StrokeWidth = polyline.StrokeWidth;
-    paint.BlendMode = polyline.StrokeBlendMode;
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
+        paint.BlendMode = polyline.StrokeBlendMode;
 
-            canvas.DrawPath(polyline.Path, paint);
+        canvas.DrawPath(polyline.Path, paint);
 
-          }
+        }
 
 
 
         }
         else
-            {
+        {
 
         if (dataSvs.BitmapDrawed == false)
-    {
-    canvas.Clear();
-    // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
+        {
+        canvas.Clear();
+        // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
 
-    dataSvs.BitmapDrawed = true;
-
-        }
-
-
-
-    // canvas.Clear();
-
-
-    foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
-            {
-
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-    paint.BlendMode = polyline.StrokeBlendMode;
-        canvas.DrawPath(polyline.Path, paint);
-
+        dataSvs.BitmapDrawed = true;
 
         }
 
-    foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-            {
+
+
+        // canvas.Clear();
+
+
+        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
+        {
 
         paint.Color = polyline.StrokeColor;
         paint.StrokeWidth = polyline.StrokeWidth;
@@ -638,6 +682,17 @@
 
 
         }
+
+        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
+        {
+
+        paint.Color = polyline.StrokeColor;
+        paint.StrokeWidth = polyline.StrokeWidth;
+        paint.BlendMode = polyline.StrokeBlendMode;
+        canvas.DrawPath(polyline.Path, paint);
+
+
+            }
 
 
 
@@ -686,13 +741,13 @@
                     SKColor strokeColor = dataSvs.selectedColor;
 
                     FingerPaintPolyline polyline = new FingerPaintPolyline
-                            {
-                                StrokeColor = strokeColor,
-                                StrokeWidth = dataSvs.strokeWidth,
-                                StrokeBlendMode = SKBlendMode.Src,
+                        {
+                            StrokeColor = strokeColor,
+                            StrokeWidth = dataSvs.strokeWidth,
+                            StrokeBlendMode = SKBlendMode.Src,
 
 
-                            };
+                        };
 
                     polyline.Path.MoveTo(new SKPoint((float)e.OffsetX, (float)e.OffsetY));
                     dataSvs.inProgressPolylines.Add(e.PointerId, polyline);
@@ -742,30 +797,32 @@
                             if (notePath.PathID == 0)
                             {
                                 dataSvs.editNote.NotePaths.Remove(notePath);
-                            }else{
+                            }
+                            else
+                            {
                                 dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
                             }
-                        
-                        // dataSvs.editNote.NotePaths.RemoveAll(pth => pth.SvgPath == deletePath.Path.ToSvgPathData());
-                        dataSvs.skiaView.Invalidate();
+
+                            // dataSvs.editNote.NotePaths.RemoveAll(pth => pth.SvgPath == deletePath.Path.ToSvgPathData());
+                            dataSvs.skiaView.Invalidate();
+                        }
+
+
                     }
 
-
-                }
-
-                break;
-            default:
-                break;
-        }
+                    break;
+                default:
+                    break;
+            }
 
         }
         catch (Exception ex)
         {
-            
+
             Error?.ProcessError(ex);
         }
 
-       
+
 
 
 
@@ -786,28 +843,28 @@
 
                     //string svgdata = dataSvs.completedPolylines[0].Path.ToSvgPathData();
                     /*
-               
+
                     */
-                   
+
                     NotePath notePath = new NotePath()
-                            {
-                                SvgPath = dataSvs.inProgressPolylines[e.PointerId].Path.ToSvgPathData(),
-                                StrokeBlendMode = dataSvs.inProgressPolylines[e.PointerId].StrokeBlendMode.ToString(),
-                                StrokeColor = dataSvs.inProgressPolylines[e.PointerId].StrokeColor.ToString(),
-                                StrokeWidth = (int)dataSvs.inProgressPolylines[e.PointerId].StrokeWidth
-                            };
+                        {
+                            SvgPath = dataSvs.inProgressPolylines[e.PointerId].Path.ToSvgPathData(),
+                            StrokeBlendMode = dataSvs.inProgressPolylines[e.PointerId].StrokeBlendMode.ToString(),
+                            StrokeColor = dataSvs.inProgressPolylines[e.PointerId].StrokeColor.ToString(),
+                            StrokeWidth = (int)dataSvs.inProgressPolylines[e.PointerId].StrokeWidth
+                        };
 
                     dataSvs.editNote.NotePaths.Add(notePath);
 
                     dataSvs.inProgressPolylines.Remove(e.PointerId);
 
                     UpdateBitmap();
-      
-                }
-                
 
-               
-                
+                }
+
+
+
+
 
                 break;
             case PaintMode.Eraser:
@@ -865,10 +922,10 @@
                 saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
             }
             /*
-                foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.inProgressPolylines.Values)
+            foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.inProgressPolylines.Values)
             {
-                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
-            }
+            saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
+             }
 
              */
 
@@ -886,59 +943,92 @@
 
     #endregion
 
-    void ImgContextMenuWithContent(MouseEventArgs args, NoteImage noteImage) => contextMenuService.Open(args, ds =>
+    private async Task ShowImgContextMenu(MouseEventArgs args, NoteImage noteImage)
+    {
+        ShowImgContext = false;
+        ShowCanvasContext = false;
+        ContextImg = null;
 
-    @<RadzenMenu>
-                 <RadzenMenuItem Text="Remove" Icon="delete_outline" Click="() => RemoveNoteImg(noteImage)"></RadzenMenuItem>
-                 <RadzenMenuItem Text="ZoomIn" Icon="zoom_in" Click="() => ImgZoomIn(noteImage)"></RadzenMenuItem>
-                 <RadzenMenuItem Text="ZoomOut" Icon="zoom_out" Click="() => ImgZoomOut(noteImage)"></RadzenMenuItem>
-       
-    </RadzenMenu>
-        );
+        await Task.Delay(16);
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextImg = noteImage;
+        ShowImgContext = true;
+
+    }
+
+    private async Task ShowCanvasContextMenu(MouseEventArgs args)
+    {
+        ShowCanvasContext = false;
+        ShowImgContext = false;
+        ContextImg = null;
+
+        await Task.Delay(16);
+        X = args.ClientX;
+        Y = args.ClientY;
+
+        ShowCanvasContext = true;
+
+
+    }
 
     private async Task RemoveNoteImg(NoteImage noteImage)
     {
-        if (dataSvs.editNote.NoteID == 0)
+        try
         {
-            dataSvs.editNote.Images.Remove(noteImage);
+            if (dataSvs.editNote.NoteID == 0)
+            {
+                dataSvs.editNote.Images.Remove(noteImage);
+
+            }
+            else
+            {
+
+                await dataSvs.DeleteNoteImg(noteImage);
+            }
 
         }
-        else
+        catch (Exception ex)
         {
 
-            await dataSvs.DeleteNoteImg(noteImage);
+            Error?.ProcessError(ex);
+        }
+        finally
+        {
+            ContextImg = null;
+            ShowImgContext = false;
         }
 
-        contextMenuService.Close();
+
     }
 
 
 
-
-    void CanvasContextMenu(MouseEventArgs args) => contextMenuService.Open(args, ds =>
-    @<RadzenMenu Style="width:200px">
-                <RadzenMenuItem Text="Past Image" Icon="image" Click="PastClipboardImg" Value="1"></RadzenMenuItem>
-
-    </RadzenMenu>
-    );
-
-
-    async Task PastClipboardImg(MenuItemEventArgs args)
+    async Task PastClipboardImg()
     {
 
-        String imgBase64 = await _module.InvokeAsync<String>("pasteImage");
-        byte[] bitArrayImg = Convert.FromBase64String(imgBase64.Substring(imgBase64.LastIndexOf(',') + 1));
+        try
+        {
+            String imgBase64 = await _module.InvokeAsync<String>("pasteImage");
+            byte[] bitArrayImg = Convert.FromBase64String(imgBase64.Substring(imgBase64.LastIndexOf(',') + 1));
 
-        string fPath = filesAndDirectories.CreateImagePath(CollectionId, "clipedimage");
-        await filesAndDirectories.SaveImageLocaly(fPath, bitArrayImg);
+            string fPath = filesAndDirectories.CreateImagePath(CollectionId, "clipedimage");
+            await filesAndDirectories.SaveImageLocaly(fPath, bitArrayImg);
 
-        Stream stream = new MemoryStream(bitArrayImg);
-        var dotnetImageStream = new DotNetStreamReference(stream);
-        //var urlstrng = await _module.InvokeAsync<string>("imgPathToSrc", fPath);
-        var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
+            Stream stream = new MemoryStream(bitArrayImg);
+            var dotnetImageStream = new DotNetStreamReference(stream);
+            //var urlstrng = await _module.InvokeAsync<string>("imgPathToSrc", fPath);
+            var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
 
-        SaveImage(fPath, "image/png");
-        contextMenuService.Close();
+            SaveImage(fPath, "image/png");
+
+
+        }
+        catch (Exception ex)
+        {
+
+            Error?.ProcessError(ex);
+        }
 
     }
 

@@ -37,7 +37,9 @@ namespace BlazorApp1.Helpers
         {
             Text = "",
             Images = new List<NoteImage>(),
-            NotePaths = new List<NotePath>()
+            NotePaths = new List<NotePath>(),
+            BackgroundColor = "#FB7B5C"
+
         };
 
        
@@ -459,7 +461,7 @@ namespace BlazorApp1.Helpers
             {
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-                BackgroundColor = defaultBackgroundColor,
+                BackgroundColor = "#FB7B5C",
 
                 MainImgWidth = Wdimension.Width,
                 MainImgHeight = Wdimension.Height
@@ -602,10 +604,11 @@ namespace BlazorApp1.Helpers
 
         public float strokeWidth = 8;
         public SKColor selectedColor;
-        public string defaultColor = "rgb(0,0,0)";
-
-        public SKColor selectedBackgroundColor;
-        public string defaultBackgroundColor = "rgb(255,222,184)";
+        // public string defaultColor = "rgb(0,0,0)";
+        public string defaultColor = "#000000";
+        // public SKColor selectedBackgroundColor;
+        //public string defaultBackgroundColor = "rgb(255,222,184)";
+        //public string defaultBackgroundColor ;
 
 
         public void ClearCanvas()
@@ -625,27 +628,10 @@ namespace BlazorApp1.Helpers
 
         public void EnableDraw()
         {
-            paintMode = PaintMode.Pen;
+           paintMode = PaintMode.Pen;
            PointerEvent = "auto";
-            if (defaultColor.Contains("rgba"))
-            {
-                byte r = Byte.Parse(defaultColor.Replace("rgba", "").Replace("(", "").Replace(")", "").Split(",")[0]);
-                byte g = Byte.Parse(defaultColor.Replace("rgba", "").Replace("(", "").Replace(")", "").Split(",")[1]);
-                byte b = Byte.Parse(defaultColor.Replace("rgba", "").Replace("(", "").Replace(")", "").Split(",")[2]);
-                float a = float.Parse(defaultColor.Replace("rgba", "").Replace("(", "").Replace(")", "").Split(",")[3], CultureInfo.InvariantCulture.NumberFormat);
-               
-                selectedColor = new SKColor(r, g, b,Convert.ToByte(255*a));
-
-            }
-            else
-            {
-                byte r = Byte.Parse(defaultColor.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[0]);
-                byte g = Byte.Parse(defaultColor.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[1]);
-                byte b = Byte.Parse(defaultColor.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[2]);
-
-                selectedColor = new SKColor(r, g, b);
-            }
-
+            selectedColor = SKColor.Parse(defaultColor);
+           
             NotifyStateChanged();
 
         }
@@ -659,10 +645,11 @@ namespace BlazorApp1.Helpers
 
         public void EnableTransparentColor()
         {
-
+            paintMode = PaintMode.Pen;
+           
             PointerEvent = "auto";
-            selectedColor = selectedColor.WithAlpha(120);
-
+            //selectedColor = selectedColor.WithAlpha(100);
+            selectedColor = SKColor.Parse(defaultColor.Replace("#", "#99"));
             NotifyStateChanged();
 
         }

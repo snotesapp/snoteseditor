@@ -1,4 +1,4 @@
-﻿@page "/dialogcard/{FileID}"
+﻿@*@page "/dialogcard/{FileID}"
 
 @using BlazorApp1.Data
 @using BlazorApp1.Helpers
@@ -8,7 +8,6 @@
 @using Blazored.SessionStorage
 
 @inject SharedDataService dataSvs
-@inject Radzen.DialogService dialogService
 @inject NavigationManager navigation
 
 @inject ILocalStorageService localstorage1
@@ -196,7 +195,7 @@
 
             }
             */
-            dialogService.Close();
+            //dialogService.Close();
         }
 
 
@@ -264,7 +263,7 @@
 
         }
          */
-        dialogService.Close();
+        //dialogService.Close();
 
     }
 
@@ -281,7 +280,7 @@
         progress = progressValue;
         await Task.Delay(2000);
         StateHasChanged();
-        dialogService.Refresh();
+       // dialogService.Refresh();
 
     }
 
@@ -304,7 +303,7 @@
 
         }
         */
-        dialogService.Close();
+        //dialogService.Close();
 
     }
 
@@ -316,3 +315,4 @@
         
     }
 }
+*@

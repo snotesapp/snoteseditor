@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Radzen;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -55,10 +55,7 @@ builder.Services.AddDbContextFactory<SNotesDBContext>(x => x.UseSqlite("Data Sou
 
 
 
-builder.Services.AddScoped<DialogService>();
-builder.Services.AddScoped<NotificationService>();
-builder.Services.AddScoped<TooltipService>();
-builder.Services.AddScoped<ContextMenuService>();
+
 
 
 builder.Services.AddOidcAuthentication(options => {

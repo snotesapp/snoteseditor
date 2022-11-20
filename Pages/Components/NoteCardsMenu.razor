@@ -6,7 +6,7 @@
 
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
-@inject ContextMenuService contextMenuService
+
 @inject IMessageService MessageService
 
 <MContainer Style="height:calc(100vh - 170px); overflow:auto">
@@ -26,7 +26,7 @@
 
                             <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                            Dark
-                           @oncontextmenu="@(args => { DragModeContextMenuWithContent(args);})" __internal_preventDefault_oncontextmenu>
+                           @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
                                 <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
                                     <MCardText Class="lh-sm text-body">
@@ -85,19 +85,52 @@
                 </ListTemplate>
             </MDragZone>
 
+         @if (ContextMenuNoteCard != null)
+        {
+           <MMenu @bind-Value="ShowNoteCardContext"
+           PositionX="X"
+           PositionY="Y"
+           CloseOnContentClick
+           Absolute
+           OffsetY
+           >
+                <MList Dense Width="200">
+                
+               
+                        <MListItem OnClick="() => SetDragMode()">
+                            <MListItemIcon>
+                                <MIcon>
+                                   mdi-arrow-vertical-lock 
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    Disable Sorting Mode
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
 
+
+
+
+                   
+
+                </MList>
+            </MMenu>
+        }
+       
         }
         else
         {
 
 
-            <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
+        <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
                 <RowTemplate Context="notecard">
 
                     <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                    Dark
                    @onclick="()=> SelectNoteCard(notecard)"
-                   @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" __internal_preventDefault_oncontextmenu>
+                   @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
                             <MCardText Class="lh-sm text-body">
@@ -133,7 +166,55 @@
                 </RowTemplate>
 
             </ListTemplate>
+         
+        @if (ContextMenuNoteCard != null)
+        {
+         <MMenu @bind-Value="ShowNoteCardContext"
+           PositionX="X"
+           PositionY="Y"
+           Absolute
+           OffsetY
+           CloseOnContentClick
+           >
+                <MList Dense Width="200">
+               
+               
+                        <MListItem OnClick="() => SetDragMode()">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-swap-vertical 
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    Enable Sorting Mode
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
 
+                        <MListItem OnClick="() => DeleteNoteCard(ContextMenuNoteCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-close
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    Remove
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+
+
+
+                   
+
+                </MList>
+            </MMenu>
+        }
+       
 
         }
 
@@ -156,10 +237,11 @@
                             <MListItem Link style="background-color:#1565c0; margin-bottom:2px"
                                Color="white" Class="elevation-4  rounded-3"
                                OnClick="()=>SelectChildCard(card)"
-                               @oncontextmenu="@(args => { CardContextMenuWithContent(args,card);})"
+                               @oncontextmenu="@(args => {ShowCardContextMenu(args,card);})"
                                __internal_preventDefault_oncontextmenu>
                                 <MListItemContent>
                                     <MListItemTitle>@card.Title </MListItemTitle>
+                                   
                                 </MListItemContent>
                             </MListItem>
 
@@ -172,10 +254,88 @@
 
         </MList>
 
+        @if (ContextMenuCard != null)
+        {
+           <MMenu Value="true"
+           PositionX="X"
+           PositionY="Y"
+           Absolute
+           OffsetY
+           OnOutsideClick="(() => ContextMenuCard = null)">
+                <MList Dense Width="200">
 
+                    @if (ContextMenuCard.Selected == true)
+                    {
+                        <MListItem OnClick="() => PinPacket(ContextMenuCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-pin-off
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    UnPin Packet
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+                        <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-close
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    Remove
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+
+
+                    }
+                    else
+                    {
+
+                        <MListItem OnClick="() => PinPacket(ContextMenuCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-pin
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    Pin Packet
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+                        <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-close
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+                                <MListItemTitle>
+                                    Remove
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
+                    }
+
+                </MList>
+            </MMenu>
+        }
+       
     }
 
    
+
 </MContainer>
 
 <div class="d-inline-flex justify-content-evenly border-top border-secondary mb-0 align-items-center" style="height:40px">
@@ -207,6 +367,35 @@
 
     private bool NotesMenuSelected = true;
 
+    private Card? ContextMenuCard = null;
+    private NoteCard? ContextMenuNoteCard = null;
+    private bool ShowNoteCardContext;
+    double X = 0;
+    double Y = 0;
+
+
+    private void ShowCardContextMenu(MouseEventArgs args, Card chCard)
+    {
+        ContextMenuCard = null;
+        // await Task.Delay(16);
+
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextMenuCard = chCard;
+    }
+
+    private void ShowNoteCardContextMenu(MouseEventArgs args, NoteCard noteCard )
+    {
+        ShowNoteCardContext = false;
+        ContextMenuNoteCard = null;
+        // await Task.Delay(16);
+
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextMenuNoteCard = noteCard;
+        ShowNoteCardContext = true;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
 
@@ -215,10 +404,6 @@
 
 
     }
-
-
-
-
 
     private Task GoToMainMenu()
     {
@@ -239,26 +424,6 @@
         dataSvs.OnChange -= StateHasChanged;
     }
 
-    void NoteCardContextMenuWithContent(MouseEventArgs args, NoteCard noteCard) => contextMenuService.Open(args, ds =>
-
-    @<RadzenMenu>
-
-                <RadzenMenuItem Text="Remove" Icon="clear" Click="() => DeleteNoteCard(noteCard)"></RadzenMenuItem>
-                <RadzenMenuItem Text="Enable Sorting Mode" Icon="swap_vert" Click="() => SetDragMode()"></RadzenMenuItem>
-
-    </RadzenMenu>
-    );
-
-    void DragModeContextMenuWithContent(MouseEventArgs args) => contextMenuService.Open(args, ds =>
-
-    @<RadzenMenu>
-
-        <RadzenMenuItem Text="Disable Sorting Mode" Icon="highlight_off" Click="() => SetDragMode()"></RadzenMenuItem>
-
-    </RadzenMenu>
-        );
-
-
 
     private async Task DeleteNoteCard(NoteCard noteCard)
     {
@@ -269,13 +434,11 @@
         StateHasChanged();
 
         //MessageService.SendMessage();
-        contextMenuService.Close();
-
+        //  contextMenuService.Close();
+        ShowNoteCardContext = false;
 
 
     }
-
-
 
     private async Task SelectNoteCard(NoteCard noteCard)
     {
@@ -302,10 +465,8 @@
 
     }
 
-
     private async void DropNoteCard(SorttableEventArgs sorttableEventArgs)
     {
-
 
         NoteCard movedNoteCard = dataSvs.SelectedCard.NoteCards[sorttableEventArgs.OldIndex];
 
@@ -325,27 +486,6 @@
 
     }
 
-    void CardContextMenuWithContent(MouseEventArgs args, Card chCard) => contextMenuService.Open(args, ds =>
-
-    @<RadzenMenu>
-                @if (chCard.Selected == true)
-        {
-            <RadzenMenuItem Text="UnPin Packet" Icon="bookmark_remove" Click="() => PinPacket(chCard)">
-              
-            </RadzenMenuItem>
-           <RadzenMenuItem Text="Remove" Icon="clear" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
-
-        }
-        else
-        {
-            <RadzenMenuItem Text="Pin Packet" Icon="bookmark" Click="() => PinPacket(chCard)"></RadzenMenuItem>
-            <RadzenMenuItem Text="Remove" Icon="clear" Click="() => RemoveSubPacket(chCard)"></RadzenMenuItem>
-
-        }
-
-    </RadzenMenu>
-    );
-
     private async Task PinPacket(Card card)
     {
         if (card.Selected == true)
@@ -358,9 +498,9 @@
         }
 
         await dataSvs.UpdateCard(card);
-       // dataSvs.MainProject = await dataSvs.GetProject();
-        contextMenuService.Close();
-
+        // dataSvs.MainProject = await dataSvs.GetProject();
+        // contextMenuService.Close();
+        ContextMenuCard = null;
     }
     private async Task RemoveSubPacket(Card card)
     {
@@ -369,11 +509,12 @@
         card.Selected = true;
         await dataSvs.UpdateCard(card);
         await dataSvs.GetCard(dataSvs.SelectedCard);
-        contextMenuService.Close();
+        //contextMenuService.Close();
+        ContextMenuCard = null;
 
     }
 
-    
+
     private void SetDragMode()
     {
         if (dataSvs.ncDragingMode)
@@ -385,7 +526,8 @@
             dataSvs.ncDragingMode = true;
         }
         StateHasChanged();
-        contextMenuService.Close();
+        ShowNoteCardContext = false;
+        //contextMenuService.Close();
     }
 
     private void SetOptions(SorttableOptions options)

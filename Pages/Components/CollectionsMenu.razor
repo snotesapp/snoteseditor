@@ -4,7 +4,7 @@
 
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
-@inject ContextMenuService contextMenuService
+
 
 <!--
 
@@ -30,7 +30,7 @@
                             {
                                 <MListItem Link style="background-color:#1565c0"
                                    @ondblclick="() => SetCollection(coll)"
-                                   @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})"
+                                   @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
                                    __internal_preventDefault_oncontextmenu
                                    Color="white" Class="elevation-4  rounded-3">
                                     <MListItemContent>
@@ -52,7 +52,7 @@
 
                                 <MListItem Link style="background-color:#ffb07e" 
                                    @ondblclick="() => SetCollection(coll)"
-                                   @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})"
+                                   @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
                                    __internal_preventDefault_oncontextmenu
                                    Color="black" Class="elevation-4  rounded-3">
                                     <MListItemContent>
@@ -83,6 +83,7 @@
                         }
 
                     </div>
+                    
 
                 </RowTemplate>
 
@@ -92,6 +93,99 @@
 
     </MRow>
 </MContainer>
+
+
+@if(ContextMenuNotesCollection != null){
+<MMenu @bind-Value="ShowNCContext"
+       PositionX="X"
+       PositionY="Y"
+       Absolute
+       OffsetY
+       CloseOnContentClick>
+    <MList Dense Width="200">
+
+    <MListItem OnClick="() => AddNCNotes(ContextMenuNotesCollection)">
+            <MListItemIcon>
+                <MIcon>
+                    mdi-shape-rectangle-plus
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+                <MListItemTitle>
+                    Add Notes
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+ @if (ContextMenuNotesCollection.Selected == true)
+{
+            <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-checkbox-blank-outline 
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
+                    <MListItemTitle>
+                        UnSelect
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
+
+
+}
+else
+{
+            <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-checkbox-marked-outline 
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
+                    <MListItemTitle>
+                        Select
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
+
+}
+
+
+       
+        <MListItem OnClick="() => RenameCollection(ContextMenuNotesCollection)">
+            <MListItemIcon>
+                <MIcon>
+                    mdi-form-textbox
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+
+                <MListItemTitle>
+                    Rename
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+        <MListItem OnClick="() => DeleteNC(ContextMenuNotesCollection)">
+            <MListItemIcon>
+                <MIcon>
+                    mdi-delete-outline
+                </MIcon>
+            </MListItemIcon>
+            <MListItemContent>
+
+                <MListItemTitle>
+                    Delete
+                </MListItemTitle>
+            </MListItemContent>
+        </MListItem>
+
+
+    </MList>
+</MMenu>
+
+}
 
 
 
@@ -105,6 +199,13 @@
 
 
     private string editNCTitle { get; set; }
+
+    private NotesCollection? ContextMenuNotesCollection = null;
+    private bool ShowNCContext;
+    double X = 0;
+    double Y = 0;
+
+
 
     private Task GoToMainMenu()
     {
@@ -122,26 +223,19 @@
     }
 
 
+    private void ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
+    {
+        ContextMenuNotesCollection =null;
+        ShowNCContext = false;
+        // await Task.Delay(16);
 
-    void NCContextMenuWithContent(MouseEventArgs args, NotesCollection notesCollection) => contextMenuService.Open(args, ds =>
+        X = args.ClientX;
+        Y = args.ClientY;
+        ContextMenuNotesCollection = notesCollection;
+        ShowNCContext = true;
+    }
 
-    @<RadzenMenu Style="width:200px">
 
-        <RadzenMenuItem Text="Add Notes" Icon="add_circle_outline" Click="() => AddNCNotes(notesCollection)">  </RadzenMenuItem>
-
-        @if (notesCollection.Selected == true)
-        {
-            <RadzenMenuItem Text="UnSelect" Icon="label_off" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
-        }
-        else
-        {
-            <RadzenMenuItem Text="Select" Icon="label_outline" Click="() => SetCollection(notesCollection)"> </RadzenMenuItem>
-        }
-        <RadzenMenuItem Text="Rename" Icon="drive_file_rename_outline" Click="() => RenameCollection(notesCollection)">  </RadzenMenuItem>
-        <RadzenMenuItem Text="Delete" Icon="delete_outline" Click="() => DeleteNC(notesCollection)"></RadzenMenuItem>
-
-    </RadzenMenu>
-    );
 
 
     private async Task SetCollection(NotesCollection nc)
@@ -156,7 +250,7 @@
             nc.Selected = true;
             await dataSvs.UpdateNCollection(nc);
         }
-        contextMenuService.Close();
+        
         await dataSvs.GetNotes();
     }
 
@@ -170,10 +264,10 @@
 
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-
+                BackgroundColor = "#FB7B5C",
             };
 
-        contextMenuService.Close();
+       
         return GoToMenu.InvokeAsync("notetools");
 
     }
@@ -186,7 +280,7 @@
         oldname = notesCollection.Title;
 
         notesCollection.Editable = true;
-        contextMenuService.Close();
+        
     }
 
     private async Task SaveCollectionName(NotesCollection nc)
@@ -209,8 +303,7 @@
     {
         await dataSvs.DeleteNCollection(notesCollection);
         dataSvs.MainProject = await dataSvs.GetProject();
-        contextMenuService.Close();
-
+        
     }
 
     public void Dispose()
