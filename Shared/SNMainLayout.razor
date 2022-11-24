@@ -13,9 +13,9 @@
 
 
 <MApp Style="background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)">
-    <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini" 
-        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
-        Fixed class="overflow-hidden" Permanent>
+    <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini"
+                       Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
+                       Fixed class="overflow-hidden" Permanent>
 
 
 
@@ -62,8 +62,8 @@
                 case "collection":
                     <MRow Class="overflow-hidden">
 
-                
-                    <CollectionsMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+
+                        <CollectionsMenu GoToMenu="@(dataSvs.SwitchMenus)" />
                     </MRow>
                     break;
                 case "cards":
@@ -117,20 +117,20 @@
 
 
     <!-- Sizes your content based upon application components -->
-    <MMain >
+    <MMain>
         <!-- Provides the application the proper gutter -->
         <MContainer class="mainpg-style" Fluid>
-           
-                    @Body
-            
-            
+
+            @Body
+
+
             <!--
                  <div class="card" style="overflow:auto;white-space:nowrap;height:100vh;width:100vw;">
 
             @Body
             </div>
             -->
-           
+
         </MContainer>
     </MMain>
 
@@ -276,9 +276,6 @@ break;
 
 }
 -->
-
-
-
 <!--
 
   <footer fixed-bottom >

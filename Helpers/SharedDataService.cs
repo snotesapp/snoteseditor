@@ -625,13 +625,36 @@ namespace BlazorApp1.Helpers
         }
 
         public string PointerEvent = "none";
-
+        public string? PenStyle;
         public void EnableDraw()
         {
-           paintMode = PaintMode.Pen;
-           PointerEvent = "auto";
-            selectedColor = SKColor.Parse(defaultColor);
+            paintMode = PaintMode.Pen;
+            PointerEvent = "auto";
+
+            if (PenStyle == "transparent")
+            {
+                selectedColor = SKColor.Parse(defaultColor.Replace("#", "#99"));
+                
+
+            }
+            else
+            {
+                selectedColor = SKColor.Parse(defaultColor);
+
+            }
+          
            
+            NotifyStateChanged();
+
+        }
+
+        public void EnableTransparentColor()
+        {
+            paintMode = PaintMode.Pen;
+
+            PointerEvent = "auto";
+            //selectedColor = selectedColor.WithAlpha(100);
+            selectedColor = SKColor.Parse(defaultColor.Replace("#", "#99"));
             NotifyStateChanged();
 
         }
@@ -643,16 +666,7 @@ namespace BlazorApp1.Helpers
             NotifyStateChanged();
         }
 
-        public void EnableTransparentColor()
-        {
-            paintMode = PaintMode.Pen;
-           
-            PointerEvent = "auto";
-            //selectedColor = selectedColor.WithAlpha(100);
-            selectedColor = SKColor.Parse(defaultColor.Replace("#", "#99"));
-            NotifyStateChanged();
-
-        }
+      
         public void EnableHand()
         {
             paintMode = PaintMode.Drag;
