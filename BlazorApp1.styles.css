@@ -142,6 +142,95 @@ body[b-bpqwveuwv6] {
     font-size:small;
     color:black;
 }
+/* /Pages/Components/SNExpandable.razor.rz.scp.css */
+body[b-rfu6aujc7u] {
+    
+}
+
+div[b-rfu6aujc7u] {
+    border: 1px solid #003c8f;
+   
+}
+span[b-rfu6aujc7u] {
+   
+    
+   display:inline-block;
+   width:85%;
+   text-align:center;
+  
+   
+}
+
+.expanded[b-rfu6aujc7u] {
+    background-color: transparent;
+    animation-name: expandedanimation-b-rfu6aujc7u;
+    animation-duration: 0.8s;
+    height: 120px;
+   
+}
+
+
+@keyframes expandedanimation-b-rfu6aujc7u {
+    0% {
+        height: 20px;
+      
+    }
+
+
+    100% {
+        height: 120px;
+        
+    }
+}
+
+.unexpanded[b-rfu6aujc7u] {
+    background-color: transparent;
+    height: 20px;
+    animation-name: unexpandedanimation-b-rfu6aujc7u;
+    animation-duration: 0.8s;
+    
+}
+
+@keyframes unexpandedanimation-b-rfu6aujc7u {
+    0% {
+        height: 120px;
+    
+    }
+
+
+    100% {
+        
+
+        height: 20px;
+       
+    }
+}
+
+.childcontent[b-rfu6aujc7u] {
+    position: relative;
+    animation-name: contentanim-b-rfu6aujc7u;
+    animation-duration: 0.7s;
+    border: none
+}
+@keyframes contentanim-b-rfu6aujc7u {
+    0% {
+        left: 0px;
+        top: -25px;
+    }
+
+    100% {
+        left: 0px;
+        top: 0px;
+    }
+}
+
+#label[b-rfu6aujc7u] {
+    position: relative;
+    top: -10px;
+    border: none;
+    background-color: #5e92f3;
+    border-radius: 3px;
+}
 /* /Pages/DropZonePg.razor.rz.scp.css */
 body[b-skfs493v7z] {
 }
@@ -171,6 +260,30 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
 {
     display: inline-block;
     
+}
+
+.navbuttons[b-3hcsrndfyc] {
+    /* Set the display property to flex to make the element a flex container */
+    display: none;
+    /* Set the flex-direction property to column to stack the child elements vertically */
+    flex-direction: column;
+    /* Optionally, set the align-items property to start to align the child elements horizontally within the container */
+    align-items: start;
+    /* Optionally, set the justify-content property to start to align the child elements vertically within the container */
+    justify-content: start;
+}
+
+.shownavbtns:hover + .navbuttons[b-3hcsrndfyc] {
+    display: flex;
+}
+.navbuttons:hover[b-3hcsrndfyc] {
+    display: flex;
+}
+
+.nullnotecardpg[b-3hcsrndfyc] {
+    width: 100vw;
+    height: 100vh;
+   
 }
 /* /Shared/MainLayout.razor.rz.scp.css */
 .page[b-d3cbnxfwwv] {
