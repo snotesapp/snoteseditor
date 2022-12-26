@@ -1,6 +1,7 @@
 ﻿
 namespace BlazorApp1.Helpers
 {
+    
     public interface IMessageService
     {
         event Action OnMessage;
@@ -25,4 +26,7 @@ namespace BlazorApp1.Helpers
         }
 
     }
+
+
+
 }

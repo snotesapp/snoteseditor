@@ -11,7 +11,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>BlazorApp1</title>
+    <title>Students Notes</title>
     <base href="/" />
     <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/custom.min.css" rel="stylesheet" />
@@ -30,9 +30,13 @@
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
     <!-- #endregion-->
+    <!-- #region fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Shippori Mincho B1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Readex Pro">
+    
 
 
-
+    <!-- #endregion-->
 
     <link href="favicon.ico" rel="icon" type="image/x-icon" />
 
@@ -40,10 +44,26 @@
 
 <body  >
     <div id="app">
+        
+        <div class="position-absolute top-50 start-50 translate-middle ">
+            <img src="images/sNotes_brand.png" alt="Students Notes" />
 
-        <div class="position-absolute top-50 start-50 spinner-border text-primary " role="status">
-            <span class="visually-hidden">Loading...</span>
+            <div style="text-align: center; font-family: Shippori Mincho B1,Readex Pro; font-size: 25px; color: #003c8f;font-weight:600 ">
+                Students Notes
+            </div>
+
+            <div class="position-absolute start-50 top-50  translate-middle">
+                <div class="  spinner-border text-primary ">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+          
         </div>
+           
+            
+          
+    
+
     </div>
 
     <div id="blazor-error-ui">
@@ -63,11 +83,13 @@
 
     <script>
 
-        window.interopFunctions = {
-            clickElement: function (element) {
-                element.click();
-            }
+       
+        
+        window.focusOnSummaryPannel = () => {
+            var element = document.getElementById('summarypannel');
+            element.scrollIntoView({ behavior: 'smooth' });
         }
+
     </script>
 
     <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>

@@ -23,6 +23,10 @@ export function copyTextToClipboard(text) {
         });
 }
 
+export function focusOnSummaryPannel() {
+    document.getElementById('summarypannel').scrollIntoView({ behavior: 'smooth' });
+   
+}
 
 //destinationImage.addEventListener('click', pasteImage);
 

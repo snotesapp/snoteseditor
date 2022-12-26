@@ -148,7 +148,7 @@
          */
 
         dataSvs.UpdateNote().GetAwaiter().GetResult();
-        dataSvs.ClearCanvas();
+        dataSvs.completedPolylines.Clear();
         dataSvs.GetNotes().GetAwaiter().GetResult();
         return BackToMain.InvokeAsync("collection");
     }

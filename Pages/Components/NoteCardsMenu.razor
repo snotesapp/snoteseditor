@@ -362,6 +362,8 @@
 
     [Parameter]
     public EventCallback<string> BackToMain { get; set; }
+    [CascadingParameter]
+    public Error? Error { get; set; }
 
     IJSObjectReference _module;
 
@@ -407,7 +409,7 @@
 
     private Task GoToMainMenu()
     {
-        
+
         return BackToMain.InvokeAsync("cards");
     }
 
@@ -427,18 +429,49 @@
 
     private async Task DeleteNoteCard(NoteCard noteCard)
     {
+        int indx = dataSvs.SelectedCard.NoteCards.IndexOf(noteCard);
 
-        dataSvs.SelectedNoteCard = null;
-        await dataSvs.RemoveNoteCard(noteCard);
-        await dataSvs.GetCard(dataSvs.SelectedCard);
-        StateHasChanged();
+        //dataSvs.SelectedNoteCard = null;
 
+        //await dataSvs.GetCard(dataSvs.SelectedCard);
+
+
+        if(indx == 0 && dataSvs.SelectedCard.NoteCards.Count >1 )
+        {
+
+            
+            dataSvs.SelectedCard.NoteCards.Remove(noteCard);
+            await dataSvs.RemoveNoteCard(noteCard);
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.First();
+        }else if(dataSvs.SelectedCard.NoteCards.Count == 1)
+        {
+            dataSvs.SelectedNoteCard = null;
+            await dataSvs.RemoveNoteCard(noteCard);
+
+            await dataSvs.GetCard(dataSvs.SelectedCard);
+            dataSvs.SwitchMenus("cards");
+        }
+        else if (indx < dataSvs.SelectedCard.NoteCards.Count )
+        {
+            //   dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.SkipWhile(x => x != noteCard).Skip(1).FirstOrDefault();
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.ElementAtOrDefault(indx - 1);
+            dataSvs.SelectedCard.NoteCards.Remove(noteCard);
+            await dataSvs.RemoveNoteCard(noteCard);
+        }
+        else
+        {
+            await dataSvs.GetCard(dataSvs.SelectedCard);
+            dataSvs.SwitchMenus("cards");
+        }
         //MessageService.SendMessage();
         //  contextMenuService.Close();
         ShowNoteCardContext = false;
-
+        MessageService.SendMessage();
+        StateHasChanged();
 
     }
+
+ 
 
     private async Task SelectNoteCard(NoteCard noteCard)
     {
@@ -482,7 +515,19 @@
 
     private async Task SelectChildCard(Card chCard)
     {
-        await dataSvs.GetCard(chCard);
+        try
+        {
+             await dataSvs.GetCard(chCard);
+        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+            MessageService.SendMessage();
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+
+
+       
 
     }
 

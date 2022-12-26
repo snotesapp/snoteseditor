@@ -19,33 +19,50 @@
 
     case "Project":
 
-        <MCard Class="p-1" >
-            <MCardTitle Class="text-h5 grey lighten-2">
+        <MCard Class="p-1 " >
+            <MCardTitle Class="text-h5 gradient-blue">
                 Create Project
             </MCardTitle>
 
-            <MIcon Large>
-                mdi-plus
-            </MIcon>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">New Project</span>
-                <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="ProjectName">
-                <button class="btn btn-outline-primary " @onclick=CreateProject>
-                    <span class="bi bi-play-fill"></span>
-                </button>
-            </div>
-            <MDivider/>
-            <MIcon Large>
-                mdi-file-upload-outline
+            <MCard Flat Class="mx-3 py-4">
 
-            </MIcon>
-            <div class="input-group mb-3">
+                <div class="input-group elevation-2 rounded-3 shadow mb-3">
+                    <span class="input-group-text" id="basic-addon1">
+                        <MIcon >
+                            mdi-plus
+                        </MIcon>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Projec tName">
+                    <MButton Class="primary" aria-label="Create SNotes Project" title="Create SNotes Project"
+                     OnClick="CreateProject">
+                     <MIcon>
+                         mdi-play
+                     </MIcon>
+                    </MButton>
+                   
+                </div>
+                <MDivider />
 
-                <InputFile class="form-control" OnChange="LoadFiles" id="inputGroupFile02" />
+                <div class="input-group elevation-2 rounded-3 shadow mb-3">
+                    <span class="input-group-text " id="basic-addon1">
+                        <MIcon>
+                            mdi-file-upload-outline
+                        </MIcon>
+                    </span>
 
-                
-            </div>
+                    <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
+                       PrependIcon="null"
+                        Accept="application/snotes"
+                        Label="Import SNotes File"></MFileInput>
 
+
+                </div>
+
+
+             
+
+            </MCard>
+   
 
         </MCard>
 
@@ -71,7 +88,7 @@
 @code {
 
     private string CurrentStep { get; set; } = "Project";
-   
+
 
     private string projectname { get; set; } = $"Project {DateTime.Now.ToString("dd'_'MM'_'yyyy'_'HH'_'mm")}";
     private string collectionname { get; set; } = "Default Collection";
@@ -82,6 +99,62 @@
     public EventCallback<bool> CloseDialoge { get; set; }
 
 
+    private async Task HandleOnChange(IBrowserFile file)
+    {
+        CurrentStep = "Progress"; 
+        if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
+        {
+            dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+        }
+
+
+        IBrowserFile uploadedfile = file;
+
+        await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
+        await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
+
+        await SetProgres(20);
+
+        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+        await Task.Delay(20);
+        await SetProgres(40);
+
+        //  var listfiles = Directory.GetFiles( AppDomain.CurrentDomain.BaseDirectory );
+        //  var listdirs = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory+"project");
+
+        var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
+
+        using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
+        {
+            Project? newProject =
+              await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+            dataSvs.MainProject = newProject;
+        }
+        await SetProgres(50);
+
+        await dataSvs.InsertProject(dataSvs.MainProject);
+        await Task.Delay(300);
+        await SetProgres(70);
+
+        var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
+
+        using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
+        {
+            List<NoteCard>? noteCardsList =
+              await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
+            await dataSvs.NewRangNoteCards(noteCardsList);
+        }
+        await SetProgres(80);
+
+        await dataSvs.GetNotes();
+       // await dataSvs.SetInitialeNC();
+        
+        await Task.Delay(20);
+
+        await SetProgres(100);
+
+        await CloseDialoge.InvokeAsync(false);
+    }
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {

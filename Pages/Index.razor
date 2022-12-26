@@ -16,8 +16,6 @@
 @using System.ComponentModel
 @inject SharedDataService dataSvs
 
-
-
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
 
@@ -59,7 +57,7 @@ else if (dataSvs.menustatus == "notecards")
 {
 
     <MRow>
-        <NoteCardsPg />
+        <NoteCardsPg  />
 
     </MRow>
 
@@ -213,7 +211,7 @@ else
         <div class="text-center">
             <MDialog @bind-Value="addcard_dialog" HideOverlay
              Width="500">
-                <ActivatorContent>
+                <ActivatorContent  >
                    
        <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs" OnClick="() => addcard_dialog = true"
          title="Add To Packet"
@@ -222,12 +220,12 @@ else
          Color="#1565c0">
             <MIcon>mdi-plus-box-multiple </MIcon>
         </MButton>
-                </ActivatorContent>
+       </ActivatorContent>
 
                 <ChildContent>
                     <MCard >
-                        <MCardTitle Class=" p-2 grey lighten-2">
-                             <div class="input-group">
+                        <MCardTitle Class=" p-2 gradient-blue ">
+                            <div class="input-group shadow">
                                 <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
                                 <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
                                     Add
@@ -302,7 +300,6 @@ else
     protected override void OnInitialized()
     {
 
-
         dataSvs.OnChange += StateHasChanged;
     }
 
@@ -329,10 +326,9 @@ else
 
 
 
-
     public void Dispose()
     {
-
+     
         dataSvs.OnChange -= StateHasChanged;
     }
 

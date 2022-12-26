@@ -1,7 +1,69 @@
 ﻿
 $theme-colors: ( primary:#1565c0, danger: #ba000d, success: #087f23, );
 
+$gradient-blue: linear-gradient(to right bottom,#5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff);
+
+.gradient-blue {
+    background-image: $gradient-blue;
+}
+
+$gradient-coral: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e ) ;
+.gradient-coral{
+    background-image:$gradient-coral;
+}
+
+
+
+$bezier: cubic-bezier(.25,1,.25,1); // Define a variable for the cubic-bezier curve
+$direction: left, right; // Define a list of directions
+
+@each $dir in $direction { // Loop through the list of directions
+    @keyframes slideanim-#{$dir} { // Generate a keyframe animation for each direction
+        0% {
+            transform: translateX(#{if($dir == "left", 100px, -100px)}); // Move the element 100px to the left or right
+        }
+
+        100% {
+            transform: translateX(0); // Return the element to its original position
+        }
+    }
+
+    .slide-animation-#{$dir} { // Generate a class for each direction
+        animation: slideanim-#{$dir} 1s $bezier; // Apply the keyframe animation to the class
+    }
+}
+
+@mixin slide-animation($direction) { // Define a mixin called "slide-animation" that takes a single argument, $direction
+    @keyframes slideanim-#{$direction} { // Generate a keyframe animation for the specified direction
+        0% {
+            transform: translateX(#{if($direction == "left", 100px, -100px)}); // Move the element 100px to the left or right
+        }
+
+        100% {
+            transform: translateX(0); // Return the element to its original position
+        }
+    }
+
+    animation: slideanim-#{$direction} 1s $bezier; // Apply the keyframe animation to the element using the mixin
+}
+
+.slide-animation-left { // Define a class for the "left" direction
+    @include slide-animation(left); // Include the "slide-animation" mixin and pass it the "left" argument
+}
+
+.slide-animation-right { // Define a class for the "right" direction
+    @include slide-animation(right); // Include the "slide-animation" mixin and pass it the "right" argument
+}
+
+
+
+
+.font-class {
+    font-family: Readex Pro,Verdana,Cambria,Calibri,Shippori Mincho B1,Helvetica,Tahoma,Arial;
+}
+
 @import "../wwwroot/lib/bootstrap/scss/bootstrap";
+
 
 /*
 

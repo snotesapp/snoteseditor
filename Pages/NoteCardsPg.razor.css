@@ -6,3 +6,27 @@ ul.nclist-style, li
     display: inline-block;
     
 }
+
+.navbuttons {
+    /* Set the display property to flex to make the element a flex container */
+    display: none;
+    /* Set the flex-direction property to column to stack the child elements vertically */
+    flex-direction: column;
+    /* Optionally, set the align-items property to start to align the child elements horizontally within the container */
+    align-items: start;
+    /* Optionally, set the justify-content property to start to align the child elements vertically within the container */
+    justify-content: start;
+}
+
+.shownavbtns:hover + .navbuttons {
+    display: flex;
+}
+.navbuttons:hover {
+    display: flex;
+}
+
+.nullnotecardpg {
+    width: 100vw;
+    height: 100vh;
+   
+}

@@ -8,6 +8,7 @@
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
 
+@inject IMessageService MessageService
 
 
 
@@ -195,7 +196,7 @@
 
                 <ChildContent>
                     <MCard>
-                        <MCardTitle Class="text-h5 grey lighten-2">
+                        <MCardTitle Class="text-h5 gradient-blue">
                             Select Destination Packet
                         </MCardTitle>
 
@@ -506,7 +507,7 @@ else
 
 
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
-
+           MessageService.SendMessage();
         }
 
 

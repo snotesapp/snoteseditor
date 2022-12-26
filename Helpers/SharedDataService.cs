@@ -4,6 +4,7 @@ using BlazorComponent;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+using OneOf.Types;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 using System.Data;
@@ -27,6 +28,8 @@ namespace BlazorApp1.Helpers
         public int bodyCols = 10;
 
         public bool newProjectDialog;
+
+        public bool noteEdited;
       
         #endregion
 
@@ -57,7 +60,7 @@ namespace BlazorApp1.Helpers
 
         public NotesCollection AddNotesSelectedNC;
 
-        public Card SelectedCard;
+        public Card? SelectedCard;
 
         public List<Card> AllCards;
         public List<Card> SelectionCards = new();
@@ -127,11 +130,14 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public async Task<Project> GetFuProject()
+        public async Task<Project> GetFullProject()
         {
             using (var projectsContext = _dbContextFactory.CreateDbContext())
             {
-                 return await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images).Include(cr => cr.Cards).FirstOrDefaultAsync();
+
+                 return await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images)
+                    .Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(pth => pth.NotePaths)
+                    .Include(cr => cr.Cards).FirstOrDefaultAsync();
                // return await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards).FirstOrDefaultAsync();
 
             }
@@ -205,18 +211,49 @@ namespace BlazorApp1.Helpers
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
+               
               SelectedCard =  await cardsContext.Cards.Where(c => c.CardID == card.CardID)
                     .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
                     .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
                     .Include(p => p.Parent).FirstOrDefaultAsync();
-              ChildCards = await GetChildCards(card);
+
+                SelectedNoteCard = SelectedCard?.NoteCards.Count == 0 ? null : SelectedNoteCard;
+
+
+
+                ChildCards = await GetChildCards(card);
                 NotifyStateChanged();
                 return SelectedCard;
 
             }
         }
 
-     
+        public async Task<Card> SetInitialeNC()
+        {
+            using (var cardsContext = _dbContextFactory.CreateDbContext())
+            {
+                try{
+                    SelectedCard = await cardsContext.Cards.Where(c => c.CardID == 1)
+                      .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
+                      .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
+                      .Include(p => p.Parent).FirstOrDefaultAsync();
+                    ChildCards = await GetChildCards(SelectedCard);
+                    SelectedNoteCard = SelectedCard.NoteCards.FirstOrDefault();
+                    SwitchMenus("notecards");
+
+                    NotifyStateChanged();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Can't set the first card");
+                }
+                
+                return SelectedCard;
+
+            }
+        }
+
+
 
         public async Task<List<Card>> GetCards()
         {
@@ -466,7 +503,7 @@ namespace BlazorApp1.Helpers
                 MainImgWidth = Wdimension.Width,
                 MainImgHeight = Wdimension.Height
             };
-
+            saveBitmap = new SKBitmap(Wdimension.Width, Wdimension.Height);
             // await GetNotes();
             NotifyStateChanged();
 
@@ -482,12 +519,14 @@ namespace BlazorApp1.Helpers
                
                 notesContext.Update(editNote);
                 await notesContext.SaveChangesAsync();
+              
+
 
                 //NotesCollection notesCollection = notesContext.NotesCollection.Where(p => p.ProjectFK == 1).Where(nc => nc.NotesCollectionID == 1).Include(n => n.Note).FirstOrDefault();
 
             }
 
-          
+
 
             // await GetNotes();
             NotifyStateChanged();
@@ -529,6 +568,34 @@ namespace BlazorApp1.Helpers
                 return isDeleted;
             }
         }
+
+        public async Task<bool> DeleteNotePaths(Note note)
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+                notesContext.RemoveRange(note.NotePaths);
+                await notesContext.SaveChangesAsync();
+               
+                NotifyStateChanged();
+
+                return true;
+            }
+        }
+
+        public async Task<bool> UpdateNotePaths(Note note)
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+                notesContext.UpdateRange(note.NotePaths);
+                await notesContext.SaveChangesAsync();
+
+                NotifyStateChanged();
+
+                return true;
+            }
+        }
+
+
         public async Task<bool> DeleteNoteImg(NoteImage noteImage)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
@@ -611,10 +678,21 @@ namespace BlazorApp1.Helpers
         //public string defaultBackgroundColor ;
 
 
-        public void ClearCanvas()
+        public async Task ClearCanvas()
         {
-            completedPolylines.Clear();
-
+            if (editNote.NoteID == 0)
+            {
+                completedPolylines.Clear();
+                editNote.NotePaths.Clear();
+            }
+            else
+            {
+                completedPolylines.Clear();
+                editNote.NotePaths = editNote.NotePaths.Where(nt => nt.PathID != 0).ToList();
+                await DeleteNotePaths(editNote);
+            }
+           
+           
             //   inProgressPolylines.Clear();
             saveBitmap = new SKBitmap(Wdimension.Width, Wdimension.Height);
 
@@ -693,7 +771,7 @@ namespace BlazorApp1.Helpers
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Package");
 
 
-            Project fullPrjct = await GetFuProject();
+            Project fullPrjct = await GetFullProject();
             JsonSerializerOptions projectoptions = new()
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
