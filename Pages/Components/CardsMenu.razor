@@ -12,10 +12,6 @@
 
 
 
-
-
-
-
 <MContainer Style="height:calc(100vh - 130px); overflow:auto">
     
 
@@ -30,36 +26,45 @@
 
                     @if (card.Editable == false)
                     {
-                        <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
+                        @if (card.Selected)
+                        {
+                            <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
                          @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,card);})">
-                         @if(card.Parent is null){
-                                <MListItem Link style="background-color:#1565c0"
-                                           OnClick="() => SelectCard(card)"
-                                           Color="white" Class="elevation-4  rounded-3">
+
+                                @if (card.Parent is null)
+                                {
+                                    <MListItem Link style="background-color:#1565c0"
+                                   OnClick="() => SelectCard(card)"
+                                   Color="white" Class="elevation-4  rounded-3">
                                         <MListItemContent>
                                             <MListItemTitle>@card.Title </MListItemTitle>
-                                        </MListItemContent>
-                               </MListItem>
-                         }else{
-
-
-                                <MListItem Link style="background-color:#1565c0"
-                                           OnClick="() => SelectCard(card)"
-                                           Color="white" Class="elevation-4  rounded-3">
-                                        <MListItemContent>
-                                            <MListItemTitle>@card.Title </MListItemTitle>
-                                            
-                                            <MListItemSubtitle   Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
-
-                                            
                                         </MListItemContent>
                                     </MListItem>
-                               
-                           
-                         }  
+                                }
+                                else
+                                {
 
-                        </div>
 
+                                    <MListItem Link style="background-color:#1565c0"
+                                   OnClick="() => SelectCard(card)"
+                                   Color="white" Class="elevation-4  rounded-3">
+                                        <MListItemContent>
+                                            <MListItemTitle>@card.Title </MListItemTitle>
+
+                                            <MListItemSubtitle Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
+
+
+                                        </MListItemContent>
+                                    </MListItem>
+
+
+                                }
+
+
+                            </div>
+
+                        }
+                       
                     }
                     else
                     {

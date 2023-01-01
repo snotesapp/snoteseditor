@@ -110,8 +110,10 @@ namespace BlazorApp1.Helpers
         {
             using (var projectsContext = _dbContextFactory.CreateDbContext())
             {
-                return await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards.Where(s => s.Selected == true)).ThenInclude(pc => pc.Parent).FirstOrDefaultAsync();
-               
+                Project  mProject = await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards.Where(s => s.Selected == true)).ThenInclude(pc => pc.Parent).FirstOrDefaultAsync();
+                return mProject;
+
+
             }
             
         }
