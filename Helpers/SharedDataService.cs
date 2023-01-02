@@ -1,24 +1,38 @@
 ﻿using BlazorApp1.Data;
 using BlazorApp1.Pages.Components;
 using BlazorComponent;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using OneOf.Types;
+using ReactiveUI;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 using System.Data;
 using System.Globalization;
 using System.IO.Compression;
+using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace BlazorApp1.Helpers
 {
-    public class SharedDataService
+    public class SharedDataService : ReactiveObject
     {
+        private string _searchTerm;
+        public string SearchTerm
+        {
+            get => _searchTerm;
+            set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
+        }
+
+
+
+
+
         #region global parameters
-      
+
 
         public event Action OnChange;
         public string menustatus { get; private set; } = "mainmenu";
@@ -30,8 +44,23 @@ namespace BlazorApp1.Helpers
         public bool newProjectDialog;
 
         public bool noteEdited;
-      
+
+
+        private bool _showFilterNotes = false;
+        public bool showFilterNotes
+        {
+            get => _showFilterNotes;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _showFilterNotes, value);
+                NotifyStateChanged();
+            }
+        }
+
         #endregion
+
+
+
 
         public PaintMode paintMode = PaintMode.Drag;
 
@@ -48,7 +77,15 @@ namespace BlazorApp1.Helpers
        
         public List<NoteImage> imagelist = new List<NoteImage>();
 
-        public List<Note> selectedNCNotes = new List<Note>();   
+        
+        private List<Note> _selectedNCNotes= new List<Note>();
+        public List<Note> selectedNCNotes 
+        {
+            get => _selectedNCNotes;
+            set => this.RaiseAndSetIfChanged(ref _selectedNCNotes, value);
+        }
+
+
 
         public Project MainProject = new Project()
         {
@@ -541,6 +578,17 @@ namespace BlazorApp1.Helpers
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
                 selectedNCNotes = await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).ToListAsync();
+                NotifyStateChanged();
+                return selectedNCNotes;
+
+            }
+        }
+
+        public async Task<List<Note>> GetNotes(string NotesTextFilter)
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.Contains(NotesTextFilter)).ToListAsync();
                 NotifyStateChanged();
                 return selectedNCNotes;
 

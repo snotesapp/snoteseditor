@@ -55,6 +55,7 @@
                         <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
                             <span class="bi bi-x"></span>
                         </button>
+
                         <button class="btn btn-outline-primary btn-sm ms-1  my-1 rounded-3" type="button" @onclick="AddCollection">
                             <span class="bi bi-plus-circle"></span>
                         </button>
@@ -78,12 +79,55 @@
 
                         </p>
 
+                        <MMenu  OffsetY >
+                            <ActivatorContent>
+
+                                <button class="btn  btn-outline-primary me-1 my-1 "
+                            type="button"
+                            @attributes='@context.Attrs'>
+                                    <span class="bi bi-caret-down">
+                                       
+                                    </span>
+
+                                </button>
+                            </ActivatorContent>
+
+                            <ChildContent>
+                                <MList Dense>
+
+                                    <MListItem OnClick="@(() => EnableAddItem())">
+                                        <MListItemIcon>
+                                            <MIcon>
+                                                mdi-plus
+                                            </MIcon>
+                                        </MListItemIcon>
+                                        <MListItemContent>
+                                            <MListItemTitle>
+                                                Add Collection
+                                            </MListItemTitle>
+                                        </MListItemContent>
+                                    </MListItem>
+
+                                    <MListItem OnClick="@(() => dataSvs.showFilterNotes = true )">
+                                        <MListItemIcon>
+                                            <MIcon>
+                                                mdi-filter-outline
+                                            </MIcon>
+                                        </MListItemIcon>
+                                        <MListItemContent>
+                                            <MListItemTitle>
+                                                Filter Notes
+                                            </MListItemTitle>
+                                        </MListItemContent>
+                                    </MListItem>
+
+                                    
+                                </MList>
+                            </ChildContent>
+                        </MMenu>
 
 
-
-                        <button class="btn btn-outline-primary  me-1  my-1 rounded-3" type="button" @onclick="@(() => EnableAddItem())">
-                            <span class="bi bi-plus-lg"></span>
-                        </button>
+                       
                     </div>
                 </MRow>
 
