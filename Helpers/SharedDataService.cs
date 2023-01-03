@@ -28,8 +28,21 @@ namespace BlazorApp1.Helpers
         }
 
 
+        private string _filterPacketsTxt;
+        public string FilterPacketsTxt
+        {
+            get => _filterPacketsTxt        ;
+            set => this.RaiseAndSetIfChanged(ref _filterPacketsTxt, value);
+        }
 
+        public bool filterPackets { get; set; }
 
+        private List<Card> _filtredPackets= new List<Card>();
+        public List<Card> FiltredPackets
+        {
+            get => _filtredPackets;
+            set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
+        }
 
         #region global parameters
 
@@ -300,7 +313,17 @@ namespace BlazorApp1.Helpers
             {
                 // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
 
-                return await cardsContext.Cards.Where(sl => sl.Selected == true ).ToListAsync();
+                return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pr => pr.Parent).ToListAsync();
+            }
+        }
+
+        public async Task<List<Card>> GetCards(string filterText)
+        {
+            using (var cardsContext = _dbContextFactory.CreateDbContext())
+            {
+                // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
+
+                return await cardsContext.Cards.Where(sl => sl.Title.Contains(filterText)).Include(pr => pr.Parent).ToListAsync();
             }
         }
 

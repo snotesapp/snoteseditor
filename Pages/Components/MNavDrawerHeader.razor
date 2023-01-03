@@ -49,7 +49,7 @@
                     <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
                         <input type="text" @ref="inputTextRef"
                    @onkeypress="@((eventArg) => AddCollection(eventArg) )" @onfocusout="@(() => EnableAddItem())"
-                   class="form-control border-0 shadow-none" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2"
+                   class="form-control border-0 shadow-none" placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2"
                    @bind-value="textValue">
 
                         <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
@@ -103,7 +103,7 @@
                                         </MListItemIcon>
                                         <MListItemContent>
                                             <MListItemTitle>
-                                                Add Collection
+                                                Add Collections
                                             </MListItemTitle>
                                         </MListItemContent>
                                     </MListItem>
@@ -163,6 +163,23 @@
 
                     </div>
                 </MRow>
+            }else if (dataSvs.filterPackets)
+            {
+                <MRow Class="ps-4 pe-4">
+
+                    <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
+                        <input  type="text" @onfocusout="@(() => EnableFilterPacket())"
+                   @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
+                   class="form-control border-0 shadow-none" placeholder="Filter Packets" aria-label="Filter Packets" aria-describedby="basic-addon2"
+                        >
+
+                        <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
+                            <span class="bi bi-x"></span>
+                        </button>
+                       
+
+                    </div>
+                </MRow>
             }
             else
             {
@@ -181,11 +198,56 @@
                         </p>
 
 
+                        <MMenu OffsetY>
+                            <ActivatorContent>
+
+                                <button class="btn  btn-outline-primary me-1 my-1 "
+                            type="button"
+                            @attributes='@context.Attrs'>
+                                    <span class="bi bi-caret-down">
+
+                                    </span>
+
+                                </button>
+                            </ActivatorContent>
+
+                            <ChildContent>
+                                <MList Dense>
+
+                                    <MListItem OnClick="@(() => EnableAddItem())">
+                                        <MListItemIcon>
+                                            <MIcon>
+                                                mdi-plus
+                                            </MIcon>
+                                        </MListItemIcon>
+                                        <MListItemContent>
+                                            <MListItemTitle>
+                                                Add Packets
+                                            </MListItemTitle>
+                                        </MListItemContent>
+                                    </MListItem>
+
+                                    <MListItem OnClick="@(() => dataSvs.filterPackets = true )">
+                                        <MListItemIcon>
+                                            <MIcon>
+                                                mdi-filter-outline
+                                            </MIcon>
+                                        </MListItemIcon>
+                                        <MListItemContent>
+                                            <MListItemTitle>
+                                                Filter Packets
+                                            </MListItemTitle>
+                                        </MListItemContent>
+                                    </MListItem>
 
 
-                        <button class="btn btn-outline-primary  me-1  my-1 rounded-3" type="button" @onclick="@(() => EnableAddItem())">
-                            <span class="bi bi-plus-lg"></span>
-                        </button>
+                                </MList>
+                            </ChildContent>
+                        </MMenu>
+
+
+
+                      
                     </div>
                 </MRow>
 
@@ -386,6 +448,8 @@
     public EventCallback<string> GoToMenu { get; set; }
     private string textValue { get; set; }
     private bool _addItem { get; set; }
+    
+   
     ElementReference inputTextRef;
     string CollectionId = "0";
 
@@ -795,6 +859,7 @@
     private void ClearText()
     {
         textValue = "";
+        dataSvs.FilterPacketsTxt = "";
 
     }
 
@@ -811,10 +876,29 @@
         }
         else
         {
+
             _addItem = true;
         }
 
+        
     }
+
+    private async Task EnableFilterPacket()
+    {
+        if (dataSvs.filterPackets == true && dataSvs.FilterPacketsTxt == "")
+        {
+            dataSvs.MainProject = await dataSvs.GetProject();
+            dataSvs.filterPackets = false;
+        }
+        else
+        {
+
+            dataSvs.filterPackets = true;
+        }
+
+
+    }
+
 
     private async Task SelectChildCard(Card chCard)
     {
