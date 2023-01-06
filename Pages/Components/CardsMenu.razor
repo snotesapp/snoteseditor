@@ -266,13 +266,30 @@
 
                 <ChildContent>
                     <MCard>
-                        <MCardTitle Class="text-h5 gradient-blue">
-                            Select Destination Packet
+                        <MCardTitle Class="p-2 gradient-blue">
+                           
+                            @if (filterPackets == false)
+                            {
+                                <p class="m-2 text-h5 ">
+                                    Select Destination Packet
+                                </p>
+                                
+                            }
+                            else
+                            {
+                                <div class="input-group mx-1 shadow">
+                                    <input type="text" class="form-control " placeholder="Filter Packets"
+                                   @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
+                                   aria-describedby="filterpktbtnGroup">
+
+
+                                </div>
+                            }
                         </MCardTitle>
 
                            <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-                            
-                            <ListTemplate Items="dataSvs.SelectionCards">
+
+                            <ListTemplate Items="@(filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.Contains(dataSvs.FilterPacketsTxt) ).ToList() : dataSvs.SelectionCards)">
                                 <RowTemplate Context="card">
 
                                     <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
@@ -289,6 +306,9 @@
                         <MDivider></MDivider>
 
                         <MCardActions>
+                            <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+
+                            </MCheckbox>
                             <MSpacer></MSpacer>
                             <MButton Color="primary"
                                  Text
@@ -560,6 +580,7 @@ else
     double Y = 0;
 
     bool dialog;
+    bool filterPackets;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -632,8 +653,6 @@ else
     }
 
 
-
-
     private async Task SelectCard(Card selectedCard)
     {
 
@@ -661,7 +680,7 @@ else
 
 
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
-           MessageService.SendMessage();
+            MessageService.SendMessage();
         }
 
 
@@ -681,10 +700,12 @@ else
         ShowCardContext = true;
     }
 
-    
+
 
     private async Task GetSelectionCards(Card chCard)
     {
+        filterPackets = false;
+        dataSvs.FilterPacketsTxt = "";
         dataSvs.SelectionCards = await dataSvs.GetSelectionCards(chCard);
     }
 

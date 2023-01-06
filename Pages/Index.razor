@@ -59,7 +59,7 @@ else if (dataSvs.menustatus == "notecards")
 {
 
     <MRow>
-        <NoteCardsPg  />
+        <NoteCardsPg />
 
     </MRow>
 
@@ -76,12 +76,11 @@ else
                 AppendOuterIcon="mdi-close"
                 OnAppendOuterClick="@(() => {dataSvs.showFilterNotes = false;dataSvs.SearchTerm = "";dataSvs.GetNotes().GetAwaiter().GetResult();})"
                 SingleLine
-                HideDetails=true
-                ></MTextField>
+                HideDetails=true></MTextField>
 
-       </div>
+    </div>
 
-    
+
 
 
     <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
@@ -167,7 +166,7 @@ else
                 -->
             }
 
-            
+
         </NoteTemplate>
     </NotesTemplate>
 
@@ -179,7 +178,8 @@ else
         </NewPrjctWizard>
     </MDialog>
 
-@if(ContextMenuNote != null){
+    @if (ContextMenuNote != null)
+    {
         <MMenu @bind-Value="ShowNoteContext"
        PositionX="X"
        PositionY="Y"
@@ -218,45 +218,59 @@ else
             </MList>
         </MMenu>
 
-}
+    }
+
 
 
     @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
     {
 
-       
+
         <div class="text-center">
             <MDialog @bind-Value="addcard_dialog" HideOverlay
              Width="500">
-                <ActivatorContent  >
-                   
-       <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs" OnClick="() => addcard_dialog = true"
-         title="Add To Packet"
-         Fab
-         Dark
-         Color="#1565c0">
-            <MIcon>mdi-plus-box-multiple </MIcon>
-        </MButton>
-       </ActivatorContent>
+                <ActivatorContent>
+
+                    <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs"
+                        OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";}'
+                     title="Add To Packet"
+                     Fab
+                     Dark
+                     Color="#1565c0">
+                        <MIcon>mdi-plus-box-multiple </MIcon>
+                    </MButton>
+                </ActivatorContent>
 
                 <ChildContent>
-                    <MCard >
-                        <MCardTitle Class=" p-2 gradient-blue ">
-                            <div class="input-group shadow">
-                                <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
-                                <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
-                                    Add
-                                </button>
+                    <MCard>
+                        <MCardTitle Class="p-2 gradient-blue ">
+                            @if(filterPackets == false)
+                            {
+                                <div class="input-group shadow">
+                                    <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
+                                    <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
+                                        Add
+                                    </button>
 
-                            </div>
-                       
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="input-group shadow">
+                                    <input type="text" class="form-control" placeholder="Filter Packets"
+                               @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
+                                    aria-describedby="filterpktbtnGroup">
+                                    
+
+                                </div>
+                            }
+
+
                         </MCardTitle>
-                      
-                       
 
-             <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-                            
-                            <ListTemplate Items="dataSvs.MainProject.Cards">
+                        <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+
+                            <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Cards)">
                                 <RowTemplate Context="card">
 
                                     <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
@@ -268,13 +282,17 @@ else
 
                             </ListTemplate>
 
-            </MList>
+                        </MList>
 
-         
-      
+
+
                         <MDivider Class="my-1"></MDivider>
 
                         <MCardActions>
+
+                            <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+
+                            </MCheckbox>
                             <MSpacer></MSpacer>
                             <MButton Color="primary"
                              Text
@@ -290,7 +308,7 @@ else
         </div>
     }
 
-   
+
 }
 
 
@@ -307,8 +325,9 @@ else
     IJSObjectReference _dropZoneJS;
 
     bool addcard_dialog;
+    bool filterPackets;
 
-    private Note? ContextMenuNote= null;
+    private Note? ContextMenuNote = null;
     private bool ShowNoteContext;
     double X = 0;
     double Y = 0;
@@ -330,6 +349,22 @@ else
            else
            {
                dataSvs.selectedNCNotes = await dataSvs.GetNotes(searchTerm);
+               //dataSvs.selectedNCNotes = dataSvs.selectedNCNotes.Where(n => n.Text.Contains(searchTerm)).ToList();
+           }
+           StateHasChanged();
+       });
+
+        dataSvs.WhenAnyValue(x => x.FilterPacketsTxt)
+       .Throttle(TimeSpan.FromSeconds(1.5))
+       .Subscribe(async FilterPacketsTxt =>
+       {
+           if (string.IsNullOrEmpty(FilterPacketsTxt))
+           {
+               dataSvs.FiltredPackets.Clear();
+           }
+           else
+           {
+               dataSvs.FiltredPackets = await dataSvs.GetCards(FilterPacketsTxt);
                //dataSvs.selectedNCNotes = dataSvs.selectedNCNotes.Where(n => n.Text.Contains(searchTerm)).ToList();
            }
            StateHasChanged();
@@ -361,14 +396,14 @@ else
     }
 
 
-   
+
     public void Dispose()
     {
-     
+
         dataSvs.OnChange -= StateHasChanged;
     }
 
-    private void ShowNoteContextMenu(MouseEventArgs args,Note note)
+    private void ShowNoteContextMenu(MouseEventArgs args, Note note)
     {
         ShowNoteContext = false;
         ContextMenuNote = null;
@@ -401,7 +436,7 @@ else
 
         await dataSvs.DeleteNote(note);
         await dataSvs.GetNotes();
-       
+
     }
 
     private async Task EditNote(Note note)
@@ -415,7 +450,7 @@ else
         //dataSvs.EditMode = true;
         dataSvs.SwitchMenus("notetools");
 
-       
+
 
     }
 
@@ -438,11 +473,12 @@ else
 
     private async Task AddCard(KeyboardEventArgs keyboardEvent)
     {
-        if (keyboardEvent.Key == "Enter"){
+        if (keyboardEvent.Key == "Enter")
+        {
             await Task.Delay(100);
             if (!string.IsNullOrWhiteSpace(cardTitle))
             {
-               
+
                 // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
                 // await  dataSvs.UpdateProject();
                 await dataSvs.AddCard(new Card { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
@@ -451,7 +487,7 @@ else
 
             }
         }
-        
+
     }
 
     protected void OpenCloseDialog(bool dialogState)
@@ -459,7 +495,7 @@ else
 
 
         dataSvs.newProjectDialog = dialogState;
-      
+
     }
 
 
