@@ -12,14 +12,16 @@
 
 
 
+
 @if (dataSvs.SelectedNoteCard != null )
  {
 
 <MCol>
     <MRow>
 
-
-            <MCard Elevation="3" Class=" m-1 p-0 gradient-coral shownavbtns" Width="@(dataSvs.SelectedNoteCard.Note.MainImgWidth )" Height="@(dataSvs.SelectedNoteCard.Note.MainImgHeight )"
+            <MCard Elevation="3" class=" m-1 p-0 gradient-coral shownavbtns"
+               Width="@(dataSvs.SelectedNoteCard.Note.MainImgWidth )" Height="@(dataSvs.SelectedNoteCard.Note.MainImgHeight )"
+                @onpointerleave="@(() => navbuttonsEnabled = false)"
                    Style="overflow:auto;">
 
                     <!--
@@ -141,7 +143,9 @@
 
                     @if (dataSvs.SelectedNoteCard.Note != null)
                     {
-                    <div class="position-absolute 
+                    <div class="position-absolute @((navbuttonsEnabled) ? "shownavbtns" : "navbuttons") 
+                    @(upAnimation ? "slide-animation-up" : "")
+                    @(downAnimation ? "slide-animation-down" : "")
                     @(leftAnimation ? "slide-animation-left" : "")
                     @(rightAnimation ? "slide-animation-right" : "")"
                      style=";
@@ -220,30 +224,89 @@
                        </ReadOnlyNoteCard>
                     -->
 
-
+                   
 
 
                 </MCard>
 
             @if(dataSvs.SelectedCard.NoteCards is not null)
             {
-                <div class="position-absolute navbuttons  top-50 start-0 translate-middle-y">
+                <div  class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
-                    @if (!dataSvs.SelectedCard.NoteCards.Last().Equals(dataSvs.SelectedNoteCard))
-                    {
-                        <MButton Class="mb-1" Elevation="2" @onpointerdown="ResetAnimation" OnClick="NextNC">
-                            <MIcon>mdi-chevron-right </MIcon>
-                        </MButton>
+                   
+					<div class="row" style="width:96px;">
+						<div class="col-4 offset-4 p-0">
 
-                    }
+                         
+							<button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
+                            @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
+							"
+                            
+                            type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectChildCard(dataSvs.SelectedCard.Parent,true))">
+								<i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
+                                @if(dataSvs.SelectedCard.Parent is not null)
+                                {
+                                <span class="tooltiptext">@dataSvs.SelectedCard.Parent.Title </span>    
+                                }
+                                
+							</button>
 
-                    @if (!dataSvs.SelectedCard.NoteCards.First().Equals(dataSvs.SelectedNoteCard))
-                    {
-                        <MButton Elevation="2" @onpointerdown="ResetAnimation" OnClick="PrecedingNC">
-                            <MIcon>mdi-chevron-left </MIcon>
-                        </MButton>
+						</div>
+					</div>
 
-                    }
+                    <div class="row " style="width:96px;">
+                        <div class="col-4 p-0">
+                            <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
+                                 @(!dataSvs.SelectedCard.NoteCards.First().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
+                                " type="button" @onpointerdown="ResetAnimation" @onclick="PrecedingNC">
+                                <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
+                            </button>
+
+                        </div>
+                        <div class="col-4 offset-4 p-0">
+                            <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
+                              @(!dataSvs.SelectedCard.NoteCards.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
+                            type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
+                                <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="row " style="width:96px;">
+
+                        <div class="col-4 offset-4 p-0">
+
+                            <div class="dropdown">
+
+                                <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
+                                 @((dataSvs.ChildCards is not null && dataSvs.ChildCards.Count > 0) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled") "
+                                type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
+                                </button>
+
+                                <ul class="dropdown-menu  p-0" style="background-color:transparent;width:200px;max-height:30vh;overflow:auto" aria-labelledby="dropdownMenuButton1">
+                                    <ListTemplate Items="dataSvs.ChildCards">
+                                        <RowTemplate Context="card">
+                                            <MListItem Class="dropdown-item elevation-4 rounded-3" Link 
+                                                style="background-color:#1565c0; margin-bottom:2px"
+                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectChildCard(card,false)">
+                                                <MListItemContent>
+                                                    <MListItemTitle>@card.Title </MListItemTitle>
+
+                                                </MListItemContent>
+                                            </MListItem>
+
+                                        </RowTemplate>
+
+                                    </ListTemplate>
+
+                                </ul>
+                            </div>
+
+                        </div>
+
+                    </div>
 
 
                 </div>
@@ -256,7 +319,7 @@
 else
 {
 
- <div class="position-relative nullnotecardpg">
+    <div class="position-relative nullnotecardpg ">
         <MButton Class="primary position-absolute top-50 start-50 translate-middle"
              OnClick='() => dataSvs.SwitchMenus("mainmenu")'>
             <MIcon Left>mdi-arrow-left</MIcon>
@@ -277,9 +340,11 @@ else
     string PointerEvent = "none";
     SKCanvasView skiaView = new SKCanvasView();
 
-    private bool leftAnimation = false;
-    private bool rightAnimation = false;
+    private bool leftAnimation, rightAnimation, upAnimation, downAnimation = false;
+    private bool navbuttonsEnabled = true;
 
+    [CascadingParameter]
+    public Error? Error { get; set; }
 
     protected override void OnInitialized()
     {
@@ -347,9 +412,9 @@ else
         else if (saveBitmap.Width < info.Width || saveBitmap.Height < info.Height)
         {
         SKBitmap newBitmap = new SKBitmap(Math.Max(saveBitmap.Width, info.Width),
-    Math.Max(saveBitmap.Height, info.Height));
+        Math.Max(saveBitmap.Height, info.Height));
 
-    using (SKCanvas newCanvas = new SKCanvas(newBitmap))
+        using (SKCanvas newCanvas = new SKCanvas(newBitmap))
         {
         newCanvas.Clear();
         newCanvas.DrawBitmap(saveBitmap, 0, 0);
@@ -389,7 +454,7 @@ else
             Console.WriteLine("Error Here");
 
         }
-      
+
 
 
     }
@@ -399,6 +464,7 @@ else
 
     #endregion
 
+    #region navigation buttons
     private void NextNC()
     {
         leftAnimation = true;
@@ -425,8 +491,39 @@ else
     {
         rightAnimation = false;
         leftAnimation = false;
+        upAnimation= false;
+        downAnimation = false;
     }
 
+    private async Task SelectChildCard(Card chCard,bool Up)
+    {
+        try
+        {
+            await dataSvs.GetCard(chCard);
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+            if (Up)
+            {
+
+
+                upAnimation= true;
+            }
+            else
+            {
+                downAnimation = true;
+            }
+            
+            //MessageService.SendMessage();
+        }
+        catch (Exception ex)
+        {
+            Error?.ProcessError(ex);
+        }
+
+
+
+
+    }
+    #endregion
 
     private void MessageHandler()
     {
