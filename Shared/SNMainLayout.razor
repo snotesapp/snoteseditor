@@ -13,7 +13,10 @@
 
 
 <MApp Style="background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)">
-    <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini"
+    
+    @if(dataSvs.MainProject.ProjectID != 0)
+    {
+         <MNavigationDrawer   App @bind-Value="_drawer" @bind-MiniVariant="_mini " 
                        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
                        Fixed class="overflow-hidden" Permanent>
 
@@ -21,8 +24,8 @@
 
 
         <MListItem Class="px-2 mb-1 " Style="height:70px" @ondblclick="EnableRenameProject">
-            <MListItemAvatar Rounded="true" Size="40">
-                <MImage tabindex="0" Src="./images/sNotes_icon.png"></MImage>
+            <MListItemAvatar Rounded="true">
+                <MImage tabindex="0" Class="me-2" Src="./images/sNotes_icon.png"></MImage>
             </MListItemAvatar>
 
             @if (@renameproject == false)
@@ -40,13 +43,18 @@
                    aria-describedby="basic-addon2" @bind-value="dataSvs.MainProject.Name" @onkeypress="@((eventArg) => RenameProject(eventArg) )" @onfocusout="RenameProject">
             }
 
-            <MButton Icon OnClick="() => _mini = !_mini">
-                <MIcon>mdi-chevron-left</MIcon>
-            </MButton>
+
+            <MButton Icon OnClick="() => _mini = !_mini ">
+                    <MIcon>mdi-chevron-left</MIcon>
+                </MButton>
+
+           
+           
+           
         </MListItem>
 
 
-        @if (!_mini)
+        @if (!_mini  )
         {
             <MRow>
                 <MNavDrawerHeader GoToMenu="@(dataSvs.SwitchMenus)" />
@@ -55,9 +63,8 @@
             @switch (dataSvs.menustatus)
             {
                 case "mainmenu":
-
-
                     <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
+
                     break;
                 case "collection":
                     <MRow Class="overflow-hidden">
@@ -94,7 +101,33 @@
         }
 
     </MNavigationDrawer>
+    }
+    else
+    {
 
+        <MNavigationDrawer App @bind-Value="_drawer" MiniVariant="true" 
+                       Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
+                       Fixed class="overflow-hidden" Permanent>
+
+
+
+
+            <MListItem Class="px-2 mb-1 " Style="height:70px">
+                <MListItemAvatar Rounded="true">
+                    <MImage tabindex="0" Class="me-2" Src="./images/sNotes_icon.png"></MImage>
+                </MListItemAvatar>
+
+      
+
+
+
+            </MListItem>
+
+        </MNavigationDrawer>
+
+    }
+
+   
 
     <!-- Sizes your content based upon application components -->
     <MMain>

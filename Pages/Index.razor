@@ -171,12 +171,16 @@ else
     </NotesTemplate>
 
 
-    <MDialog @bind-Value="@dataSvs.newProjectDialog"
-         HideOverlay MaxWidth="600">
-        <NewPrjctWizard CloseDialoge="OpenCloseDialog">
 
-        </NewPrjctWizard>
-    </MDialog>
+    <MDialog Persistent HideOverlay  @bind-Value="@dataSvs.newProjectDialog"
+             MaxWidth="600">
+            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
+
+            </NewPrjctWizard>
+
+        </MDialog>
+   
+   
 
     @if (ContextMenuNote != null)
     {

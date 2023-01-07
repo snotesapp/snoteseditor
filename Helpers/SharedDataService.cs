@@ -48,6 +48,8 @@ namespace BlazorApp1.Helpers
 
 
         public event Action OnChange;
+
+        
         public string menustatus { get; private set; } = "mainmenu";
         public bool ncDragingMode = false;
 
@@ -150,7 +152,7 @@ namespace BlazorApp1.Helpers
               // projectsContext.Add(project);
                 await projectsContext.AddAsync(project);
                 await projectsContext.SaveChangesAsync();
-
+                NotifyStateChanged();
             }
 
             return true;

@@ -35,18 +35,23 @@ builder.Services.AddHttpClient("GDriveApiUpload", client =>
 );
 //builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("GDriveApiUpload"));
 
+// Disable logging for Entity Framework Core
+builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None));
+
+
 
 builder.Services.AddScoped<Project>();
 builder.Services.AddSingleton<CounterService, CounterService>();
 
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 builder.Services.AddSingleton<IMessageService, MessageService>();
+builder.Services.AddMasaBlazor();
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddBlazorContextMenu();
 
-builder.Services.AddMasaBlazor();
+
 
 //builder.Services.AddDbContext<DataContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlite<SNotesDBContext>("Data Source=snotesonline.db");
