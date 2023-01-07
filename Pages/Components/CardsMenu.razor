@@ -54,7 +54,7 @@
                                             <MListItemContent>
                                                 <MListItemTitle>@card.Title </MListItemTitle>
 
-                                                <MListItemSubtitle Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
+                                                <MListItemSubtitle Class="ms-2" Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
 
 
                                             </MListItemContent>
@@ -292,7 +292,7 @@
                             <ListTemplate Items="@(filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.Contains(dataSvs.FilterPacketsTxt) ).ToList() : dataSvs.SelectionCards)">
                                 <RowTemplate Context="card">
 
-                                    <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
+                                    <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
                                     @onclick="@(() => {SetParentCard(card,ContextMenuCard); dialog = false;})">
                                         @card.Title
                                     </button>

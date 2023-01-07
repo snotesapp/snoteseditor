@@ -3,7 +3,6 @@
 @using BlazorApp1.Pages.Components
 @using System.Collections.ObjectModel
 
-
 @inject Project newprjct;
 
 @using BlazorApp1.Helpers
@@ -14,6 +13,8 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Text.Json
 @using System.ComponentModel
+
+
 
 @inject SharedDataService dataSvs
 
@@ -170,17 +171,15 @@ else
         </NoteTemplate>
     </NotesTemplate>
 
-
-
     <MDialog Persistent HideOverlay  @bind-Value="@dataSvs.newProjectDialog"
-             MaxWidth="600">
-            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
+         MaxWidth="600">
+        <NewPrjctWizard CloseDialoge="OpenCloseDialog">
 
-            </NewPrjctWizard>
+        </NewPrjctWizard>
 
-        </MDialog>
-   
-   
+    </MDialog>
+
+
 
     @if (ContextMenuNote != null)
     {
@@ -261,7 +260,9 @@ else
                             else
                             {
                                 <div class="input-group shadow">
-                                    <input type="text" class="form-control" placeholder="Filter Packets"
+                                    <input type="text" class="form-control" placeholder="
+
+"
                                @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
                                     aria-describedby="filterpktbtnGroup">
                                     
@@ -277,7 +278,7 @@ else
                             <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Cards)">
                                 <RowTemplate Context="card">
 
-                                    <button type="button" class="list-group-item list-group-item-action mb-1 shadow rounded" style="background-color:#5e92f3"
+                                    <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow rounded truncate-text" style="background-color:#5e92f3"
                                     @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); addcard_dialog=false; })">
                                         @card.Title
                                     </button>
@@ -401,6 +402,7 @@ else
 
 
 
+ 
     public void Dispose()
     {
 

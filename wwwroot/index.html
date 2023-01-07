@@ -24,15 +24,20 @@
     <link href="BlazorApp1.styles.css" rel="stylesheet" />
     <link href="_content/Blazor.ContextMenu/blazorContextMenu.min.css" rel="stylesheet" />
 
+
     <!-- #region masa.Blazor-->
     <link href="_content/Masa.Blazor/css/masa-blazor.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
+
     <!-- #endregion-->
+
+
+
     <!-- #region fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Readex Pro">
-    
+
 
 
     <!-- #endregion-->
@@ -41,9 +46,9 @@
 
 </head>
 
-<body  >
+<body>
     <div id="app">
-        
+
         <div class="position-absolute top-50 start-50 translate-middle ">
             <img src="images/sNotes_brand.png" alt="Students Notes" />
 
@@ -52,12 +57,12 @@
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
-          
+
         </div>
-           
-            
-          
-    
+
+
+
+
 
     </div>
 
@@ -72,14 +77,15 @@
 
     <script src="https://cdn.masastack.com/npm/sortable/Sortable.min.js"></script>
 
+
     <script src="lib/panzoom/panzoom/dist/panzoom.min.js"></script>
     <script src="myjs/BootstrapModalInterop.js"></script>
     <script src="myjs/dropZone.js"></script>
 
     <script>
 
-       
-        
+
+
         window.focusOnSummaryPannel = () => {
             var element = document.getElementById('summarypannel');
             element.scrollIntoView({ behavior: 'smooth' });
@@ -87,10 +93,11 @@
 
     </script>
 
+    <script src="_content/BlazorComponent/js/blazor-component.js"></script>
+
+
     <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>
 
-
-    <script src="_content/BlazorComponent/js/blazor-component.js"></script>
 
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
 
