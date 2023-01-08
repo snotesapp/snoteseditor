@@ -303,7 +303,7 @@ else
     {
         await dataSvs.DeleteNCollection(notesCollection);
         dataSvs.MainProject = await dataSvs.GetProject();
-        
+        await dataSvs.GetNotes();
     }
 
     public void Dispose()

@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
     <link href="css/app.css" rel="stylesheet" />
     <link href="BlazorApp1.styles.css" rel="stylesheet" />
-    <link href="_content/Blazor.ContextMenu/blazorContextMenu.min.css" rel="stylesheet" />
 
 
     <!-- #region masa.Blazor-->
@@ -72,19 +71,23 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_content/BlazorComponent/js/blazor-component.js"></script>
+
+    <!--
+     commented to test improve performance
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.6.0/umd/popper.min.js" integrity="sha512-BmM0/BQlqh02wuK5Gz9yrbe7VyIVwOzD1o40yi1IsTjriX/NGF37NyXHfmFzIlMmoSIBXgqDiG1VNU6kB5dBbA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+     -->
     <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <script src="https://cdn.masastack.com/npm/sortable/Sortable.min.js"></script>
 
-
-    <script src="lib/panzoom/panzoom/dist/panzoom.min.js"></script>
+    <!--
+     commented to test improve performance
+     <script src="lib/panzoom/panzoom/dist/panzoom.min.js"></script>
     <script src="myjs/BootstrapModalInterop.js"></script>
     <script src="myjs/dropZone.js"></script>
-
-    <script>
-
-
+            <script>
 
         window.focusOnSummaryPannel = () => {
             var element = document.getElementById('summarypannel');
@@ -93,13 +96,17 @@
 
     </script>
 
-    <script src="_content/BlazorComponent/js/blazor-component.js"></script>
-
-
     <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>
 
 
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
+
+     -->
+
+
+
+
+
 
 </body>
 

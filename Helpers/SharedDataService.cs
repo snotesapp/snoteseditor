@@ -18,6 +18,7 @@ using System.Text.Json.Serialization;
 
 namespace BlazorApp1.Helpers
 {
+
     public class SharedDataService : ReactiveObject
     {
         private string _searchTerm;
@@ -236,6 +237,7 @@ namespace BlazorApp1.Helpers
                 var tracking = collectionContext.Remove(deleteNC);
                 await collectionContext.SaveChangesAsync();
                 var isDeleted = tracking.State == EntityState.Deleted;
+                
                 return isDeleted;
             }
         }
@@ -840,113 +842,95 @@ namespace BlazorApp1.Helpers
         }
         #endregion
 
+        #region Download Project
+
+        private static readonly JsonSerializerOptions ProjectOptions = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true,
+            IgnoreReadOnlyProperties = true,
+        };
+
+        private static readonly JsonSerializerOptions NoteCardsOptions = new()
+        {
+            WriteIndented = true,
+        };
+
         public byte[] fileArray;
+
         public async Task DownloadProjectFile()
         {
-            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Package");
-
-
-            Project fullPrjct = await GetFullProject();
-            JsonSerializerOptions projectoptions = new()
+            try
             {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                WriteIndented = true,
-                IgnoreReadOnlyProperties = true,
-            };
+                // Create the package directory
+                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory);
 
-            List<NoteCard> allNoteCards = await GetAllNoteCards();
-            JsonSerializerOptions notecardsoptions = new()
-            {
-                WriteIndented = true,
-            };
-
-            /*
-            string jsonString = JsonSerializer.Serialize<Project>(fullPrjct, options);
-
-
-
-            var test1FilePath = AppDomain.CurrentDomain.BaseDirectory + "PackageTest/jsonFile.json";
-
-            using (StreamWriter? sw = new StreamWriter(test1FilePath))
-            {
-                sw.WriteLine(jsonString);
-            }
-            */
-
-            //  var test1FilePath = AppDomain.CurrentDomain.BaseDirectory + "PackageTest/jsonFile.json";
-
-            var jsonProjectFilePath = ProjectPath.Parent.FullName + "/jsonFile.json";
-            using FileStream createProjectStream = File.Create(jsonProjectFilePath);
-            await JsonSerializer.SerializeAsync<Project>(createProjectStream, fullPrjct, projectoptions);
-            await createProjectStream.DisposeAsync();
-
-            var jsonNoteCardsFilePath = ProjectPath.Parent.FullName  + "/notecards.json";
-            using FileStream createNotecardsStream = File.Create(jsonNoteCardsFilePath);
-            await JsonSerializer.SerializeAsync<List<NoteCard>>(createNotecardsStream, allNoteCards, notecardsoptions);
-            await createNotecardsStream.DisposeAsync();
-
-
-
-            var packageFilePath = AppDomain.CurrentDomain.BaseDirectory + "Package/package.zip";
-
-            ZipFile.CreateFromDirectory(ProjectPath.Parent.FullName, packageFilePath);
-            
-            /*
-            var filePackage = new FilePackage
-            {
-                FilePath = packageFilePath,
-                ContentFilePathList = new List<string>
+                // Create the meta object and serialize it to a byte array
+                var metaObject = new MetaObject
                 {
-                     test1FilePath, test2FilePath
+                    Version = "1.0"
+                };
+                byte[] metaJsonBytes = SerializeMetaObject(metaObject);
+
+                // Write the serialized meta object to a file
+                File.WriteAllBytes(ProjectPath.Parent.FullName + FilePaths.MetaFilePath, metaJsonBytes);
+
+                // Serialize the full project object to a file
+                Project fullPrjct = await GetFullProject();
+                if (fullPrjct != null)
+                {
+                    await SerializeProjectAsync(fullPrjct);
                 }
-            };
 
-            var filePackageWriter = new FilePackageWriter(filePackage);
-            filePackageWriter.GeneratePackage(true);
-            */
+                // Serialize the list of note cards to a file
+                List<NoteCard> allNoteCards = await GetAllNoteCards();
+                if (allNoteCards != null)
+                {
+                    await SerializeNoteCardsAsync(allNoteCards);
+                }
 
-            fileArray = await File.ReadAllBytesAsync(packageFilePath);
-            File.Delete(packageFilePath);
+                // Create the package file
+                var packageFilePath = AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory + "/" + FilePaths.PackageFilePath;
+                ZipFile.CreateFromDirectory(ProjectPath.Parent.FullName, packageFilePath);
 
-            /*
-            Project fullPrjct = await GetFuProject();
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                WriteIndented = true
-            };
-            string jsonString = JsonSerializer.Serialize<Project>(fullPrjct,options);
+                // Read the package file into a byte array
+                fileArray = await File.ReadAllBytesAsync(packageFilePath);
 
-            var test1FilePath = AppDomain.CurrentDomain.BaseDirectory + "test_1.txt";
-
-            using (StreamWriter? sw = new StreamWriter(test1FilePath))
-            {
-                sw.WriteLine(jsonString);
+                // Delete the package file
+                if (Path.HasExtension(packageFilePath))
+                {
+                    File.Delete(packageFilePath);
+                }
             }
-
-
-            var packageDirectory = AppDomain.CurrentDomain.BaseDirectory + "packageDirectory";
-            Directory.CreateDirectory(packageDirectory);
-            File.Copy(test1FilePath, packageDirectory+"/"+"file.txt", true);
-            if (File.Exists("package.zip"))
+            catch (Exception ex)
             {
-                File.Delete("package.zip");
+                // Log the error or display an error message to the user
             }
-            ZipFile.CreateFromDirectory(packageDirectory, "package.zip");
-
-            fileArray = await File.ReadAllBytesAsync(AppDomain.CurrentDomain.BaseDirectory + "package.zip");
-            var listfiles = Directory.GetFiles(packageDirectory);
-           // var readcontent = File.ReadAllText(test1FilePath);  
-
-           // fileArray = System.Text.Encoding.UTF8.GetBytes(jsonString) ;
-
-            Project? desPrjoject =
-               JsonSerializer.Deserialize<Project>(jsonString);
-
-    
-         */
-
         }
+
+        private byte[] SerializeMetaObject(MetaObject metaObject)
+        {
+            return JsonSerializer.SerializeToUtf8Bytes(metaObject);
+        }
+
+        private async Task SerializeProjectAsync(Project project)
+        {
+            var jsonProjectFilePath = ProjectPath.Parent.FullName + "/" + FilePaths.ProjectFilePath;
+            await using (FileStream createProjectStream = File.Create(jsonProjectFilePath))
+            {
+                await JsonSerializer.SerializeAsync<Project>(createProjectStream, project, ProjectOptions);
+            }
+        }
+        private async Task SerializeNoteCardsAsync(List<NoteCard> noteCards)
+        {
+            var jsonNoteCardsFilePath = ProjectPath.Parent.FullName + "/" + FilePaths.NoteCardsFilePath;
+            await using (FileStream createNotecardsStream = File.Create(jsonNoteCardsFilePath))
+            {
+                await JsonSerializer.SerializeAsync<List<NoteCard>>(createNotecardsStream, noteCards, NoteCardsOptions);
+            }
+        }
+
+        #endregion
 
 
         public async Task GetThumbUrl(IJSObjectReference _jsModule,Note note)
@@ -1015,7 +999,14 @@ namespace BlazorApp1.Helpers
         Eraser
         
     }
-  
+
+    record MetaObject
+    {
+        public string Version { get; init; } = "1.0";
+    }
+
+
+
     #region dbtest
     /*
     

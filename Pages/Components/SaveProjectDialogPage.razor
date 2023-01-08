@@ -86,8 +86,8 @@
         await dataSvs.DownloadProjectFile();
         SetProgres(70);
         #region convert bitArray to zip and download it
-        var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-        await _module.InvokeVoidAsync("blazorDownloadFile1", fileName, "application/zip", dataSvs.fileArray);
+        var fileName = $"{dataSvs.MainProject.Name}.snotes";
+        await _module.InvokeVoidAsync("blazorDownloadFile", fileName, "application/zip", dataSvs.fileArray);
         SetProgres(100);
         //dialogService.Close();
         CurrentStep = "Storage";
