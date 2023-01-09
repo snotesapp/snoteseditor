@@ -16,7 +16,7 @@
         @if (dataSvs.ncDragingMode)
         {
             <MDragZone Group="nc_Grp" Options=SetOptions>
-                <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
+                <ListTemplate Items="dataSvs.SelectedCard.NotePackets">
                     <RowTemplate Context="notecard">
 
 
@@ -124,7 +124,7 @@
         {
 
 
-        <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
+        <ListTemplate Items="dataSvs.SelectedCard.NotePackets">
                 <RowTemplate Context="notecard">
 
                     <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
@@ -370,14 +370,14 @@
 
     private bool NotesMenuSelected = true;
 
-    private Card? ContextMenuCard = null;
-    private NoteCard? ContextMenuNoteCard = null;
+    private Packet? ContextMenuCard = null;
+    private NotePacket? ContextMenuNoteCard = null;
     private bool ShowNoteCardContext;
     double X = 0;
     double Y = 0;
 
 
-    private void ShowCardContextMenu(MouseEventArgs args, Card chCard)
+    private void ShowCardContextMenu(MouseEventArgs args, Packet chCard)
     {
         ContextMenuCard = null;
         // await Task.Delay(16);
@@ -387,7 +387,7 @@
         ContextMenuCard = chCard;
     }
 
-    private void ShowNoteCardContextMenu(MouseEventArgs args, NoteCard noteCard )
+    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket noteCard )
     {
         ShowNoteCardContext = false;
         ContextMenuNoteCard = null;
@@ -428,23 +428,23 @@
     }
 
 
-    private async Task DeleteNoteCard(NoteCard noteCard)
+    private async Task DeleteNoteCard(NotePacket noteCard)
     {
-        int indx = dataSvs.SelectedCard.NoteCards.IndexOf(noteCard);
+        int indx = dataSvs.SelectedCard.NotePackets.IndexOf(noteCard);
 
         //dataSvs.SelectedNoteCard = null;
 
         //await dataSvs.GetCard(dataSvs.SelectedCard);
 
 
-        if(indx == 0 && dataSvs.SelectedCard.NoteCards.Count >1 )
+        if(indx == 0 && dataSvs.SelectedCard.NotePackets.Count >1 )
         {
 
             
-            dataSvs.SelectedCard.NoteCards.Remove(noteCard);
+            dataSvs.SelectedCard.NotePackets.Remove(noteCard);
             await dataSvs.RemoveNoteCard(noteCard);
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.First();
-        }else if(dataSvs.SelectedCard.NoteCards.Count == 1)
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.First();
+        }else if(dataSvs.SelectedCard.NotePackets.Count == 1)
         {
             dataSvs.SelectedNoteCard = null;
             await dataSvs.RemoveNoteCard(noteCard);
@@ -452,11 +452,11 @@
             await dataSvs.GetCard(dataSvs.SelectedCard);
             dataSvs.SwitchMenus("cards");
         }
-        else if (indx < dataSvs.SelectedCard.NoteCards.Count )
+        else if (indx < dataSvs.SelectedCard.NotePackets.Count )
         {
             //   dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.SkipWhile(x => x != noteCard).Skip(1).FirstOrDefault();
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.ElementAtOrDefault(indx - 1);
-            dataSvs.SelectedCard.NoteCards.Remove(noteCard);
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.ElementAtOrDefault(indx - 1);
+            dataSvs.SelectedCard.NotePackets.Remove(noteCard);
             await dataSvs.RemoveNoteCard(noteCard);
         }
         else
@@ -474,7 +474,7 @@
 
  
 
-    private async Task SelectNoteCard(NoteCard noteCard)
+    private async Task SelectNoteCard(NotePacket noteCard)
     {
 
 
@@ -502,24 +502,24 @@
     private async void DropNoteCard(SorttableEventArgs sorttableEventArgs)
     {
 
-        NoteCard movedNoteCard = dataSvs.SelectedCard.NoteCards[sorttableEventArgs.OldIndex];
+        NotePacket movedNoteCard = dataSvs.SelectedCard.NotePackets[sorttableEventArgs.OldIndex];
 
-        dataSvs.SelectedCard.NoteCards.RemoveAt(sorttableEventArgs.OldIndex);
-        dataSvs.SelectedCard.NoteCards.Insert(sorttableEventArgs.NewIndex, movedNoteCard);
+        dataSvs.SelectedCard.NotePackets.RemoveAt(sorttableEventArgs.OldIndex);
+        dataSvs.SelectedCard.NotePackets.Insert(sorttableEventArgs.NewIndex, movedNoteCard);
 
 
         //Update notecards Order
-        dataSvs.SelectedCard.NoteCards.Select(dx => { dx.Order = dataSvs.SelectedCard.NoteCards.IndexOf(dx); return dx; }).ToList();
+        dataSvs.SelectedCard.NotePackets.Select(dx => { dx.Order = dataSvs.SelectedCard.NotePackets.IndexOf(dx); return dx; }).ToList();
         await dataSvs.UpdateCard(dataSvs.SelectedCard);
 
     }
 
-    private async Task SelectChildCard(Card chCard)
+    private async Task SelectChildCard(Packet chCard)
     {
         try
         {
              await dataSvs.GetCard(chCard);
-        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
         catch (Exception ex)
@@ -532,7 +532,7 @@
 
     }
 
-    private async Task PinPacket(Card card)
+    private async Task PinPacket(Packet card)
     {
         if (card.Selected == true)
         {
@@ -548,7 +548,7 @@
         // contextMenuService.Close();
         ContextMenuCard = null;
     }
-    private async Task RemoveSubPacket(Card card)
+    private async Task RemoveSubPacket(Packet card)
     {
         card.Parent = null;
         card.ParentID = null;

@@ -229,7 +229,7 @@
 
                 </MCard>
 
-            @if(dataSvs.SelectedCard.NoteCards is not null)
+            @if(dataSvs.SelectedCard.NotePackets is not null)
             {
                 <div  class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
@@ -257,7 +257,7 @@
                     <div class="row " style="width:96px;">
                         <div class="col-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
-                                 @(!dataSvs.SelectedCard.NoteCards.First().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
+                                 @(!dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
                                 " type="button" @onpointerdown="ResetAnimation" @onclick="PrecedingNC">
                                 <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
                             </button>
@@ -265,7 +265,7 @@
                         </div>
                         <div class="col-4 offset-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
-                              @(!dataSvs.SelectedCard.NoteCards.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
+                              @(!dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
                             type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
                                 <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
                             </button>
@@ -468,18 +468,18 @@ else
     private void NextNC()
     {
         leftAnimation = true;
-        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.SkipWhile(x => x != dataSvs.SelectedNoteCard).Skip(1).First();
+        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.SkipWhile(x => x != dataSvs.SelectedNoteCard).Skip(1).First();
 
 
     }
     private void PrecedingNC()
     {
 
-        int index = dataSvs.SelectedCard.NoteCards.IndexOf(dataSvs.SelectedNoteCard);
+        int index = dataSvs.SelectedCard.NotePackets.IndexOf(dataSvs.SelectedNoteCard);
         if (index > 0)
         {
             rightAnimation = true;
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.ElementAt(index - 1);
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.ElementAt(index - 1);
 
         }
 
@@ -495,12 +495,12 @@ else
         downAnimation = false;
     }
 
-    private async Task SelectChildCard(Card chCard,bool Up)
+    private async Task SelectChildCard(Packet chCard,bool Up)
     {
         try
         {
             await dataSvs.GetCard(chCard);
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             if (Up)
             {
 

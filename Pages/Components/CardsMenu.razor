@@ -24,7 +24,7 @@
            
              @if(!dataSvs.filterPackets)
             {
-                <ListTemplate Items="dataSvs.MainProject.Cards">
+                <ListTemplate Items="dataSvs.MainProject.Packets">
                     <RowTemplate Context="card">
 
                         @if (card.Editable == false)
@@ -581,7 +581,7 @@ else
 
     IJSObjectReference _module;
 
-    private Card? ContextMenuCard = null;
+    private Packet? ContextMenuCard = null;
     private bool ShowCardContext;
     double X = 0;
     double Y = 0;
@@ -660,13 +660,13 @@ else
     }
 
 
-    private async Task SelectCard(Card selectedCard)
+    private async Task SelectCard(Packet selectedCard)
     {
 
 
 
         await dataSvs.GetCard(selectedCard);
-        if (dataSvs.SelectedCard.NoteCards.Count > 0)
+        if (dataSvs.SelectedCard.NotePackets.Count > 0)
         {
 
             //NoteCard snoteCard = await dataSvs.GetNoteCard(dataSvs.SelectedCard.NoteCards.OrderBy(no => no.NoteID).FirstOrDefault());
@@ -686,7 +686,7 @@ else
             */
 
 
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
 
@@ -695,7 +695,7 @@ else
         await BackToMain.InvokeAsync("notecards");
     }
 
-    private void ShowCardContextMenu(MouseEventArgs args, Card card)
+    private void ShowCardContextMenu(MouseEventArgs args, Packet card)
     {
         ShowCardContext = false;
         ContextMenuCard = null;
@@ -709,16 +709,16 @@ else
 
 
 
-    private async Task GetSelectionCards(Card chCard)
+    private async Task GetSelectionCards(Packet chCard)
     {
         filterPackets = false;
         dataSvs.FilterPacketsTxt = "";
         dataSvs.SelectionCards = await dataSvs.GetSelectionCards(chCard);
     }
 
-    private async Task SetParentCard(Card parentCard, Card childCard)
+    private async Task SetParentCard(Packet parentCard, Packet childCard)
     {
-        childCard.ParentID = parentCard.CardID;
+        childCard.ParentID = parentCard.PacketID;
         childCard.Parent = null;
         childCard.Selected = false;
         await dataSvs.UpdateCard(childCard);
@@ -730,17 +730,17 @@ else
 
     #region Rename Card
     string oldname;
-    void RenameCard(Card card)
+    void RenameCard(Packet card)
     {
 
-        dataSvs.MainProject.Cards.Select(ed => { ed.Editable = false; return ed; }).ToList();
+        dataSvs.MainProject.Packets.Select(ed => { ed.Editable = false; return ed; }).ToList();
         oldname = card.Title;
 
         card.Editable = true;
 
     }
 
-    private async Task SaveCardName(Card card)
+    private async Task SaveCardName(Packet card)
     {
         if (!string.IsNullOrWhiteSpace(card.Title))
         {
@@ -757,7 +757,7 @@ else
     }
     #endregion
 
-    private async Task PinPacket(Card card)
+    private async Task PinPacket(Packet card)
     {
         if (card.Selected == true)
         {
@@ -773,7 +773,7 @@ else
         // contextMenuService.Close();
         ContextMenuCard = null;
     }
-    private async Task RemoveSubPacket(Card card)
+    private async Task RemoveSubPacket(Packet card)
     {
         card.Parent = null;
         card.ParentID = null;
@@ -786,7 +786,7 @@ else
     }
 
 
-    private async Task DeleteCard(Card card)
+    private async Task DeleteCard(Packet card)
     {
 
         await dataSvs.DeleteCard(card);

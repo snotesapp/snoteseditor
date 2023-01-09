@@ -140,8 +140,8 @@
 
         using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
         {
-            List<NoteCard>? noteCardsList =
-              await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
+            List<NotePacket>? noteCardsList =
+              await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
             await dataSvs.NewRangNoteCards(noteCardsList);
         }
         await SetProgres(80);

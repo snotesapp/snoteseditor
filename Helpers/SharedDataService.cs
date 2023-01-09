@@ -38,8 +38,8 @@ namespace BlazorApp1.Helpers
 
         public bool filterPackets { get; set; }
 
-        private List<Card> _filtredPackets= new List<Card>();
-        public List<Card> FiltredPackets
+        private List<Packet> _filtredPackets= new List<Packet>();
+        public List<Packet> FiltredPackets
         {
             get => _filtredPackets;
             set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
@@ -107,7 +107,7 @@ namespace BlazorApp1.Helpers
 
         public Project MainProject = new Project()
         {
-            Cards = new List<Card>(),
+            Packets = new List<Packet>(),
             NotesCollection = new List<NotesCollection>() ,
         };
         public DirectoryInfo ProjectPath { get; set; }
@@ -115,14 +115,14 @@ namespace BlazorApp1.Helpers
 
         public NotesCollection AddNotesSelectedNC;
 
-        public Card? SelectedCard;
+        public Packet? SelectedCard;
 
-        public List<Card> AllCards;
-        public List<Card> SelectionCards = new();
-        public List<Card> ChildCards = new();
+        public List<Packet> AllCards;
+        public List<Packet> SelectionCards = new();
+        public List<Packet> ChildCards = new();
 
         public WindowDimension Wdimension = new();
-        public NoteCard? SelectedNoteCard;
+        public NotePacket? SelectedNoteCard;
 
 
         private IDbContextFactory<SNotesDBContext> _dbContextFactory { get; set; }
@@ -165,7 +165,7 @@ namespace BlazorApp1.Helpers
         {
             using (var projectsContext = _dbContextFactory.CreateDbContext())
             {
-                Project  mProject = await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards.Where(s => s.Selected == true)).ThenInclude(pc => pc.Parent).FirstOrDefaultAsync();
+                Project  mProject = await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Packets.Where(s => s.Selected == true)).ThenInclude(pc => pc.Parent).FirstOrDefaultAsync();
                 return mProject;
 
 
@@ -194,7 +194,7 @@ namespace BlazorApp1.Helpers
 
                  return await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images)
                     .Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(pth => pth.NotePaths)
-                    .Include(cr => cr.Cards).FirstOrDefaultAsync();
+                    .Include(cr => cr.Packets).FirstOrDefaultAsync();
                // return await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards).FirstOrDefaultAsync();
 
             }
@@ -248,13 +248,13 @@ namespace BlazorApp1.Helpers
         #endregion
 
         #region Cards Crud
-        public async Task<bool> AddCard(Card newCard)
+        public async Task<bool> AddCard(Packet newCard)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
 
                 // cardsContext.Add(newCard);
-                cardsContext.Cards.Add(newCard);
+                cardsContext.Packets.Add(newCard);
                 await cardsContext.SaveChangesAsync();
                 MainProject = await GetProject();
             //    MainProject.Cards.Add(newCard);
@@ -265,17 +265,17 @@ namespace BlazorApp1.Helpers
 
         }
 
-        public async Task<Card> GetCard(Card card)
+        public async Task<Packet> GetCard(Packet card)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
                
-              SelectedCard =  await cardsContext.Cards.Where(c => c.CardID == card.CardID)
-                    .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
-                    .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
+              SelectedCard =  await cardsContext.Packets.Where(c => c.PacketID == card.PacketID)
+                    .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
+                    .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
                     .Include(p => p.Parent).FirstOrDefaultAsync();
 
-                SelectedNoteCard = SelectedCard?.NoteCards.Count == 0 ? null : SelectedNoteCard;
+                SelectedNoteCard = SelectedCard?.NotePackets.Count == 0 ? null : SelectedNoteCard;
 
 
 
@@ -286,17 +286,17 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public async Task<Card> SetInitialeNC()
+        public async Task<Packet> SetInitialeNC()
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
                 try{
-                    SelectedCard = await cardsContext.Cards.Where(c => c.CardID == 1)
-                      .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
-                      .Include(nd => nd.NoteCards.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
+                    SelectedCard = await cardsContext.Packets.Where(c => c.PacketID == 1)
+                      .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
+                      .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
                       .Include(p => p.Parent).FirstOrDefaultAsync();
                     ChildCards = await GetChildCards(SelectedCard);
-                    SelectedNoteCard = SelectedCard.NoteCards.FirstOrDefault();
+                    SelectedNoteCard = SelectedCard.NotePackets.FirstOrDefault();
                     SwitchMenus("notecards");
 
                     NotifyStateChanged();
@@ -313,32 +313,32 @@ namespace BlazorApp1.Helpers
 
 
 
-        public async Task<List<Card>> GetCards()
+        public async Task<List<Packet>> GetCards()
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
                 // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
 
-                return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pr => pr.Parent).ToListAsync();
+                return await cardsContext.Packets.Where(sl => sl.Selected == true ).Include(pr => pr.Parent).ToListAsync();
             }
         }
 
-        public async Task<List<Card>> GetCards(string filterText)
+        public async Task<List<Packet>> GetCards(string filterText)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
                 // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
 
-                return await cardsContext.Cards.Where(sl => sl.Title.Contains(filterText)).Include(pr => pr.Parent).ToListAsync();
+                return await cardsContext.Packets.Where(sl => sl.Title.Contains(filterText)).Include(pr => pr.Parent).ToListAsync();
             }
         }
 
-        public async Task<List<Card>> GetSelectionCards(Card card)
+        public async Task<List<Packet>> GetSelectionCards(Packet card)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
 
-                List<Card> chcards = new List<Card> { card };
+                List<Packet> chcards = new List<Packet> { card };
                 int i = 0;
                 do
                 {
@@ -353,27 +353,27 @@ namespace BlazorApp1.Helpers
 
 
 
-                Task<List<Card>> selcard = cardsContext.Cards.Where(p => !chcards.Select(p2 => p2.CardID).Contains(p.CardID)).OrderBy(p => p.Title).ToListAsync();
+                Task<List<Packet>> selcard = cardsContext.Packets.Where(p => !chcards.Select(p2 => p2.PacketID).Contains(p.PacketID)).OrderBy(p => p.Title).ToListAsync();
                 return await selcard;
             }
         }
 
-        public async Task<List<Card>> GetChildCards(Card card)
+        public async Task<List<Packet>> GetChildCards(Packet card)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
-                return await cardsContext.Cards.Where(c => c.ParentID == card.CardID).ToListAsync();
+                return await cardsContext.Packets.Where(c => c.ParentID == card.PacketID).ToListAsync();
                 
 
             }
         }
 
 
-        public async Task<bool> UpdateCard(Card card)
+        public async Task<bool> UpdateCard(Packet card)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {
-                var tracking = cardsContext.Cards.Update(card);
+                var tracking = cardsContext.Packets.Update(card);
 
                 await cardsContext.SaveChangesAsync();
                 var isModified = tracking.State == EntityState.Modified;
@@ -382,7 +382,7 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public async Task<bool> DeleteCard(Card Card)
+        public async Task<bool> DeleteCard(Packet Card)
         {
             using (var cardsContext = _dbContextFactory.CreateDbContext())
             {              
@@ -400,38 +400,38 @@ namespace BlazorApp1.Helpers
 
         #region NoteCards Crud
 
-        public async Task<NoteCard> GetNoteCard(NoteCard noteCard)
+        public async Task<NotePacket> GetNoteCard(NotePacket noteCard)
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
                 NotifyStateChanged();
-                return await notecardsContext.NoteCards.Where(ncd => ncd.NoteID == noteCard.NoteID && ncd.CardID == noteCard.CardID).Include(nt => nt.Note).ThenInclude(im => im.Images).FirstOrDefaultAsync();
+                return await notecardsContext.NotePackets.Where(ncd => ncd.NoteID == noteCard.NoteID && ncd.PacketID == noteCard.PacketID).Include(nt => nt.Note).ThenInclude(im => im.Images).FirstOrDefaultAsync();
             }
         }
 
-        public async Task <List<NoteCard>> GetAllNoteCards()
+        public async Task <List<NotePacket>> GetAllNoteCards()
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
-                return await notecardsContext.NoteCards.ToListAsync();
+                return await notecardsContext.NotePackets.ToListAsync();
 
             }
         }
 
-        public async Task<bool> NewNoteCard(Card addCard, Note addNote)
+        public async Task<bool> NewNoteCard(Packet addCard, Note addNote)
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
                 //cardsContext.Note.Add(NewNote);
                 //await cardsContext.SaveChangesAsync();
                 // cardsContext.NoteCards.Add(new NoteCard { Card =NewCard , Note = NewNote, Order = NewCard.NoteCards.Count });
-                NoteCard noteCard = new NoteCard() { CardID = addCard.CardID, NoteID = addNote.NoteID };
+                NotePacket noteCard = new NotePacket() { PacketID = addCard.PacketID, NoteID = addNote.NoteID };
 
                 try
                 {
-                    if (!notecardsContext.NoteCards.Contains(noteCard))
+                    if (!notecardsContext.NotePackets.Contains(noteCard))
                     {
-                        notecardsContext.NoteCards.Add(new NoteCard { CardID = addCard.CardID, NoteID = addNote.NoteID });
+                        notecardsContext.NotePackets.Add(new NotePacket { PacketID = addCard.PacketID, NoteID = addNote.NoteID });
                         await notecardsContext.SaveChangesAsync();
                     }
                   
@@ -454,13 +454,13 @@ namespace BlazorApp1.Helpers
                 //cardsContext.Note.Add(NewNote);
                 //await cardsContext.SaveChangesAsync();
                 // cardsContext.NoteCards.Add(new NoteCard { Card =NewCard , Note = NewNote, Order = NewCard.NoteCards.Count });
-                NoteCard noteCard = new NoteCard() { CardID = cardID, NoteID = noteID };
+                NotePacket noteCard = new NotePacket() { PacketID = cardID, NoteID = noteID };
 
                 try
                 {
-                    if (!notecardsContext.NoteCards.Contains(noteCard))
+                    if (!notecardsContext.NotePackets.Contains(noteCard))
                     {
-                        notecardsContext.NoteCards.Add(new NoteCard() { CardID = cardID, NoteID = noteID });
+                        notecardsContext.NotePackets.Add(new NotePacket() { PacketID = cardID, NoteID = noteID });
                         await notecardsContext.SaveChangesAsync();
                     }
 
@@ -478,19 +478,19 @@ namespace BlazorApp1.Helpers
         }
 
 
-        public async Task<bool> AddRangNoteCard(Card addCard, List<Note> addNotes)
+        public async Task<bool> AddRangNoteCard(Packet addCard, List<Note> addNotes)
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
                 foreach (Note addNote in addNotes)
                 {
-                    NoteCard noteCard = new NoteCard() { CardID = addCard.CardID, NoteID = addNote.NoteID };
+                    NotePacket noteCard = new NotePacket() { PacketID = addCard.PacketID, NoteID = addNote.NoteID };
 
                     try
                     {
-                        if (!notecardsContext.NoteCards.Contains(noteCard))
+                        if (!notecardsContext.NotePackets.Contains(noteCard))
                         {
-                            notecardsContext.NoteCards.Add(new NoteCard { CardID = addCard.CardID, NoteID = addNote.NoteID });
+                            notecardsContext.NotePackets.Add(new NotePacket { PacketID = addCard.PacketID, NoteID = addNote.NoteID });
                             await notecardsContext.SaveChangesAsync();
                         }
 
@@ -511,7 +511,7 @@ namespace BlazorApp1.Helpers
             return true;
         }
 
-        public async Task<bool> NewRangNoteCards(List<NoteCard> noteCards)
+        public async Task<bool> NewRangNoteCards(List<NotePacket> noteCards)
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
@@ -524,12 +524,12 @@ namespace BlazorApp1.Helpers
             return true;
         }
 
-        public async Task<bool> RemoveNoteCard(NoteCard noteCards)
+        public async Task<bool> RemoveNoteCard(NotePacket noteCards)
         {
             using (var notecardsContext = _dbContextFactory.CreateDbContext())
             {
 
-                notecardsContext.NoteCards.Remove(noteCards);
+                notecardsContext.NotePackets.Remove(noteCards);
                 await notecardsContext.SaveChangesAsync();
                 NotifyStateChanged();
 
@@ -885,7 +885,7 @@ namespace BlazorApp1.Helpers
                 }
 
                 // Serialize the list of note cards to a file
-                List<NoteCard> allNoteCards = await GetAllNoteCards();
+                List<NotePacket> allNoteCards = await GetAllNoteCards();
                 if (allNoteCards != null)
                 {
                     await SerializeNoteCardsAsync(allNoteCards);
@@ -923,12 +923,12 @@ namespace BlazorApp1.Helpers
                 await JsonSerializer.SerializeAsync<Project>(createProjectStream, project, ProjectOptions);
             }
         }
-        private async Task SerializeNoteCardsAsync(List<NoteCard> noteCards)
+        private async Task SerializeNoteCardsAsync(List<NotePacket> noteCards)
         {
             var jsonNoteCardsFilePath = ProjectPath.Parent.FullName + "/" + FilePaths.NoteCardsFilePath;
             await using (FileStream createNotecardsStream = File.Create(jsonNoteCardsFilePath))
             {
-                await JsonSerializer.SerializeAsync<List<NoteCard>>(createNotecardsStream, noteCards, NoteCardsOptions);
+                await JsonSerializer.SerializeAsync<List<NotePacket>>(createNotecardsStream, noteCards, NoteCardsOptions);
             }
         }
 

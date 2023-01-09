@@ -320,7 +320,7 @@
                         else
                         {
                             <button class="btn btn-outline-danger  ms-1  my-1 rounded-3" type="button"
-                    onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
+                             onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
                                 <span class="bi bi-arrow-left"></span>
                             </button>
                         }
@@ -706,7 +706,7 @@
         {
             // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
             // await  dataSvs.UpdateProject();
-            await dataSvs.AddCard(new Card { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+            await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
             textValue = "";
             await inputTextRef.FocusAsync();
         }
@@ -725,7 +725,7 @@
             {
                 // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
                 // await  dataSvs.UpdateProject();
-                await dataSvs.AddCard(new Card { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
                 textValue = "";
                 await inputTextRef.FocusAsync();
             }
@@ -806,13 +806,13 @@
     }
 
 
-    private async Task SelectChildCard(Card chCard)
+    private async Task SelectChildCard(Packet chCard)
     {
         
         try
         {
             await dataSvs.GetCard(chCard);
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
         }
         catch (Exception ex)
         {

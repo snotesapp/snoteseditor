@@ -268,7 +268,7 @@ else
 
                         <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
 
-                            <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Cards)">
+                            <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
                                 <RowTemplate Context="card">
 
                                     <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow rounded truncate-text" style="background-color:#5e92f3"
@@ -415,7 +415,7 @@ else
     }
 
 
-    public async Task AddUserSelectedNotes(Card card)
+    public async Task AddUserSelectedNotes(Packet card)
     {
         List<Note> UserSelectedNotes = dataSvs.selectedNCNotes.Where(sl => sl.Selected == true).ToList();
         await dataSvs.AddRangNoteCard(card, UserSelectedNotes);
@@ -423,7 +423,7 @@ else
         UserSelectedNotes.Select(nts => { nts.Selected = false; return nts; }).ToList();
     }
 
-    private async Task AddNoteCard(Card card, Note note)
+    private async Task AddNoteCard(Packet card, Note note)
     {
 
         await dataSvs.NewNoteCard(card, note);
@@ -461,7 +461,7 @@ else
         {
             // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
             // await  dataSvs.UpdateProject();
-            await dataSvs.AddCard(new Card { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+            await dataSvs.AddCard(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
             cardTitle = "";
         }
 
@@ -480,7 +480,7 @@ else
 
                 // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
                 // await  dataSvs.UpdateProject();
-                await dataSvs.AddCard(new Card { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                await dataSvs.AddCard(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
                 cardTitle = "";
 
 

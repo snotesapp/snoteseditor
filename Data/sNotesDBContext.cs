@@ -8,8 +8,8 @@ namespace BlazorApp1.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<Note> Note { get; set; }
         public DbSet<NotesCollection> NotesCollection { get; set; }
-        public DbSet<Card> Cards { get; set; }
-        public DbSet<NoteCard> NoteCards { get; set; }
+        public DbSet<Packet> Packets { get; set; }
+        public DbSet<NotePacket> NotePackets { get; set; }
         public DbSet<NoteImage> NoteImage { get; set; }
         public DbSet<NotePath> NotePath { get; set; }
         public const string DatabaseName = "sNotes.db3";
@@ -54,9 +54,9 @@ namespace BlazorApp1.Data
         {
 
             modelBuilder.Entity<Project>().Property(b => b.Name).HasMaxLength(100);
-            modelBuilder.Entity<Card>().HasOne(b => b.Project).WithMany(p => p.Cards).HasForeignKey(b => b.ProjectFK);
-            modelBuilder.Entity<Card>().Property(b => b.Title).HasMaxLength(100);
-            modelBuilder.Entity<Card>().Property(b => b.Resume).HasMaxLength(1500);
+            modelBuilder.Entity<Packet>().HasOne(b => b.Project).WithMany(p => p.Packets).HasForeignKey(b => b.ProjectFK);
+            modelBuilder.Entity<Packet>().Property(b => b.Title).HasMaxLength(100);
+            modelBuilder.Entity<Packet>().Property(b => b.Resume).HasMaxLength(1500);
            // modelBuilder.Entity<Card>().Property(csl => csl.Selected).HasDefaultValue(true);
             modelBuilder.Entity<NotesCollection>().HasOne(ig => ig.Project).WithMany(p => p.NotesCollection).HasForeignKey(ig => ig.ProjectFK);
             modelBuilder.Entity<NotesCollection>().Property(b => b.Title).HasMaxLength(100);
@@ -68,14 +68,14 @@ namespace BlazorApp1.Data
             modelBuilder.Entity<Note>().Ignore(sl => sl.Selected);
             modelBuilder.Entity<Note>().Ignore(th => th.Thumbnail);
 
-            modelBuilder.Entity<NoteCard>().HasKey(c => new { c.CardID, c.NoteID });
-            modelBuilder.Entity<NoteCard>().HasOne(cd => cd.Card).WithMany(c => c.NoteCards).HasForeignKey(cd => cd.CardID);
-            modelBuilder.Entity<NoteCard>().HasOne(cd => cd.Note).WithMany(i => i.NoteCards).HasForeignKey(cd => cd.NoteID);
-            modelBuilder.Entity<NoteCard>().Ignore(dv => dv.IsDragOver);
+            modelBuilder.Entity<NotePacket>().HasKey(c => new { c.PacketID, c.NoteID });
+            modelBuilder.Entity<NotePacket>().HasOne(cd => cd.Packet).WithMany(c => c.NotePackets).HasForeignKey(cd => cd.PacketID);
+            modelBuilder.Entity<NotePacket>().HasOne(cd => cd.Note).WithMany(i => i.NotePackets).HasForeignKey(cd => cd.NoteID);
+            modelBuilder.Entity<NotePacket>().Ignore(dv => dv.IsDragOver);
    
 
-            modelBuilder.Entity<Card>().HasOne(c => c.Parent).WithMany().HasForeignKey(p => p.ParentID).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Card>().Ignore(ed => ed.Editable);
+            modelBuilder.Entity<Packet>().HasOne(c => c.Parent).WithMany().HasForeignKey(p => p.ParentID).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Packet>().Ignore(ed => ed.Editable);
 
             modelBuilder.Entity<NoteImage>().HasOne(n => n.Note).WithMany(i => i.Images).HasForeignKey(nf => nf.NoteFK);
             modelBuilder.Entity<NoteImage>().Ignore(bn => bn.Bounds);

@@ -23,16 +23,16 @@ namespace BlazorApp1.Data
         [Key]
         public int ProjectID { get; set; }
         public string Name { get; set; }
-        public List<Card> Cards { get; set; }
+        public List<Packet> Packets { get; set; }
 
         public List<NotesCollection> NotesCollection { get; set; }
 
     }
     
-    public class Card
+    public class Packet
     {
 
-        public int CardID { get; set; }
+        public int PacketID { get; set; }
         public string Title { get; set; }
         public string? Resume { get; set; }
         public bool Selected { get; set; }
@@ -40,20 +40,20 @@ namespace BlazorApp1.Data
 
         public int? ParentID { get; set; }
         [JsonIgnore]
-        public Card? Parent { get; set; }
+        public Packet? Parent { get; set; }
         public int ProjectFK { get; set; }
         public Project Project { get; set; }
-        public List<NoteCard> NoteCards { get; set; }
+        public List<NotePacket> NotePackets { get; set; }
 
 
     }
 
-    public class NoteCard
+    public class NotePacket
     {
 
         public int Order { get; set; }
-        public int CardID { get; set; }
-        public Card? Card { get; set; }
+        public int PacketID { get; set; }
+        public Packet? Packet { get; set; }
 
         public int NoteID { get; set; }
         public Note? Note { get; set; }
@@ -75,7 +75,7 @@ namespace BlazorApp1.Data
         public int NotesCollectionFK { get; set; }
 
         public NotesCollection NotesCollection { get; set; }
-        public List<NoteCard> NoteCards { get; set; }
+        public List<NotePacket> NotePackets { get; set; }
         public List<NotePath> NotePaths { get; set; }
 
 
