@@ -11,7 +11,7 @@
 @using System.Globalization
 @using System.Drawing
 @using SkiaSharp.Views.Blazor
-
+@inject SkiaServices skiaSvs
 
 @inject SharedDataService dataSvs
 
@@ -175,7 +175,7 @@
                         <MTextarea Outlined NoResize Class="font-class" TextColor="black"  Counter="true" Clearable Rules="_rules"
                            
                                    Placeholder="Write something"
-                                   OnChange= "() =>{ UpdateBitmap();}"
+                                   OnChange= "() =>{ skiaSvs.UpdateBitmap();}"
                                    @bind-Value="@(dataSvs.editNote.Text)">
 
 
@@ -188,8 +188,7 @@
 
             @if (ContextImg != null)
             {
-                <MMenu @bind-Value="ShowImgContext" OnOutsideClick="()=> UpdateBitmap()" 
-                 
+                <MMenu @bind-Value="ShowImgContext" OnOutsideClick="()=> skiaSvs.UpdateBitmap()"
                    PositionX="X"
                    PositionY="Y"
                    Absolute
@@ -421,7 +420,7 @@
                 await filesAndDirectories.SaveImageLocaly(fPath, stream);
 
                 SaveImage(fPath, file.ContentType);
-                UpdateBitmap();
+                skiaSvs.UpdateBitmap();
                 await stream.DisposeAsync();
             }
 
@@ -571,7 +570,7 @@
     {
 
         _noteImage.Selected = false;
-        UpdateBitmap();
+        skiaSvs.UpdateBitmap();
        
         // dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
 
@@ -864,7 +863,7 @@
 
                     dataSvs.inProgressPolylines.Remove(e.PointerId);
 
-                    UpdateBitmap();
+                    skiaSvs.UpdateBitmap();
 
                 }
 
@@ -881,7 +880,7 @@
                 break;
         }
 
-        UpdateBitmap();
+        skiaSvs.UpdateBitmap();
     }
 
     void OnPointerCancel(PointerEventArgs e)
@@ -908,44 +907,6 @@
 
     }
 
-    void UpdateBitmap()
-    {
-
-        using (SKCanvas saveBitmapCanvas = new SKCanvas(dataSvs.saveBitmap))
-        {
-
-            //saveBitmapCanvas.Clear();
-
-
-            foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.completedPolylines)
-            {
-
-                paint.Color = FngrPaintPoly.StrokeColor;
-                paint.StrokeWidth = FngrPaintPoly.StrokeWidth;
-                paint.BlendMode = FngrPaintPoly.StrokeBlendMode;
-
-
-                saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
-            }
-            /*
-            foreach (FingerPaintPolyline FngrPaintPoly in dataSvs.inProgressPolylines.Values)
-            {
-            saveBitmapCanvas.DrawPath(FngrPaintPoly.Path, paint);
-             }
-
-             */
-
-
-            dataSvs.noteEdited = true;
-
-
-        }
-
-
-
-
-        dataSvs.skiaView.Invalidate();
-    }
 
     #endregion
 
@@ -1055,7 +1016,7 @@
 
             });
 
-        UpdateBitmap();
+        skiaSvs.UpdateBitmap();
         
         StateHasChanged();
     }

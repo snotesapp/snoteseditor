@@ -4,6 +4,7 @@
 @inject SharedDataService dataSvs
 @inject IJSRuntime JSRuntime
 @inject IMessageService MessageService
+@inject SkiaServices skiaSvs
 
 @switch (dataSvs.menustatus)
 {
@@ -344,46 +345,14 @@
 
             <MDivider></MDivider>
         </MContainer>
-        <MDialog @bind-Value="savenotedialog" HideOverlay Persistent
-         MaxWidth="290">
-            <MCard>
-                <MCardTitle Class="text-h5">
-                    Save Note
-                </MCardTitle>
 
-                <MCardText>
-                    Would you like to save note?
-                </MCardText>
 
-                <MCardActions>
-                    <MSpacer></MSpacer>
+        <AlertDialog  DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
 
-                    @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
-                    {
-                        <MButton Color="green darken-1"
-                     Text
-                     OnClick='()=> SaveNTAndBack("collection") '>
-                            Yes
-                        </MButton>
-                    }
-                    else
-                    {
-                       <MButton Color="green darken-1"
-                     Text
-                     OnClick='()=> FocusOnSummaryPannel()  '>
-                            Yes
-                        </MButton>
-                    }
-                   
+        </AlertDialog>
 
-                    <MButton Color="green darken-1"
-                     Text
-                     OnClick='()=> BackToCollections("collection")'>
-                        No
-                    </MButton>
-                </MCardActions>
-            </MCard>
-        </MDialog>
+       
+
         <!--
 
 
@@ -449,7 +418,7 @@
     private string textValue { get; set; }
     private bool _addItem { get; set; }
     
-   
+
     ElementReference inputTextRef;
     string CollectionId = "0";
 
@@ -482,7 +451,7 @@
 
     #region Save Note
 
-    bool savenotedialog = false;
+    
 
     private async Task SwitchMenu(string menu)
     {
@@ -507,7 +476,8 @@
                 {
                     if (dataSvs.noteEdited)
                     {
-                        savenotedialog = true;
+                        dataSvs.savenotedialog = true;
+                        
                         //await dataSvs.SaveNote();
                         //  dataSvs.BitmapDrawed = false;
                         // dataSvs.ClearCanvas();
@@ -526,7 +496,9 @@
                 {
                     if (dataSvs.noteEdited)
                     {
-                        CreateThumbImg();
+
+                        skiaSvs.CreateThumbImg(CollectionId);
+                        //CreateThumbImg();
                         await dataSvs.UpdateNote();
 
                         await dataSvs.GetNotes();
@@ -578,8 +550,8 @@
     public async Task SaveNote()
     {
 
-        CreateThumbImg();
-
+        //CreateThumbImg();
+        skiaSvs.CreateThumbImg(CollectionId);
         if (dataSvs.editNote.NoteID == 0)
         {
             if (dataSvs.noteEdited)
@@ -624,7 +596,7 @@
     private async Task BackToCollections(string menu)
     {
 
-        savenotedialog = false;
+        dataSvs.savenotedialog  = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
         await dataSvs.GetNotes();
@@ -633,7 +605,8 @@
 
     private async Task SaveNTAndBack(string menu)
     {
-        CreateThumbImg();
+        skiaSvs.CreateThumbImg(CollectionId);
+        //CreateThumbImg();
         if (dataSvs.editNote.NoteID == 0)
         {
             await dataSvs.SaveNote();
@@ -646,81 +619,14 @@
 
         dataSvs.BitmapDrawed = false;
 
-        savenotedialog = false;
+        dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
         await dataSvs.GetNotes();
         await GoToMenu.InvokeAsync(menu);
     }
 
-    private void CreateThumbImg()
-    {
-        string bitmapPath;
-        if (dataSvs.editNote.MainImg is not null)
-        {
 
-            bitmapPath = dataSvs.editNote.MainImg;
-            using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-            {
-
-                SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
-                SKImage subImage = image.Subset(sKRectI);
-                SKData data = subImage.Encode();
-
-                //  SKData data = image.Encode();
-
-                FileStream fs = File.Create(bitmapPath);
-                data.SaveTo(fs);
-                fs.Close();
-
-
-                // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
-
-            }
-
-        }
-        else
-        {
-            // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
-
-            var fileName = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-            var path = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            if (Directory.Exists(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/"))
-            {
-                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            }
-            else
-            {
-                Directory.CreateDirectory(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/");
-                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            }
-
-            //  bitmapPath = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-
-        }
-
-
-        using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-        {
-
-            SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
-            SKImage subImage = image.Subset(sKRectI);
-            SKData data = subImage.Encode();
-
-            //  SKData data = image.Encode();
-            FileStream fs = File.Create(bitmapPath);
-            data.SaveTo(fs);
-            fs.Close();
-
-            dataSvs.editNote.MainImg = bitmapPath;
-            // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
-
-        }
-
-    }
     #endregion
 
 
@@ -866,7 +772,7 @@
     private async Task FocusOnSummaryPannel()
     {
         await JSRuntime.InvokeVoidAsync("focusOnSummaryPannel");
-        savenotedialog = false;
+        dataSvs.savenotedialog = false;
     }
     private void EnableAddItem()
     {

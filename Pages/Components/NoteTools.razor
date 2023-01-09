@@ -1,7 +1,7 @@
 ﻿@using BlazorApp1.Helpers
 @using SkiaSharp
 @inject SharedDataService dataSvs
-
+@inject SkiaServices skiaSvs
 
 
 <div class="d-flex flex-wrap justify-content-start">
@@ -210,6 +210,7 @@
 
         //Console.WriteLine($"Value changed to: {value}");
         dataSvs.SetBackgroundColor(chArgs?.Value?.ToString());
+        skiaSvs.UpdateBitmap();
         //Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
     }
 

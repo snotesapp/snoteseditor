@@ -92,6 +92,9 @@
         </MList>
 
     </MRow>
+
+ 
+
 </MContainer>
 
 
@@ -167,7 +170,7 @@ else
             </MListItemContent>
         </MListItem>
 
-        <MListItem OnClick="() => DeleteNC(ContextMenuNotesCollection)">
+            <MListItem OnClick="() =>showDeleteNCConfirmation = true">
             <MListItemIcon>
                 <MIcon>
                     mdi-delete-outline
@@ -185,7 +188,13 @@ else
     </MList>
 </MMenu>
 
+    <AlertDialog Show="@showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
+             Text="Confirm deleting collection with all notes inside?" YesEvent="() => DeleteNC(ContextMenuNotesCollection)" NoEvent="()=> showDeleteNCConfirmation = false">
+
+    </AlertDialog>
+
 }
+
 
 
 
@@ -197,7 +206,7 @@ else
     [Parameter]
     public EventCallback<string> GoToMenu { get; set; }
 
-
+    private bool showDeleteNCConfirmation = false;
     private string editNCTitle { get; set; }
 
     private NotesCollection? ContextMenuNotesCollection = null;
@@ -250,13 +259,13 @@ else
             nc.Selected = true;
             await dataSvs.UpdateNCollection(nc);
         }
-        
+
         await dataSvs.GetNotes();
     }
 
     private Task AddNCNotes(NotesCollection notesCollection)
     {
-      //  dataSvs.EditMode = false;
+        //  dataSvs.EditMode = false;
 
         dataSvs.AddNotesSelectedNC = notesCollection;
         dataSvs.editNote = new Note()
@@ -267,7 +276,7 @@ else
                 BackgroundColor = "#FB7B5C",
             };
 
-       
+
         return GoToMenu.InvokeAsync("notetools");
 
     }
@@ -280,7 +289,7 @@ else
         oldname = notesCollection.Title;
 
         notesCollection.Editable = true;
-        
+
     }
 
     private async Task SaveCollectionName(NotesCollection nc)
@@ -304,6 +313,7 @@ else
         await dataSvs.DeleteNCollection(notesCollection);
         dataSvs.MainProject = await dataSvs.GetProject();
         await dataSvs.GetNotes();
+        showDeleteNCConfirmation = false;
     }
 
     public void Dispose()

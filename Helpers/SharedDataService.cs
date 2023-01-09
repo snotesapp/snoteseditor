@@ -73,6 +73,8 @@ namespace BlazorApp1.Helpers
             }
         }
 
+        public bool savenotedialog = false;
+
         #endregion
 
 

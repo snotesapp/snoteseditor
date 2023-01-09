@@ -12,6 +12,11 @@ $gradient-coral: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#f
     background-image:$gradient-coral;
 }
 
+$gradient-danger: linear-gradient(to right bottom, #ba000d,#de4e6e,#e58fbb,#e7caeb,#ffffff );
+
+.gradient-danger {
+    background-image: $gradient-danger;
+}
 
 
 $bezier: cubic-bezier(.25,1,.25,1); // Define a variable for the cubic-bezier curve

@@ -1,0 +1,279 @@
+﻿@using BlazorApp1.Helpers;
+@using SkiaSharp;
+@inject SharedDataService dataSvs
+@inject SkiaServices skiaSvs
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+
+@switch (DialogType)
+{
+    case DialogTypes.DialogType.SaveNote:
+        <MDialog @bind-Value="Show" HideOverlay Persistent
+         MaxWidth="400">
+            <MCard>
+                <MCardTitle Class="text-h5 gradient-blue">
+                    Save Note
+                </MCardTitle>
+
+                <MCardText Class="text-h6  text-dark">
+                    Would you like to save note?
+                </MCardText>
+
+                <MCardActions>
+                    <MSpacer></MSpacer>
+
+                    @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                    {
+                        <MButton Color="green darken-1"
+                     Text
+                     OnClick='()=> SaveNTAndBack("collection") '>
+                            Yes
+                        </MButton>
+                    }
+                    else
+                    {
+                        <MButton Color="primary darken-1"
+                     Text
+                     OnClick='()=> FocusOnSummaryPannel()  '>
+                            Yes
+                        </MButton>
+                    }
+
+
+                    <MButton Color="primary darken-1"
+                     Text
+                     OnClick='()=> BackToCollections("collection")'>
+                        No
+                    </MButton>
+                </MCardActions>
+            </MCard>
+        </MDialog>
+
+    break;
+    case DialogTypes.DialogType.GeneralSave:
+        <MDialog @bind-Value="Show" HideOverlay Persistent
+         MaxWidth="400">
+            <MCard>
+                <MCardTitle Class="text-h5  gradient-danger">
+                    <MIcon Large Left Class="text-danger">
+                        mdi-alert-outline
+                    </MIcon>
+                    @Title
+                </MCardTitle>
+
+                <MCardText Class="text-h6  text-dark">
+                    @Text
+                </MCardText>
+
+                <MCardActions>
+                    <MSpacer></MSpacer>
+                    <MButton Color="primary darken-1" @onclick="YesEvent"
+                     Text >
+                        Yes
+                    </MButton>
+
+                    <MButton Color="primary darken-1" @onclick="NoEvent"
+                     Text>
+                        No
+                    </MButton>
+                </MCardActions>
+            </MCard>
+        </MDialog>
+
+        break;
+
+}
+
+
+
+
+
+@code {
+
+  
+
+    [Parameter]
+    public bool Show { get; set; } 
+    
+    [Parameter]
+    public DialogTypes.DialogType DialogType { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public EventCallback YesEvent { get; set; }
+    [Parameter]
+    public EventCallback NoEvent { get; set; }
+
+
+    // bool savenotedialog = false;
+    string CollectionId = "0";
+    IJSObjectReference _module;
+
+    protected override void OnInitialized()
+    {
+        if (dataSvs.AddNotesSelectedNC is not null)
+        {
+            CollectionId = dataSvs.AddNotesSelectedNC.NotesCollectionID.ToString();
+
+        }
+
+
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
+
+
+
+
+
+        }
+
+
+    }
+
+
+
+    private async Task BackToCollections(string menu)
+    {
+
+        dataSvs.savenotedialog = false;
+        dataSvs.noteEdited = false;
+        dataSvs.completedPolylines.Clear();
+        await dataSvs.GetNotes();
+        dataSvs.SwitchMenus(menu);
+
+    }
+
+    private async Task SaveNTAndBack(string menu)
+    {
+        skiaSvs.CreateThumbImg(CollectionId);
+        if (dataSvs.editNote.NoteID == 0)
+        {
+            await dataSvs.SaveNote();
+        }
+        else
+        {
+            await dataSvs.UpdateNote();
+        }
+
+
+        dataSvs.BitmapDrawed = false;
+
+        dataSvs.savenotedialog = false;
+        dataSvs.noteEdited = false;
+        dataSvs.completedPolylines.Clear();
+        await dataSvs.GetNotes();
+        dataSvs.SwitchMenus(menu);
+    }
+
+    private async Task FocusOnSummaryPannel()
+    {
+
+        await _module.InvokeVoidAsync("focusOnSummaryPannel");
+        Show = false;
+        dataSvs.savenotedialog = false;
+    }
+
+
+    // Unregister the drop zone events
+    public async ValueTask DisposeAsync()
+    {
+
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+
+    
+   
+
+    /*
+        private void CreateThumbImg()
+        {
+        string bitmapPath;
+        if (dataSvs.editNote.MainImg is not null)
+            {
+
+            bitmapPath = dataSvs.editNote.MainImg;
+            using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
+                {
+
+                SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
+                SKImage subImage = image.Subset(sKRectI);
+                SKData data = subImage.Encode();
+
+                //  SKData data = image.Encode();
+
+                FileStream fs = File.Create(bitmapPath);
+                data.SaveTo(fs);
+                fs.Close();
+
+
+                // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
+
+        }
+
+        }
+        else
+            {
+            // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
+
+            var fileName = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
+            var path = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+            if (Directory.Exists(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/"))
+                {
+                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+            }
+            else
+                {
+                Directory.CreateDirectory(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/");
+                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
+
+            }
+
+            //  bitmapPath = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
+
+        }
+
+
+        using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
+            {
+
+            SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
+            SKImage subImage = image.Subset(sKRectI);
+            SKData data = subImage.Encode();
+
+            //  SKData data = image.Encode();
+            FileStream fs = File.Create(bitmapPath);
+            data.SaveTo(fs);
+            fs.Close();
+
+            dataSvs.editNote.MainImg = bitmapPath;
+            // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
+
+     }
+
+        }
+
+    */
+
+}
+
+
+
+
+   

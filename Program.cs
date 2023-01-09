@@ -44,6 +44,8 @@ builder.Services.AddScoped<Project>();
 builder.Services.AddSingleton<CounterService, CounterService>();
 
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
+builder.Services.AddSingleton<SkiaServices, SkiaServices>();
+
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddMasaBlazor();
 

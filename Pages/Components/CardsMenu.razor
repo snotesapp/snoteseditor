@@ -231,7 +231,7 @@
             </MListItemContent>
         </MListItem>
 
-            <MListItem OnClick="() => DeleteCard(ContextMenuCard)">
+            <MListItem OnClick="() => showDeletePacketConfirmation = true">
             <MListItemIcon>
                 <MIcon>
                     mdi-delete-outline
@@ -391,6 +391,11 @@
 
             }
         </MList>
+
+        <AlertDialog Show="@showDeletePacketConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Packet"
+                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() => DeleteCard(ContextMenuCard)" NoEvent="()=> showDeletePacketConfirmation = false">
+
+        </AlertDialog>
 </MMenu>
 
 }
@@ -570,8 +575,9 @@ else
 
 
     private string cardTitle { get; set; }
-
     private bool _hover;
+
+    private bool showDeletePacketConfirmation = false;
 
     IJSObjectReference _module;
 
@@ -718,8 +724,8 @@ else
         await dataSvs.UpdateCard(childCard);
 
         dataSvs.MainProject = await dataSvs.GetProject();
-       
-       
+
+
     }
 
     #region Rename Card
@@ -731,7 +737,7 @@ else
         oldname = card.Title;
 
         card.Editable = true;
-      
+
     }
 
     private async Task SaveCardName(Card card)
@@ -784,7 +790,7 @@ else
     {
 
         await dataSvs.DeleteCard(card);
+        showDeletePacketConfirmation = false;
 
-       
     }
 }

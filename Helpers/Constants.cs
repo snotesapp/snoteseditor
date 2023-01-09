@@ -9,5 +9,14 @@
         public const string PackageFilePath = "package.zip";
     }
 
+    public static class DialogTypes
+    {
+        public enum DialogType
+        {
+            GeneralSave,
+            SaveNote
 
+        }
+    }
+   
 }
