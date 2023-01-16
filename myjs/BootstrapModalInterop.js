@@ -184,25 +184,48 @@ export function zoomOutelement(elementid) {
 
 }
 
-export function blazorDownloadFile1(filename, contentType, content) {
-    // Create the URL
-    const file = new File([content], filename, { type: contentType });
-    const exportUrl = URL.createObjectURL(file);
+export function blazorDownloadFile(filename, contentType, content) {
+    try {
+        // Create a new Blob object from the content
+        const blob = new Blob([content], { type: contentType });
 
-    // Create the <a> element and click on it
-    const a = document.createElement("a");
-    document.body.appendChild(a);
-    a.href = exportUrl;
-    a.download = filename;
-    a.target = "_self";
-    a.click();
+        // Use the fetch API to download the file
+        fetch(URL.createObjectURL(blob))
+            .then(response => {
+                // Check if the response is successful
+                if (response.ok) {
+                    // Create a new Blob object from the response
+                    return response.blob();
+                }
+                throw new Error("Failed to download file");
+            })
+            .then(blob => {
+                // Create an object URL from the blob
+                const url = URL.createObjectURL(blob);
 
+                // Create a new <a> element and set its href attribute
+                const a = document.createElement("a");
+                a.href = url;
 
-    // We don't need to keep the object URL, let's release the memory
-    // On older versions of Safari, it seems you need to comment this line...
-    URL.revokeObjectURL(exportUrl);
+                // Set the download attribute of the <a> element
+                a.download = filename;
 
+                // Append the <a> element to the document and click on it
+                document.body.appendChild(a);
+                a.click();
+
+                // Release the object URL
+                URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    } catch (error) {
+        console.error(error);
+    }
 }
+
+
 
 export function blazorDownloadFile2(fileName, url) {
     const anchorElement = document.createElement('a');

@@ -253,6 +253,7 @@ h1[b-a9n1frdwkj] {
 body[b-a9n1frdwkj] {
 }
 /* /Pages/NoteCardsPg.razor.rz.scp.css */
+
 body[b-3hcsrndfyc] {
 }
 
@@ -273,6 +274,8 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     justify-content: start;
 }
 
+
+
 .shownavbtns:hover + .navbuttons[b-3hcsrndfyc] {
     display: flex;
 }
@@ -285,6 +288,55 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     height: 100vh;
    
 }
+
+.npnavbutton[b-3hcsrndfyc] {
+    width:32px;
+    height:32px;
+    background-color:#1565c0;
+}
+
+.npnavbutton-disabled[b-3hcsrndfyc] {
+    width: 32px;
+    height: 32px;
+}
+.npnavbutton:hover[b-3hcsrndfyc] {
+    width: 32px;
+    height: 32px;
+    background-color: #5e92f3;
+    
+}
+
+
+.npnavbutton:active[b-3hcsrndfyc] {
+    width: 32px;
+    height: 32px;
+    background-color: #003c8f;
+}
+
+.sn-tooltip[b-3hcsrndfyc] {
+    position: relative;
+    display: inline-block;
+}
+
+    .sn-tooltip .tooltiptext[b-3hcsrndfyc] {
+        visibility: hidden;
+        width: 200px;
+        background-color: #1565c0;
+        color: #f5f5f5;
+        text-align: center;
+        border-radius: 4px;
+        padding: 5px 0;
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        bottom: 115%;
+        left: 100%;
+        margin-left: -32px;
+    }
+
+    .sn-tooltip:hover .tooltiptext[b-3hcsrndfyc] {
+        visibility: visible;
+    }
 /* /Shared/MainLayout.razor.rz.scp.css */
 .page[b-d3cbnxfwwv] {
     position: relative;
