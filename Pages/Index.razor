@@ -164,13 +164,18 @@ else
         </NoteTemplate>
     </NotesTemplate>
 
-    <MDialog Persistent HideOverlay  @bind-Value="@dataSvs.newProjectDialog"
+    @if(dataSvs.MainProject.ProjectID == 0)
+    {
+        <MDialog Persistent HideOverlay @bind-Value="@dataSvs.newProjectDialog"
          MaxWidth="600">
-        <NewPrjctWizard CloseDialoge="OpenCloseDialog">
+            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
 
-        </NewPrjctWizard>
+            </NewPrjctWizard>
 
-    </MDialog>
+        </MDialog>
+
+    }
+
 
 
 
@@ -217,11 +222,8 @@ else
     }
 
 
-
     @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
     {
-
-
         <div class="text-center">
             <MDialog @bind-Value="addcard_dialog" HideOverlay
              Width="500">
@@ -311,8 +313,6 @@ else
 
 
 
-
-
 @code {
 
     [Parameter]
@@ -324,6 +324,7 @@ else
 
     bool addcard_dialog;
     bool filterPackets;
+
 
     private Note? ContextMenuNote = null;
     private bool ShowNoteContext;

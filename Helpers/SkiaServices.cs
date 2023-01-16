@@ -10,6 +10,7 @@ namespace BlazorApp1.Helpers
         public SkiaServices(SharedDataService dataSvs)
         {
             this.dataSvs = dataSvs;
+
         }
     
         public void CreateThumbImg(string CollectionId)
@@ -138,4 +139,8 @@ namespace BlazorApp1.Helpers
 
 
     }
+
+
+   
+
 }
