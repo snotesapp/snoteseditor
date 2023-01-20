@@ -107,6 +107,7 @@ namespace BlazorApp1.Helpers
 
         public Project MainProject = new Project()
         {
+            
             Packets = new List<Packet>(),
             NotesCollection = new List<NotesCollection>() ,
         };
@@ -329,7 +330,7 @@ namespace BlazorApp1.Helpers
             {
                 // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
 
-                return await cardsContext.Packets.Where(sl => sl.Title.Contains(filterText)).Include(pr => pr.Parent).ToListAsync();
+                return await cardsContext.Packets.Where(sl => sl.Title.ToLower().Contains(filterText.Trim().ToLower())).Include(pr => pr.Parent).ToListAsync();
             }
         }
 
@@ -617,7 +618,7 @@ namespace BlazorApp1.Helpers
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
-                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.Contains(NotesTextFilter)).ToListAsync();
+                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).ToListAsync();
                 NotifyStateChanged();
                 return selectedNCNotes;
 
@@ -931,6 +932,8 @@ namespace BlazorApp1.Helpers
                 await JsonSerializer.SerializeAsync<List<NotePacket>>(createNotecardsStream, noteCards, NoteCardsOptions);
             }
         }
+
+
 
         #endregion
 

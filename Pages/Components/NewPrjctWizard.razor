@@ -5,6 +5,7 @@
 @using System.Text.Json
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using SkiaSharp;
 
 @inject SharedDataService dataSvs
 
@@ -12,6 +13,7 @@
 
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
+
 
 
 @switch (CurrentStep)
@@ -120,9 +122,19 @@
         await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
         await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
 
-        await SetProgres(20);
 
-        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+        await SetProgres(20);
+        try
+        {
+            await Task.Delay(200);
+            ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+        }
+        catch
+        {
+            Console.WriteLine("Error");
+        }
+
+
         await Task.Delay(20);
         await SetProgres(40);
 
@@ -164,65 +176,65 @@
     }
 
 
-    /*
-     
+        /*
+
     private async Task LoadFiles(InputFileChangeEventArgs e)
-    {
+            {
 
         CurrentStep = "Progress";
         if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
-        {
-            dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+    {
+    dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
         }
 
 
-        IBrowserFile uploadedfile = e.File;
+    IBrowserFile uploadedfile = e.File;
 
-        await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
-        await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
+    await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
+    await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
 
-        await SetProgres(20);
+    await SetProgres(20);
 
-        ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
-        await Task.Delay(20);
-        await SetProgres(40);
+    ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+    await Task.Delay(20);
+    await SetProgres(40);
 
-        //  var listfiles = Directory.GetFiles( AppDomain.CurrentDomain.BaseDirectory );
-        //  var listdirs = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory+"project");
+    //  var listfiles = Directory.GetFiles( AppDomain.CurrentDomain.BaseDirectory );
+    //  var listdirs = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory+"project");
 
-        var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
+    var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
 
         using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-        {
-            Project? newProject =
-              await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-            dataSvs.MainProject = newProject;
-        }
-        await SetProgres(50);
+          {
+          Project? newProject =
+        await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+    dataSvs.MainProject = newProject;
+    }
+    await SetProgres(50);
 
-        await dataSvs.InsertProject(dataSvs.MainProject);
-        await Task.Delay(300);
-        await SetProgres(70);
+    await dataSvs.InsertProject(dataSvs.MainProject);
+    await Task.Delay(300);
+    await SetProgres(70);
 
-        var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
+    var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
 
-        using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-        {
-            List<NoteCard>? noteCardsList =
-              await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
-            await dataSvs.NewRangNoteCards(noteCardsList);
-        }
-        await SetProgres(80);
+    using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
+          {
+          List<NoteCard>? noteCardsList =
+          await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
+        await dataSvs.NewRangNoteCards(noteCardsList);
+    }
+    await SetProgres(80);
 
-        await dataSvs.GetNotes();
-        await Task.Delay(20);
-        await SetProgres(100);
+    await dataSvs.GetNotes();
+    await Task.Delay(20);
+    await SetProgres(100);
 
-        await CloseDialoge.InvokeAsync(false);
+    await CloseDialoge.InvokeAsync(false);
 
     }
 
-   
+
      */
 
     void SetStep(string step)
@@ -251,10 +263,38 @@
                 Note = new List<Note>()
             });
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+        
+        
+        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
+        DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");
+
+        using (var bitmap = new SkiaSharp.SKBitmap(600, 400))
+        {
+            bitmap.Erase(SKColor.Parse("#FF7F50"));
+            using (var canvas = new SkiaSharp.SKCanvas(bitmap))
+            {
+                var paint = new SkiaSharp.SKPaint()
+                    {
+                        Color = SKColors.Black,
+                        TextSize = 20,
+                        IsAntialias = true,
+                        Typeface = SKTypeface.FromFamilyName("Arial")
+                    };
+                canvas.DrawText("Copyright © 2023 sNotes. All rights reserved.", 20, 100, paint);
+               
+            }
+            using (var image = SkiaSharp.SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 100))
+            {
+                using (var stream = File.OpenWrite(imagespth.FullName + "/blanc.jpeg"))
+                {
+                    data.SaveTo(stream);
+                }
+            }
+        }
+
         await dataSvs.InsertProject(dataSvs.MainProject);
 
-       
-        
         await CloseDialoge.InvokeAsync(false);
     }
 

@@ -39,7 +39,7 @@ namespace BlazorApp1.Data
         public bool Editable { get; set; }
 
         public int? ParentID { get; set; }
-        [JsonIgnore]
+        [NotMapped]
         public Packet? Parent { get; set; }
         public int ProjectFK { get; set; }
         public Project Project { get; set; }
@@ -198,7 +198,8 @@ namespace BlazorApp1.Data
 
     public class NotesCollection
     {
-        
+
+
         public int NotesCollectionID { get; set; }
         public string Title { get; set; }
         public bool Selected { get; set; }
