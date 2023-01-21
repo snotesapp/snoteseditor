@@ -943,22 +943,25 @@
     {
         try
         {
+            if (File.Exists(noteImage.ImgURI))
+            {
+                using (FileStream stream = File.Open(noteImage.ImgURI, FileMode.Open))
+                {
+                    stream.Close();
+                    File.Delete(noteImage.ImgURI);
+                }
+            }
             if (dataSvs.editNote.NoteID == 0)
             {
-               
                 dataSvs.editNote.Images.Remove(noteImage);
-
             }
             else
             {
-
                 await dataSvs.DeleteNoteImg(noteImage);
             }
-
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
-
             Error?.ProcessError(ex);
         }
         finally
@@ -966,10 +969,7 @@
             ContextImg = null;
             ShowImgContext = false;
         }
-
-
     }
-
 
 
     async Task PastClipboardImg()

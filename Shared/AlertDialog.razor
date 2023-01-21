@@ -144,6 +144,7 @@
     private async Task BackToCollections(string menu)
     {
 
+        await dataSvs.DeleteNoteImgFiles(dataSvs.editNote, true);
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();

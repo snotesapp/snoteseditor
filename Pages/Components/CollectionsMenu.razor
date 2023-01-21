@@ -263,6 +263,7 @@ else
         await dataSvs.GetNotes();
     }
 
+
     private Task AddNCNotes(NotesCollection notesCollection)
     {
         //  dataSvs.EditMode = false;
@@ -273,7 +274,7 @@ else
 
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-                BackgroundColor = "#FB7B5C",
+                BackgroundColor = "#FFFFFF",
             };
 
 
@@ -308,14 +309,30 @@ else
     }
     #endregion
 
-    private async Task DeleteNC(NotesCollection notesCollection)
-    {
-        await dataSvs.DeleteNCollection(notesCollection);
-        dataSvs.MainProject = await dataSvs.GetProject();
-        await dataSvs.GetNotes();
-        showDeleteNCConfirmation = false;
-    }
 
+    private async Task DeleteNC(NotesCollection notesCollection)
+{
+    try
+    {
+        var filePath = Path.Combine(dataSvs.ProjectPath.FullName, notesCollection.NotesCollectionID.ToString());
+        if (Directory.Exists(filePath))
+        {
+            Directory.Delete(filePath, true);
+            await dataSvs.DeleteNCollection(notesCollection);
+            dataSvs.MainProject = await dataSvs.GetProject();
+            await dataSvs.GetNotes();
+            showDeleteNCConfirmation = false;
+        }
+    }
+    catch (Exception ex)
+    {
+        // log the error
+        Console.WriteLine("Error deleting notes collection ");
+    }
+}
+
+
+ 
     public void Dispose()
     {
         dataSvs.OnChange -= StateHasChanged;

@@ -417,7 +417,7 @@
     public EventCallback<string> GoToMenu { get; set; }
     private string textValue { get; set; }
     private bool _addItem { get; set; }
-    
+
 
     ElementReference inputTextRef;
     string CollectionId = "0";
@@ -451,7 +451,7 @@
 
     #region Save Note
 
-    
+
 
     private async Task SwitchMenu(string menu)
     {
@@ -470,14 +470,15 @@
                 //dataSvs.UpdateNote().GetAwaiter().GetResult();
 
 
-
+               
 
                 if (dataSvs.editNote.NoteID == 0) //New Note
                 {
+
                     if (dataSvs.noteEdited)
                     {
                         dataSvs.savenotedialog = true;
-                        
+
                         //await dataSvs.SaveNote();
                         //  dataSvs.BitmapDrawed = false;
                         // dataSvs.ClearCanvas();
@@ -522,7 +523,7 @@
                     // await dataSvs.UpdateNote();
                 }
 
-
+               
                 //dialog = true;
                 // dataSvs.ClearCanvas();
                 //await dataSvs.GetNotes();

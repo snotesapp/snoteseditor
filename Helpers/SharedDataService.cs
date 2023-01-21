@@ -1,16 +1,10 @@
 ﻿using BlazorApp1.Data;
-using BlazorApp1.Pages.Components;
-using BlazorComponent;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
-using OneOf.Types;
 using ReactiveUI;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 using System.Data;
-using System.Globalization;
 using System.IO.Compression;
 using System.Reactive.Linq;
 using System.Text.Json;
@@ -88,7 +82,7 @@ namespace BlazorApp1.Helpers
             Text = "",
             Images = new List<NoteImage>(),
             NotePaths = new List<NotePath>(),
-            BackgroundColor = "#FB7B5C"
+            BackgroundColor = "#FFFFFF"
 
         };
 
@@ -567,7 +561,7 @@ namespace BlazorApp1.Helpers
             {
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-                BackgroundColor = "#FB7B5C",
+                BackgroundColor = "#FFFFFF",
 
                 MainImgWidth = Wdimension.Width,
                 MainImgHeight = Wdimension.Height
@@ -648,6 +642,54 @@ namespace BlazorApp1.Helpers
                 return isDeleted;
             }
         }
+
+
+        public async Task DeleteNoteImgFiles(Note note, bool notSavedImageOnly)
+        {
+            if(notSavedImageOnly)
+            {
+                var imgURIs = note.Images.Where(im => im.NoteImageID == 0).Select(image => image.ImgURI).ToArray();
+                Parallel.ForEach(imgURIs, imgURI =>
+                {
+                    if (File.Exists(imgURI))
+                    {
+                        try
+                        {
+                            File.Delete(imgURI);
+                        }
+                        catch (IOException ex)
+                        {
+                            Console.WriteLine("File Not Found");
+                        }
+                    }
+                });
+
+            }
+            else
+            {
+                Note DeleteNote = await GetNote(note);
+                var imgURIs = DeleteNote.Images.Select(image => image.ImgURI).ToArray();
+
+
+                Parallel.ForEach(imgURIs, imgURI =>
+                {
+                    if (File.Exists(imgURI))
+                    {
+                        try
+                        {
+                            File.Delete(imgURI);
+                        }
+                        catch (IOException ex)
+                        {
+                            Console.WriteLine("File Not Found");
+                        }
+                    }
+                });
+            }
+           
+
+        }
+
 
         public async Task<bool> DeleteNotePaths(Note note)
         {
@@ -876,7 +918,7 @@ namespace BlazorApp1.Helpers
                 byte[] metaJsonBytes = SerializeMetaObject(metaObject);
 
                 // Write the serialized meta object to a file
-                File.WriteAllBytes(ProjectPath.Parent.FullName + FilePaths.MetaFilePath, metaJsonBytes);
+                File.WriteAllBytes(ProjectPath.Parent.FullName + "/"+ FilePaths.MetaFilePath, metaJsonBytes);
 
                 // Serialize the full project object to a file
                 Project fullPrjct = await GetFullProject();

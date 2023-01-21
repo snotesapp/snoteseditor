@@ -322,6 +322,9 @@ else
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
     bool addcard_dialog;
     bool filterPackets;
 
@@ -396,7 +399,7 @@ else
 
 
 
- 
+
     public void Dispose()
     {
 
@@ -434,6 +437,9 @@ else
     private async Task DeleteNote(Note note)
     {
 
+
+
+        await dataSvs.DeleteNoteImgFiles(note,false);
         await dataSvs.DeleteNote(note);
         await dataSvs.GetNotes();
 
