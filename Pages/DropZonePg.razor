@@ -47,7 +47,7 @@
                              @oncontextmenu:preventDefault="true"
                              @oncontextmenu:stopPropagation>
 
-                                    <img id="ncimage_@ncimg.NoteImageID"
+                                    <img id="ncimage_@ncimg.NoteImageID" title="image_@(ncimg.NoteImageID)"
                                  @onclick="(() => SelectImage(ncimg))"
                                  class="rounded mx-auto d-block  "
                                  width="@ncimg.Width" height="@ncimg.Height"
@@ -69,7 +69,7 @@
                              @oncontextmenu:stopPropagation>
 
 
-                                    <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))"
+                                    <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))" title="image_@(ncimg.NoteImageID)"
                                  @onpointerdown="((de) => ImgDragStart(de,ncimg))"
                                  @onpointerup="((de) => ImgDragEnd(de,ncimg))"
                                  class="rounded mx-auto d-block  "

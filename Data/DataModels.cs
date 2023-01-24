@@ -166,7 +166,7 @@ namespace BlazorApp1.Data
         public Note Note { get; set; }
 
         public bool Selected { get; set; }
-
+         [JsonIgnore]
         public Rectangle Bounds
         {
             get
