@@ -300,7 +300,7 @@
     SKPoint? touchLocation;
 
     bool show = true;
-    string CollectionId = "0";
+
 
     public List<Func<string, StringBoolean>> _rules = new()
                 {
@@ -313,21 +313,17 @@
     double Y = 0;
     private bool ShowCanvasContext;
 
-    
+
     protected override void OnInitialized()
     {
 
-        if (dataSvs.AddNotesSelectedNC is not null)
-        {
-            CollectionId = dataSvs.AddNotesSelectedNC.NotesCollectionID.ToString();
 
-        }
 
         // dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
         //   dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
 
         filesAndDirectories = new FilesAndDirectories(dataSvs);
-        
+
         dataSvs.OnChange += StateHasChanged;
 
     }
@@ -357,7 +353,7 @@
             dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
 
 
-            
+
             foreach (NotePath notePath in dataSvs.editNote.NotePaths)
             {
 
@@ -387,11 +383,11 @@
          }
          *
          */
-           
+
             StateHasChanged();
 
         }
-        
+
 
     }
 
@@ -400,34 +396,6 @@
         Console.WriteLine(text);
     }
 
-
-
-    async Task OnChange(InputFileChangeEventArgs e)
-    {
-        if (dragstarted == false)
-        {
-            long maxFileSize = 1024 * 1024 * 15;
-            var files = e.GetMultipleFiles();
-
-            foreach (var file in files)
-            {
-                using Stream stream = file.OpenReadStream(maxFileSize);
-
-                // Get the file name
-                var fileName = file.Name;
-                // var fileName = Guid.NewGuid().ToString();
-                string fPath = filesAndDirectories.CreateImagePath(CollectionId, fileName);
-                await filesAndDirectories.SaveImageLocaly(fPath, stream);
-
-                SaveImage(fPath, file.ContentType);
-                skiaSvs.UpdateBitmap();
-                await stream.DisposeAsync();
-            }
-
-        }
-
-
-    }
 
 
 
@@ -490,7 +458,7 @@
             */
 
         resizing = false;
-       
+
         // _noteImage.Width = dragedNoteImage.Width;
         //_noteImage.Height = dragedNoteImage.Height;
     }
@@ -511,8 +479,8 @@
         dragstarted = false;
         _noteImage.X = dragedNoteImage.X;
         _noteImage.Y = dragedNoteImage.Y;
-         
-       
+
+
     }
     private void ImgDragOver(PointerEventArgs de)
     {
@@ -571,7 +539,7 @@
 
         _noteImage.Selected = false;
         skiaSvs.UpdateBitmap();
-       
+
         // dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
 
     }
@@ -603,22 +571,22 @@
         SKImageInfo info = args.Info;
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
-        
-        
+
+
         /*
         if (dataSvs.EditMode == false)
         {
 
         // Create bitmap the size of the display surface
-        if (dataSvs.saveBitmap == null)
-        {
-        dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-        }
-        // Or create new bitmap for a new size of display surface
-          else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
+          if (dataSvs.saveBitmap == null)
           {
-          SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
-          Math.Max(dataSvs.saveBitmap.Height, info.Height));
+          dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
+          }
+          // Or create new bitmap for a new size of display surface
+          else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
+        {
+        SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
+        Math.Max(dataSvs.saveBitmap.Height, info.Height));
 
         using (SKCanvas newCanvas = new SKCanvas(newBitmap))
         {
@@ -873,7 +841,7 @@
 
                 break;
             case PaintMode.Eraser:
-                
+
                 ereaseEnabled = false;
                 break;
             default:
@@ -903,7 +871,7 @@
                 break;
         }
 
-      
+
 
     }
 
@@ -972,6 +940,37 @@
     }
 
 
+    #region add Image
+
+
+    async Task OnChange(InputFileChangeEventArgs e)
+    {
+        if (dragstarted == false)
+        {
+            long maxFileSize = 1024 * 1024 * 15;
+            var files = e.GetMultipleFiles();
+
+            foreach (var file in files)
+            {
+                using Stream stream = file.OpenReadStream(maxFileSize);
+
+                // Get the file name
+                var fileName = file.Name;
+                // var fileName = Guid.NewGuid().ToString();
+                string fPath = filesAndDirectories.CreateImagePath(dataSvs.editNote.NotesCollectionFK.ToString(), fileName);
+                await filesAndDirectories.SaveImageLocaly(fPath, stream);
+
+                SaveImage(fPath, file.ContentType);
+                skiaSvs.UpdateBitmap();
+                await stream.DisposeAsync();
+            }
+
+        }
+
+
+    }
+
+
     async Task PastClipboardImg()
     {
 
@@ -980,7 +979,8 @@
             String imgBase64 = await _module.InvokeAsync<String>("pasteImage");
             byte[] bitArrayImg = Convert.FromBase64String(imgBase64.Substring(imgBase64.LastIndexOf(',') + 1));
 
-            string fPath = filesAndDirectories.CreateImagePath(CollectionId, "clipedimage");
+            string collId = dataSvs.editNote.NotesCollectionFK.ToString();
+            string fPath = filesAndDirectories.CreateImagePath(collId, "clipedimage");
             await filesAndDirectories.SaveImageLocaly(fPath, bitArrayImg);
 
             Stream stream = new MemoryStream(bitArrayImg);
@@ -989,7 +989,7 @@
             var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
 
             SaveImage(fPath, "image/png");
-           
+
 
         }
         catch (Exception ex)
@@ -1018,10 +1018,11 @@
             });
 
         skiaSvs.UpdateBitmap();
-        
-        StateHasChanged();
-    }
 
+        StateHasChanged();
+        dataSvs.EnableHand();
+    }
+    #endregion
     public void Log()
     {
         Console.WriteLine("shape clicked");

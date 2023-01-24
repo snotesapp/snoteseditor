@@ -76,13 +76,15 @@ namespace BlazorApp1.Helpers
 
         public PaintMode paintMode = PaintMode.Drag;
 
+        public string noteBackgroundColor = "#FFFFFF";
+
         //Note Props
         public Note editNote = new Note()
         {
             Text = "",
             Images = new List<NoteImage>(),
             NotePaths = new List<NotePath>(),
-            BackgroundColor = "#FFFFFF"
+            
 
         };
 
@@ -540,7 +542,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<bool> SaveNote()
         {
-
+             noteBackgroundColor = editNote.BackgroundColor;
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
               
@@ -561,8 +563,7 @@ namespace BlazorApp1.Helpers
             {
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-                BackgroundColor = "#FFFFFF",
-
+                BackgroundColor = noteBackgroundColor,
                 MainImgWidth = Wdimension.Width,
                 MainImgHeight = Wdimension.Height
             };
@@ -783,6 +784,7 @@ namespace BlazorApp1.Helpers
         public Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
         public List<FingerPaintPolyline> completedPolylines = new List<FingerPaintPolyline>();
         public SKCanvasView? skiaView = null!;
+
         public SKBitmap? saveBitmap;
         public SKCanvas? paintSKCanvas;
        

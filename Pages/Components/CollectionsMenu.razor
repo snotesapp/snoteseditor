@@ -271,10 +271,10 @@ else
         dataSvs.AddNotesSelectedNC = notesCollection;
         dataSvs.editNote = new Note()
             {
-
+                NotesCollectionFK = notesCollection.NotesCollectionID,
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
-                BackgroundColor = "#FFFFFF",
+                BackgroundColor = dataSvs.noteBackgroundColor,
             };
 
 

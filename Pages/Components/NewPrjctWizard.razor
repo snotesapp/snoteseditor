@@ -126,7 +126,7 @@
         await SetProgres(20);
         try
         {
-            await Task.Delay(200);
+           // await Task.Delay(200);
             ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
         }
         catch
@@ -152,7 +152,7 @@
         await SetProgres(50);
 
         await dataSvs.InsertProject(dataSvs.MainProject);
-        await Task.Delay(300);
+       // await Task.Delay(300);
         await SetProgres(70);
 
         var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
@@ -168,7 +168,7 @@
         await dataSvs.GetNotes();
         // await dataSvs.SetInitialeNC();
 
-        await Task.Delay(20);
+       // await Task.Delay(20);
 
         await SetProgres(100);
 
@@ -181,8 +181,8 @@
     private async Task LoadFiles(InputFileChangeEventArgs e)
             {
 
-        CurrentStep = "Progress";
-        if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
+    CurrentStep = "Progress";
+    if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
     {
     dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
         }
@@ -204,10 +204,10 @@
 
     var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
 
-        using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-          {
-          Project? newProject =
-        await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+    using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
+      {
+      Project? newProject =
+    await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
     dataSvs.MainProject = newProject;
     }
     await SetProgres(50);
@@ -219,10 +219,10 @@
     var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
 
     using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-          {
-          List<NoteCard>? noteCardsList =
-          await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
-        await dataSvs.NewRangNoteCards(noteCardsList);
+      {
+      List<NoteCard>? noteCardsList =
+      await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
+    await dataSvs.NewRangNoteCards(noteCardsList);
     }
     await SetProgres(80);
 
@@ -246,7 +246,7 @@
     {
 
         progress = progressValue;
-        await Task.Delay(2000);
+        await Task.Delay(200);
         StateHasChanged();
         //dialogService.Refresh();
 
@@ -256,15 +256,9 @@
     {
         dataSvs.MainProject.Name = projectname;
 
-        dataSvs.MainProject.NotesCollection.Add(new NotesCollection()
-            {
-                Title = collectionname,
-                Selected = true,
-                Note = new List<Note>()
-            });
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
         
-        
+        /**/
         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
         DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");
 
@@ -295,6 +289,14 @@
 
         await dataSvs.InsertProject(dataSvs.MainProject);
 
+        NotesCollection defaultNC = new NotesCollection()
+            {
+                ProjectFK = dataSvs.MainProject.ProjectID,
+                Title = collectionname,
+                Selected = true,
+                Note = new List<Note>()
+            };
+        await dataSvs.AddCollection(defaultNC);
         await CloseDialoge.InvokeAsync(false);
     }
 

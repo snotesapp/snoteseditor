@@ -39,7 +39,7 @@ namespace BlazorApp1.Data
         public bool Editable { get; set; }
 
         public int? ParentID { get; set; }
-        [NotMapped]
+        [JsonIgnore]
         public Packet? Parent { get; set; }
         public int ProjectFK { get; set; }
         public Project Project { get; set; }
@@ -131,7 +131,6 @@ namespace BlazorApp1.Data
         public string ImgContentType { get; set; }
 
         private string _locaton;
-
         public string? Location
         {
             get

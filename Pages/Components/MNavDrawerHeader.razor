@@ -420,7 +420,7 @@
 
 
     ElementReference inputTextRef;
-    string CollectionId = "0";
+   
 
 
     bool download_dialog;
@@ -432,11 +432,7 @@
 
     protected override void OnInitialized()
     {
-        if (dataSvs.AddNotesSelectedNC is not null)
-        {
-            CollectionId = dataSvs.AddNotesSelectedNC.NotesCollectionID.ToString();
-
-        }
+   
 
         dataSvs.OnChange += StateHasChanged;
 
@@ -498,7 +494,7 @@
                     if (dataSvs.noteEdited)
                     {
 
-                        skiaSvs.CreateThumbImg(CollectionId);
+                        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
                         //CreateThumbImg();
                         await dataSvs.UpdateNote();
 
@@ -552,7 +548,8 @@
     {
 
         //CreateThumbImg();
-        skiaSvs.CreateThumbImg(CollectionId);
+        
+        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
         if (dataSvs.editNote.NoteID == 0)
         {
             if (dataSvs.noteEdited)
@@ -606,7 +603,7 @@
 
     private async Task SaveNTAndBack(string menu)
     {
-        skiaSvs.CreateThumbImg(CollectionId);
+        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
         //CreateThumbImg();
         if (dataSvs.editNote.NoteID == 0)
         {
