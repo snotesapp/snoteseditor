@@ -561,6 +561,7 @@ namespace BlazorApp1.Helpers
 
             editNote = new Note()
             {
+                NotesCollectionFK = AddNotesSelectedNC.NotesCollectionID,
                 Images = new List<NoteImage>(),
                 NotePaths = new List<NotePath>(),
                 BackgroundColor = noteBackgroundColor,
@@ -609,6 +610,7 @@ namespace BlazorApp1.Helpers
             }
         }
 
+  
         public async Task<List<Note>> GetNotes(string NotesTextFilter)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())

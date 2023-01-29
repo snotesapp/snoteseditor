@@ -573,17 +573,17 @@
         SKCanvas canvas = args.Surface.Canvas;
 
 
-        /*
-        if (dataSvs.EditMode == false)
-        {
+          /*
+          if (dataSvs.EditMode == false)
+          {
 
-        // Create bitmap the size of the display surface
+          // Create bitmap the size of the display surface
           if (dataSvs.saveBitmap == null)
           {
           dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-          }
-          // Or create new bitmap for a new size of display surface
-          else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
+        }
+        // Or create new bitmap for a new size of display surface
+        else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
         {
         SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
         Math.Max(dataSvs.saveBitmap.Height, info.Height));
@@ -1017,6 +1017,7 @@
 
             });
 
+        Console.WriteLine(fPath);
         skiaSvs.UpdateBitmap();
 
         StateHasChanged();

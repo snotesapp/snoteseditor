@@ -260,6 +260,7 @@ else
             await dataSvs.UpdateNCollection(nc);
         }
 
+      
         await dataSvs.GetNotes();
     }
 
@@ -276,7 +277,6 @@ else
                 NotePaths = new List<NotePath>(),
                 BackgroundColor = dataSvs.noteBackgroundColor,
             };
-
 
         return GoToMenu.InvokeAsync("notetools");
 
