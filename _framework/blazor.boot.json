@@ -9,7 +9,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BlazorApp1.dll": "sha256-h5qPZYqjy\/8iYCtJRgwqDPtKXauIy2aXrdlFnOCDgQA=",
+      "BlazorApp1.dll": "sha256-M3FTUrknLqOuMIKGBgdCPK8zghnx\/huS2utXsAvRe+U=",
       "BlazorComponent.dll": "sha256-E7X1sh0D5ouC4xt5DLyaHcE6+VRpOm9z3Gu7RQ7NCGU=",
       "BlazorContextMenu.dll": "sha256-5tGp4kDMF913+8+RpdzNyqophNzfyvoYmQSPIDJyTsU=",
       "Blazored.LocalStorage.dll": "sha256-6RRoYeDP3d0xabXmcCMF66wXeJlXVPem28Trs8sQiis=",
