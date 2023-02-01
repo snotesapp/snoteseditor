@@ -139,10 +139,7 @@ else
     </div>
 
 
-    <div class="overflow-auto d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" >
-
-
-
+    <div class="overflow-auto d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" @ref="_mainPg">
 
         <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
             <NoteTemplate Context="note">
@@ -231,22 +228,24 @@ else
             </NoteTemplate>
         </NotesTemplate>
 
-
-         
-</div>
+        @if (dataSvs.selectedNCNotes.Count == 20 || _hasMore)
+        {
+            <MButton class="position-absolute bottom-0 start-50 translate-middle-x my-6 mx-3 "
+             OnClick='() => LoadMoreNotes()'
+             title="Add To Packet"
+             Fab
+             Dark
+             Color="#1565c0">
+                <MIcon>mdi-playlist-plus </MIcon>
+            </MButton>
+        }
+       
+    </div>
 
 
     @if(dataSvs.MainProject.ProjectID == 0)
     {
-        /*
-        <MDialog Persistent HideOverlay @bind-Value="@dataSvs.newProjectDialog"
-         MaxWidth="600">
-            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
-
-            </NewPrjctWizard>
-
-        </MDialog>
-        */
+    
 
         <SNmodal Width="700" Height="300" IsOpen="@dataSvs.newProjectDialog">
             <NewPrjctWizard CloseDialoge="OpenCloseDialog">
@@ -263,10 +262,6 @@ else
             </SaveProjectDialogPage>
         </SNmodal>
     }
- 
-
- 
-
 
 
     @if (ContextMenuNote != null)
@@ -390,91 +385,7 @@ else
 
 </SNmodal>
 
-<!--
-             <div class="text-center">
-                    <MDialog @bind-Value="addcard_dialog" HideOverlay
-                     Width="500">
-                        <ActivatorContent>
-
-                            <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs"
-                                OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";}'
-                             title="Add To Packet"
-                             Fab
-                             Dark
-                             Color="#1565c0">
-                                <MIcon>mdi-plus-box-multiple </MIcon>
-                            </MButton>
-                        </ActivatorContent>
-
-                        <ChildContent>
-                            <MCard>
-                                <MCardTitle Class="p-2 gradient-blue ">
-        @if(filterPackets == false)
-        {
-                                        <div class="input-group shadow">
-                                            <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
-                                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
-                                                Add
-                                            </button>
-
-                                        </div>
-        }
-        else
-        {
-                                        <div class="input-group shadow">
-                                            <input type="text" class="form-control" placeholder="
-
-"
-                               @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
-                                    aria-describedby="filterpktbtnGroup">
-
-
-                                        </div>
-        }
-
-
-                                </MCardTitle>
-
-                                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-
-                                    <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
-                                        <RowTemplate Context="card">
-
-                                            <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow rounded truncate-text" style="background-color:#5e92f3"
-        @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); addcard_dialog=false; })">
-        @card.Title
-                                            </button>
-
-                                        </RowTemplate>
-
-                                    </ListTemplate>
-
-                                </MList>
-
-
-
-                                <MDivider Class="my-1"></MDivider>
-
-                                <MCardActions>
-
-                                    <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
-
-                                    </MCheckbox>
-                                    <MSpacer></MSpacer>
-                                    <MButton Color="primary"
-                                     Text
-                                     OnClick="() => addcard_dialog = false">
-                                        Close
-                                    </MButton>
-                                </MCardActions>
-                            </MCard>
-
-
-                        </ChildContent>
-                    </MDialog>
-                </div>
--->
-       
+     
     }
 
 
@@ -496,6 +407,8 @@ else
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
+    private ElementReference _mainPg;
+    private bool _hasMore;
 
     [CascadingParameter]
     public Error? Error { get; set; }
@@ -503,7 +416,7 @@ else
     bool addcard_dialog;
     bool filterPackets;
 
-    
+
     bool moveto_filterPackets;
 
     private Note? ContextMenuNote = null;
@@ -568,9 +481,9 @@ else
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-           
-        }
 
+
+        }
 
 
     }
@@ -679,19 +592,18 @@ else
     protected void OpenCloseDialog(bool dialogState)
     {
 
-
         dataSvs.newProjectDialog = dialogState;
         dataSvs.download_dialog = dialogState;
-        
+
     }
 
 
- 
-    private async Task LoadMore()
+    private async Task LoadMoreNotes()
     {
-        var append = await dataSvs.GetNotes(dataSvs.selectedNCNotes.Count,20);
+        List<Note> append = await dataSvs.GetNotes(dataSvs.selectedNCNotes.Count,20);
         dataSvs.selectedNCNotes.AddRange(append);
        
+        _hasMore = append.Count > 0;
     }
 
     @inject HttpClient Http

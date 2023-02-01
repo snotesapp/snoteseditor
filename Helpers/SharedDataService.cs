@@ -632,7 +632,7 @@ namespace BlazorApp1.Helpers
                 {
                     var selectedNotes = await notesContext.Note
                         .Where(nc => nc.NotesCollection.Selected == true)
-                        .Skip(pageIndex * pageSize)
+                        .Skip(pageIndex )
                         .Take(pageSize)
                         .ToListAsync();
 

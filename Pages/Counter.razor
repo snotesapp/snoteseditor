@@ -4,7 +4,6 @@
 @using System.Text.Json
 @using BlazorApp1.Helpers
 
-@implements IAsyncDisposable
 @inject IJSRuntime JS
 
 @inject CounterService Svc
@@ -17,65 +16,9 @@
 
 <button class="btn btn-primary" @onclick="Svc.Increment">Click me</button>
 
-<div class="container position-relative" style="width:700px; height:500px; background-color:burlywood">
- <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-  <div class="btn-group mr-2" role="group" aria-label="First group">
-
-    <button class="btn btn-secondary" id="zoominbtn2" @ref="zoominbuttom" >ZoomIn</button>
-    <button class="btn btn-secondary" id="zoomoutbtn2" @ref="zoomoutbutton" >ZoomOut</button>
-    <button class="btn btn-secondary" id="enablezoomandpan"   @onclick="(() => EnablePanZoom(elemid))"   >Enable</button>
-    <button class="btn btn-secondary" @onclick="GetPanZoomData" >Data</button>
-  </div>
-
-</div>
-
-
-
-
-<img id="mszoomimage1" 
-       @onclick="(() => EnablePanZoom(elemid))" 
-   style="left:80px; top:80px" width="100" height="100"
-    class="rounded mx-auto d-block position-absolute  " 
-    src="https://getbootstrap.com/docs/5.2/assets/brand/bootstrap-logo-shadow.png"  alt="zoom image">
-
-
-    
-<img id="mszoomimage2" 
-       @onclick="(() => EnablePanZoom(elemid2))" 
-   style="left:300px; top:80px" width="100" height="100"
-    class="rounded mx-auto d-block position-absolute  " 
-    src="https://getbootstrap.com/docs/5.2/assets/brand/bootstrap-logo-shadow.png"  alt="zoom image">
-</div>
-
-
-<button id="zoominbtn" class="btn btn-primary" @onclick="ZoomInImg">ZoomIn</button>
-<button class="btn btn-primary" @onclick="ZoomOutImg">ZoomOut</button>
-<p>
-    <button @onclick="TriggerPrompt">Trigger browser window prompt</button>
-</p>
-
-
-<button @ref="exampleButton">Example Button</button>
-
-<button @onclick="TriggerClick">
-    Trigger click event on <code>Example Button</code>
-</button>
-
-
-
-
-
 
 @code {
 
-    private IJSObjectReference? module;
-    private string? result;
-    private IJSObjectReference zoompanobject; 
-
-
-    private ElementReference mszoomimage;
-    private ElementReference zoominbuttom;
-    private ElementReference zoomoutbutton;
 
     private int currentCount = 0;
 
@@ -86,107 +29,6 @@
 
     }
 
-    #region prompt
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            module = await JS.InvokeAsync<IJSObjectReference>("import", 
-                "./myjs/BootstrapModalInterop.js");
-        }
-    }
 
-    private async Task TriggerPrompt()
-    {
-        result = await Prompt("Provide some text");
-    }
-
-    public async ValueTask<string?> Prompt(string message) =>
-        module is not null ? 
-            await module.InvokeAsync<string>("showPrompt", message) : null;
-
-
-    #endregion
-
-    #region zoom
-
-    private string elemid = "mszoomimage1";
-    private string elemid2 = "mszoomimage2";
-
-
-    private bool enablepan = false;
-    private async Task EnablePanZoom(string elementid)
-    {
-        switch(enablepan)
-        {
-            case false : 
-                zoompanobject = await module.InvokeAsync<IJSObjectReference>("enablepanzoom", elementid,zoominbuttom,zoomoutbutton);
-                enablepan = true;
-                break;
-            case true:
-                await module.InvokeVoidAsync("disablepanzoom", zoompanobject,elementid,zoominbuttom,zoomoutbutton);
-                enablepan = false;
-                break;
-
-   
-        }
-    
-    }
-
-    private async Task DisablePanZoom()
-    {
-
-        await module.InvokeVoidAsync(
-                "disablepanzoom", zoompanobject,mszoomimage,zoominbuttom,zoomoutbutton);
-
-    }
-
-    private async Task GetPanZoomData()
-    {
-
-        var data = await module.InvokeAsync<JsonElement>("getpanzoomdata", zoompanobject,mszoomimage);
-       
-       var X = data.GetProperty("x").GetRawText();
-       var Y = data.GetProperty("y").GetRawText();
-       var Scale = data.GetProperty("scale").GetRawText();
-
-    }
-
-
-    private async Task ZoomInImg()
-    {
-         await module.InvokeVoidAsync(
-            "zoomInelement", elemid);
-       
-    }
-
-
-    
-    
-    private async Task ZoomOutImg()
-    {
-        await module.InvokeVoidAsync(
-            "zoomOutelement", elemid);
-    }
-
-
-    async ValueTask IAsyncDisposable.DisposeAsync()
-    {
-        if (module is not null)
-        {
-            await module.DisposeAsync();
-        }
-    }
-#endregion
-
-
-
-    private ElementReference exampleButton;
-
-    public async Task TriggerClick()
-    {
-        await JS.InvokeVoidAsync(
-            "interopFunctions.clickElement", exampleButton);
-    }
 
 }
