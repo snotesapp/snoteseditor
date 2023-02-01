@@ -170,7 +170,7 @@ else
             </MListItemContent>
         </MListItem>
 
-            <MListItem OnClick="() =>showDeleteNCConfirmation = true">
+            <MListItem OnClick="() =>{dataSvs.showDeleteNCConfirmation = true; dataSvs.ContextMenuNotesCollection = ContextMenuNotesCollection;}">
             <MListItemIcon>
                 <MIcon>
                     mdi-delete-outline
@@ -188,10 +188,6 @@ else
     </MList>
 </MMenu>
 
-    <AlertDialog Show="@showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
-             Text="Confirm deleting collection with all notes inside?" YesEvent="() => DeleteNC(ContextMenuNotesCollection)" NoEvent="()=> showDeleteNCConfirmation = false">
-
-    </AlertDialog>
 
 }
 
@@ -206,7 +202,7 @@ else
     [Parameter]
     public EventCallback<string> GoToMenu { get; set; }
 
-    private bool showDeleteNCConfirmation = false;
+    
     private string editNCTitle { get; set; }
 
     private NotesCollection? ContextMenuNotesCollection = null;
@@ -309,27 +305,6 @@ else
     }
     #endregion
 
-
-    private async Task DeleteNC(NotesCollection notesCollection)
-{
-    try
-    {
-        var filePath = Path.Combine(dataSvs.ProjectPath.FullName, notesCollection.NotesCollectionID.ToString());
-        if (Directory.Exists(filePath))
-        {
-            Directory.Delete(filePath, true);
-            await dataSvs.DeleteNCollection(notesCollection);
-            dataSvs.MainProject = await dataSvs.GetProject();
-            await dataSvs.GetNotes();
-            showDeleteNCConfirmation = false;
-        }
-    }
-    catch (Exception ex)
-    {
-        // log the error
-        Console.WriteLine("Error deleting notes collection ");
-    }
-}
 
 
  

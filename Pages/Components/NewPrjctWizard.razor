@@ -21,7 +21,7 @@
 
     case "Project":
 
-        <MCard Class="p-1 " >
+        <MCard Class="p-1 h-100 w-100" >
             <MCardTitle Class="text-h5 gradient-blue">
                 Create Project
             </MCardTitle>
@@ -80,7 +80,7 @@
         break;
 
     case "Progress":
-        <div class="col-md-12" style="background-color:whitesmoke">
+        <div class="col-md-12 position-absolute top-50 start-50 translate-middle " style="background-color:whitesmoke">
 
             <MProgressLinear Value="@progress" Height="25"  Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3" OnChange="SetProgres">
                 <strong>@($"{context}%")</strong>

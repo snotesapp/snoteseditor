@@ -214,9 +214,6 @@
        CloseOnContentClick>
     <MList Dense Width="200">
 
-
-
-       
             <MListItem OnClick="() => RenameCard(ContextMenuCard)">
             <MListItemIcon>
                 <MIcon>
@@ -231,7 +228,7 @@
             </MListItemContent>
         </MListItem>
 
-            <MListItem OnClick="() => showDeletePacketConfirmation = true">
+            <MListItem OnClick="() =>{dataSvs.showDeletePacketConfirmation = true; dataSvs.ContextMenuCard = ContextMenuCard;}">
             <MListItemIcon>
                 <MIcon>
                     mdi-delete-outline
@@ -243,83 +240,22 @@
                 </MListItemTitle>
             </MListItemContent>
         </MListItem>
+            
+        <MListItem  OnClick="() => GetSelectionCards(ContextMenuCard)">
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-subdirectory-arrow-right
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
 
+                    <MListItemTitle>
+                        Move To
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
      
-            <MDialog @bind-Value="dialog" HideOverlay
-                 Width="500">
-                <ActivatorContent>
-                    <MListItem @attributes="@context.Attrs" OnClick="() => GetSelectionCards(ContextMenuCard)">
-            <MListItemIcon>
-                <MIcon>
-                   mdi-subdirectory-arrow-right 
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
 
-                <MListItemTitle>
-                    Move To
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
-
-                   
-                </ActivatorContent>
-
-                <ChildContent>
-                    <MCard>
-                        <MCardTitle Class="p-2 gradient-blue">
-                           
-                            @if (filterPackets == false)
-                            {
-                                <p class="m-2 text-h5 ">
-                                    Select Destination Packet
-                                </p>
-                                
-                            }
-                            else
-                            {
-                                <div class="input-group mx-1 shadow">
-                                    <input type="text" class="form-control " placeholder="Filter Packets"
-                                   @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
-                                   aria-describedby="filterpktbtnGroup">
-
-
-                                </div>
-                            }
-                        </MCardTitle>
-
-                           <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-
-                            <ListTemplate Items="@(filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.Contains(dataSvs.FilterPacketsTxt) ).ToList() : dataSvs.SelectionCards)">
-                                <RowTemplate Context="card">
-
-                                    <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
-                                    @onclick="@(() => {SetParentCard(card,ContextMenuCard); dialog = false;})">
-                                        @card.Title
-                                    </button>
-
-                                </RowTemplate>
-
-                            </ListTemplate>
-
-            </MList>
-
-                        <MDivider></MDivider>
-
-                        <MCardActions>
-                            <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
-
-                            </MCheckbox>
-                            <MSpacer></MSpacer>
-                            <MButton Color="primary"
-                                 Text
-                                 OnClick="() => dialog = false">
-                                Close
-                            </MButton>
-                        </MCardActions>
-                    </MCard>
-                </ChildContent>
-            </MDialog>
 
             @if (ContextMenuCard.Parent is not null)
             {
@@ -392,10 +328,7 @@
             }
         </MList>
 
-        <AlertDialog Show="@showDeletePacketConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Packet"
-                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() => DeleteCard(ContextMenuCard)" NoEvent="()=> showDeletePacketConfirmation = false">
-
-        </AlertDialog>
+       
 </MMenu>
 
 }
@@ -586,7 +519,7 @@ else
     double X = 0;
     double Y = 0;
 
-    bool dialog;
+    //bool dialog;
     bool filterPackets;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -711,22 +644,15 @@ else
 
     private async Task GetSelectionCards(Packet chCard)
     {
-        filterPackets = false;
+        dataSvs.ContextMenuCard = chCard;
+        dataSvs.filterPackets = false;
         dataSvs.FilterPacketsTxt = "";
         dataSvs.SelectionCards = await dataSvs.GetSelectionCards(chCard);
-    }
-
-    private async Task SetParentCard(Packet parentCard, Packet childCard)
-    {
-        childCard.ParentID = parentCard.PacketID;
-        childCard.Parent = null;
-        childCard.Selected = false;
-        await dataSvs.UpdateCard(childCard);
-
-        dataSvs.MainProject = await dataSvs.GetProject();
-
+        dataSvs.moveto_dialog = true;
 
     }
+
+
 
     #region Rename Card
     string oldname;

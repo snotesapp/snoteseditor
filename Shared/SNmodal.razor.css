@@ -1,0 +1,58 @@
+﻿body {
+}
+
+
+.SNmodal {
+    position:  fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 10;
+    margin: auto;
+   
+    animation: popup 0.4s ease-in-out;
+}
+
+@keyframes popup {
+    from {
+        transform: scale(0) translate(-50%, -50%);
+    }
+
+    to {
+        transform: scale(1) translate(-50%, -50%);
+    }
+}
+
+
+.SNmodal-container {
+    position: relative;
+    width: 600px;
+    height: 200px;
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+   
+}
+
+.SNmodal-content {
+
+    margin-bottom: 20px;
+}
+
+.SNmodal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index:9;
+}

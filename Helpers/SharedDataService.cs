@@ -9,6 +9,7 @@ using System.IO.Compression;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Util.Reflection.Expressions;
 
 namespace BlazorApp1.Helpers
 {
@@ -23,21 +24,7 @@ namespace BlazorApp1.Helpers
         }
 
 
-        private string _filterPacketsTxt;
-        public string FilterPacketsTxt
-        {
-            get => _filterPacketsTxt        ;
-            set => this.RaiseAndSetIfChanged(ref _filterPacketsTxt, value);
-        }
-
-        public bool filterPackets { get; set; }
-
-        private List<Packet> _filtredPackets= new List<Packet>();
-        public List<Packet> FiltredPackets
-        {
-            get => _filtredPackets;
-            set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
-        }
+    
 
         #region global parameters
 
@@ -67,7 +54,24 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public bool savenotedialog = false;
+        // public bool savenotedialog = false;
+
+        private bool _savenotedialog;
+        public bool savenotedialog
+        {
+            get { return _savenotedialog; }
+            set { this.RaiseAndSetIfChanged(ref _savenotedialog, value); NotifyStateChanged(); }
+
+        }
+
+        private bool _download_dialog;
+        public bool download_dialog
+        {
+            get { return _download_dialog; }
+            set { this.RaiseAndSetIfChanged(ref _download_dialog, value); NotifyStateChanged(); }
+
+        }
+
 
         #endregion
 
@@ -603,19 +607,51 @@ namespace BlazorApp1.Helpers
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
-                selectedNCNotes = await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).ToListAsync();
+                
+                selectedNCNotes =  await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).Take(20).ToListAsync();
                 NotifyStateChanged();
                 return selectedNCNotes;
 
             }
         }
 
-  
+        public async Task<List<Note>> GetNotes(int pageIndex = 0, int pageSize = 20)
+        {
+            if (pageIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException("pageIndex must be greater than or equal to 0.");
+            }
+            if (pageSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException("pageSize must be greater than 0.");
+            }
+
+            try
+            {
+                using (var notesContext = _dbContextFactory.CreateDbContext())
+                {
+                    var selectedNotes = await notesContext.Note
+                        .Where(nc => nc.NotesCollection.Selected == true)
+                        .Skip(pageIndex * pageSize)
+                        .Take(pageSize)
+                        .ToListAsync();
+
+                    NotifyStateChanged();
+                    return selectedNotes;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error occurred while fetching notes.", ex);
+            }
+        }
+
+
         public async Task<List<Note>> GetNotes(string NotesTextFilter)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
-                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).ToListAsync();
+                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).Take(20).ToListAsync();
                 NotifyStateChanged();
                 return selectedNCNotes;
 
@@ -983,6 +1019,114 @@ namespace BlazorApp1.Helpers
 
         #endregion
 
+        #region Collection ViewModel
+
+        
+        private bool _showDeleteNCConfirmation;
+        public bool showDeleteNCConfirmation
+        {
+            get { return _showDeleteNCConfirmation; }
+            set { this.RaiseAndSetIfChanged(ref _showDeleteNCConfirmation, value); NotifyStateChanged(); }
+
+        }
+
+        public NotesCollection? ContextMenuNotesCollection = null;
+        public async Task DeleteNC(NotesCollection notesCollection)
+        {
+            try
+            {
+              
+                var filePath = Path.Combine(ProjectPath.FullName, notesCollection.NotesCollectionID.ToString());
+                if (Directory.Exists(filePath))
+                {
+                    Directory.Delete(filePath, true);
+                   
+                }
+                await DeleteNCollection(notesCollection);
+                MainProject = await GetProject();
+                await GetNotes();
+                showDeleteNCConfirmation = false;
+            }
+            catch (Exception ex)
+            {
+                // log the error
+                Console.WriteLine("Error deleting notes collection ");
+            }
+        }
+
+
+        #endregion
+
+
+        
+       
+        #region Packet ViewModel
+        private string _filterPacketsTxt;
+        public string FilterPacketsTxt
+        {
+            get => _filterPacketsTxt;
+            set => this.RaiseAndSetIfChanged(ref _filterPacketsTxt, value);
+        }
+
+       
+        private bool _filterPackets;
+        public bool filterPackets
+        {
+            get { return _filterPackets; }
+            set { this.RaiseAndSetIfChanged(ref _filterPackets, value); NotifyStateChanged(); }
+
+        }
+
+
+
+        private bool _showDeletePacketConfirmation;
+        public bool showDeletePacketConfirmation
+        {
+            get { return _showDeletePacketConfirmation; }
+            set { this.RaiseAndSetIfChanged(ref _showDeletePacketConfirmation, value); NotifyStateChanged(); }
+
+        }
+
+
+        private bool _moveto_dialog;
+        public bool moveto_dialog
+        {
+            get { return _moveto_dialog; }
+            set { this.RaiseAndSetIfChanged(ref _moveto_dialog, value); NotifyStateChanged(); }
+
+        }
+
+
+        public Packet? ContextMenuCard = null;
+
+        private List<Packet> _filtredPackets = new List<Packet>();
+        public List<Packet> FiltredPackets
+        {
+            get => _filtredPackets;
+            set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
+        }
+
+        public async Task DeletePacket(Packet card)
+        {
+
+            await DeleteCard(card);
+            showDeletePacketConfirmation = false;
+            ContextMenuCard = null;
+        }
+
+        public async Task SetParentCard(Packet parentCard, Packet childCard)
+        {
+            childCard.ParentID = parentCard.PacketID;
+            childCard.Parent = null;
+            childCard.Selected = false;
+            await UpdateCard(childCard);
+
+            MainProject = await GetProject();
+            ContextMenuCard = null;
+
+        }
+
+        #endregion
 
         public async Task GetThumbUrl(IJSObjectReference _jsModule,Note note)
         {

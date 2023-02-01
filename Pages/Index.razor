@@ -47,7 +47,71 @@ else if (dataSvs.menustatus == "cards")
 
         <NoteCardsPg />
               -->
+
+        <AlertDialog Show="@dataSvs.showDeletePacketConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Packet"
+                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() => dataSvs.DeletePacket(dataSvs.ContextMenuCard)" NoEvent="()=> dataSvs.showDeletePacketConfirmation = false">
+
+        </AlertDialog>
+
+        <SNmodal Width="500" Height="250" IsOpen="dataSvs.moveto_dialog">
+            <MCard>
+                <MCardTitle Class="p-2 gradient-blue">
+
+                    @if (moveto_filterPackets == false)
+                    {
+                        <p class="m-2 text-h5 ">
+                            Select Destination Packet
+                        </p>
+
+                    }
+                    else
+                    {
+                        <div class="input-group mx-1 shadow">
+                            <input type="text" class="form-control " placeholder="Filter Packets"
+                           @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
+                           aria-describedby="filterpktbtnGroup">
+
+
+                        </div>
+                    }
+                </MCardTitle>
+
+                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+
+                    <ListTemplate Items="@(moveto_filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.ToLower().Contains(dataSvs.FilterPacketsTxt.Trim().ToLower()) ).ToList() : dataSvs.SelectionCards)">
+                        <RowTemplate Context="card">
+
+                            <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
+                                @onclick="@(() => {dataSvs.SetParentCard(card,dataSvs.ContextMenuCard); dataSvs.moveto_dialog = false;})">
+                                @card.Title
+                            </button>
+
+                        </RowTemplate>
+
+                    </ListTemplate>
+
+                </MList>
+
+                <MDivider></MDivider>
+
+                <MCardActions>
+                    <MCheckbox OnClick='()=> {moveto_filterPackets = !moveto_filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+
+                    </MCheckbox>
+                    <MSpacer></MSpacer>
+                    <MButton Color="primary"
+                         Text
+                         OnClick="() => {dataSvs.moveto_dialog = false; moveto_filterPackets = false;}">
+                        Close
+                    </MButton>
+                </MCardActions>
+            </MCard>
+        </SNmodal>
+
     </MRow>
+
+
+
 }
 else if (dataSvs.menustatus == "notecards")
 {
@@ -75,97 +139,106 @@ else
     </div>
 
 
+    <div class="overflow-auto d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" >
 
 
-    <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
-        <NoteTemplate Context="note">
-            @if (note.Selected)
-            {
-                <!--
 
 
-                   <div class="card p-2 bd-highlight border-3 border-primary" style="width: 30rem; margin:4px;"
-                @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
-                @onclick="() => dataSvs.StyleSelectNote(note)">
+        <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
+            <NoteTemplate Context="note">
+                @if (note.Selected)
+                {
+                    <!--
 
-                       <div class="d-flex flex-row">
 
-                           <img src="@note.Thumbnail"  class="card-img-top" style="height:150px;width:150px" alt="...">
-                           <div class="card-body">
-                               <h5 class="card-title">Card title </h5>
-                               <p class="card-text">@note.Text</p>
-                               <a class="btn btn-primary">Add To Card</a>
+                       <div class="card p-2 bd-highlight border-3 border-primary" style="width: 30rem; margin:4px;"
+                    @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
+                    @onclick="() => dataSvs.StyleSelectNote(note)">
+
+                           <div class="d-flex flex-row">
+
+                               <img src="@note.Thumbnail"  class="card-img-top" style="height:150px;width:150px" alt="...">
+                               <div class="card-body">
+                                   <h5 class="card-title">Card title </h5>
+                                   <p class="card-text">@note.Text</p>
+                                   <a class="btn btn-primary">Add To Card</a>
+                               </div>
+
                            </div>
 
+
+
                        </div>
+                           -->
+                    <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
+                   Dark
+                   OnClick="() => dataSvs.StyleSelectNote(note)"
+                   @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
+
+                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
+                            <MCardText Class="lh-sm text-body"
+                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
+                                @note.Text
+                            </MCardText>
+
+                        </MImage>
 
 
 
-                   </div>
-                       -->
-                <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
-               Dark
-               OnClick="() => dataSvs.StyleSelectNote(note)"
-               @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
-
-                    <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                        <MCardText Class="lh-sm text-body"
-                           Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
-                            @note.Text
-                        </MCardText>
-
-                    </MImage>
-
-
-
-                </MCard>
-
-            }
-            else
-            {
-                <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
-               Dark
-               OnClick="() => dataSvs.StyleSelectNote(note)"
-               @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
-
-                    <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                        <MCardText Class="lh-sm text-body"
-                           Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
-                            @note.Text
-                        </MCardText>
-
-                    </MImage>
-
-
-
-                </MCard>
-                <!--
-                <div class="card p-2 bd-highlight " style="width: 30rem; margin:4px;"
-                @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
-                @onclick="() => dataSvs.StyleSelectNote(note)">
-                                   <div class="d-flex flex-row shadow rounded p-0">
-                @if (@note.Thumbnail is not null)
-                {
-                                           <img src="@note.Thumbnail" class="card-img-top" style="height:150px;width:150px" alt="...">
+                    </MCard>
 
                 }
-                                       <div class="card-body">
-                                           <h5 class="card-title">Card title </h5>
-                                           <p class="card-text">@note.Text</p>
-                                           <a class="btn btn-primary">Add To Card</a>
+                else
+                {
+                    <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
+                   Dark
+                   OnClick="() => dataSvs.StyleSelectNote(note)"
+                   @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
+
+                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
+                            <MCardText Class="lh-sm text-body"
+                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
+                                @note.Text
+                            </MCardText>
+
+                        </MImage>
+
+
+
+                    </MCard>
+                    <!--
+                    <div class="card p-2 bd-highlight " style="width: 30rem; margin:4px;"
+                    @oncontextmenu="@(args => { NoteContextMenuWithContent(args,note);})" @oncontextmenu:preventDefault="true"
+                    @onclick="() => dataSvs.StyleSelectNote(note)">
+                                       <div class="d-flex flex-row shadow rounded p-0">
+                    @if (@note.Thumbnail is not null)
+                    {
+                                               <img src="@note.Thumbnail" class="card-img-top" style="height:150px;width:150px" alt="...">
+
+                    }
+                                           <div class="card-body">
+                                               <h5 class="card-title">Card title </h5>
+                                               <p class="card-text">@note.Text</p>
+                                               <a class="btn btn-primary">Add To Card</a>
+                                           </div>
+
                                        </div>
-
                                    </div>
-                               </div>
-                -->
-            }
+                    -->
+                }
 
 
-        </NoteTemplate>
-    </NotesTemplate>
+            </NoteTemplate>
+        </NotesTemplate>
+
+
+         
+</div>
+
 
     @if(dataSvs.MainProject.ProjectID == 0)
     {
+        /*
         <MDialog Persistent HideOverlay @bind-Value="@dataSvs.newProjectDialog"
          MaxWidth="600">
             <NewPrjctWizard CloseDialoge="OpenCloseDialog">
@@ -173,9 +246,26 @@ else
             </NewPrjctWizard>
 
         </MDialog>
+        */
+
+        <SNmodal Width="700" Height="300" IsOpen="@dataSvs.newProjectDialog">
+            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
+
+            </NewPrjctWizard>
+        </SNmodal>
 
     }
+    @if (dataSvs.download_dialog)
+    {
+        <SNmodal Width="700" Height="300" IsOpen="@dataSvs.download_dialog">
+            <SaveProjectDialogPage CloseDialoge="OpenCloseDialog">
 
+            </SaveProjectDialogPage>
+        </SNmodal>
+    }
+ 
+
+ 
 
 
 
@@ -224,12 +314,8 @@ else
 
     @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
     {
-        <div class="text-center">
-            <MDialog @bind-Value="addcard_dialog" HideOverlay
-             Width="500">
-                <ActivatorContent>
-
-                    <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs"
+        
+                    <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 "
                         OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";}'
                      title="Add To Packet"
                      Fab
@@ -237,10 +323,9 @@ else
                      Color="#1565c0">
                         <MIcon>mdi-plus-box-multiple </MIcon>
                     </MButton>
-                </ActivatorContent>
 
-                <ChildContent>
-                    <MCard>
+        <SNmodal Width="500" Height="250" IsOpen="addcard_dialog">
+        <MCard>
                         <MCardTitle Class="p-2 gradient-blue ">
                             @if(filterPackets == false)
                             {
@@ -296,19 +381,108 @@ else
                             <MSpacer></MSpacer>
                             <MButton Color="primary"
                              Text
-                             OnClick="() => addcard_dialog = false">
+                     OnClick="() =>{ addcard_dialog = false; filterPackets = false;}">
                                 Close
                             </MButton>
                         </MCardActions>
                     </MCard>
 
 
-                </ChildContent>
-            </MDialog>
-        </div>
+</SNmodal>
+
+<!--
+             <div class="text-center">
+                    <MDialog @bind-Value="addcard_dialog" HideOverlay
+                     Width="500">
+                        <ActivatorContent>
+
+                            <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 " @attributes="@context.Attrs"
+                                OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";}'
+                             title="Add To Packet"
+                             Fab
+                             Dark
+                             Color="#1565c0">
+                                <MIcon>mdi-plus-box-multiple </MIcon>
+                            </MButton>
+                        </ActivatorContent>
+
+                        <ChildContent>
+                            <MCard>
+                                <MCardTitle Class="p-2 gradient-blue ">
+        @if(filterPackets == false)
+        {
+                                        <div class="input-group shadow">
+                                            <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
+                                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
+                                                Add
+                                            </button>
+
+                                        </div>
+        }
+        else
+        {
+                                        <div class="input-group shadow">
+                                            <input type="text" class="form-control" placeholder="
+
+"
+                               @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
+                                    aria-describedby="filterpktbtnGroup">
+
+
+                                        </div>
+        }
+
+
+                                </MCardTitle>
+
+                                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+
+                                    <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
+                                        <RowTemplate Context="card">
+
+                                            <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow rounded truncate-text" style="background-color:#5e92f3"
+        @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); addcard_dialog=false; })">
+        @card.Title
+                                            </button>
+
+                                        </RowTemplate>
+
+                                    </ListTemplate>
+
+                                </MList>
+
+
+
+                                <MDivider Class="my-1"></MDivider>
+
+                                <MCardActions>
+
+                                    <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+
+                                    </MCheckbox>
+                                    <MSpacer></MSpacer>
+                                    <MButton Color="primary"
+                                     Text
+                                     OnClick="() => addcard_dialog = false">
+                                        Close
+                                    </MButton>
+                                </MCardActions>
+                            </MCard>
+
+
+                        </ChildContent>
+                    </MDialog>
+                </div>
+-->
+       
     }
 
 
+    <AlertDialog Show="@dataSvs.showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
+             Text="Confirm deleting collection with all notes inside?" YesEvent="() => dataSvs.DeleteNC(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
+
+    </AlertDialog>
+    
 }
 
 
@@ -322,12 +496,15 @@ else
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
+
     [CascadingParameter]
     public Error? Error { get; set; }
 
     bool addcard_dialog;
     bool filterPackets;
 
+    
+    bool moveto_filterPackets;
 
     private Note? ContextMenuNote = null;
     private bool ShowNoteContext;
@@ -391,7 +568,7 @@ else
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-
+           
         }
 
 
@@ -497,14 +674,25 @@ else
 
     }
 
+
+
     protected void OpenCloseDialog(bool dialogState)
     {
 
 
         dataSvs.newProjectDialog = dialogState;
-
+        dataSvs.download_dialog = dialogState;
+        
     }
 
+
+ 
+    private async Task LoadMore()
+    {
+        var append = await dataSvs.GetNotes(dataSvs.selectedNCNotes.Count,20);
+        dataSvs.selectedNCNotes.AddRange(append);
+       
+    }
 
     @inject HttpClient Http
 

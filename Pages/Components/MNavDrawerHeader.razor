@@ -9,30 +9,17 @@
 @switch (dataSvs.menustatus)
 {
     case "mainmenu":
-      
-    <MDialog HideOverlay OnOutsideClick="() => download_dialog = false"
-        @bind-Value="download_dialog"
-        MaxWidth="600">
-        <ActivatorContent >
-              <div class="row m-2 ">
 
-  
-            <MButton title="Download"  @attributes="@context.Attrs" Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45" >
+
+      
+        <div class="row m-2 ">
+
+            <MButton title="Download" OnClick="() => dataSvs.download_dialog = true"
+             Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45">
 
             </MButton>
-            
-             </div>       
-
+        </div>
         <MDivider Class="mt-0"></MDivider>
-        </ActivatorContent>
-
-        <ChildContent  >
-                        <SaveProjectDialogPage CloseDialoge="OpenCloseDialog">
-
-                        </SaveProjectDialogPage>
-        </ChildContent>
-    </MDialog>
-
 
        
 
@@ -347,9 +334,7 @@
         </MContainer>
 
 
-        <AlertDialog  DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
-
-        </AlertDialog>
+    
 
        
 
@@ -420,7 +405,7 @@
 
 
     ElementReference inputTextRef;
-   
+
 
 
     bool download_dialog;
@@ -432,7 +417,7 @@
 
     protected override void OnInitialized()
     {
-   
+
 
         dataSvs.OnChange += StateHasChanged;
 
@@ -466,7 +451,7 @@
                 //dataSvs.UpdateNote().GetAwaiter().GetResult();
 
 
-               
+
 
                 if (dataSvs.editNote.NoteID == 0) //New Note
                 {
@@ -519,7 +504,7 @@
                     // await dataSvs.UpdateNote();
                 }
 
-               
+
                 //dialog = true;
                 // dataSvs.ClearCanvas();
                 //await dataSvs.GetNotes();
@@ -533,7 +518,7 @@
                 await GoToMenu.InvokeAsync(menu);
             }
             //  await GoToMenu.InvokeAsync(menu);
-
+           
         }
         catch (Exception ex)
         {

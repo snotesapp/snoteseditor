@@ -9,8 +9,8 @@
 @switch (DialogType)
 {
     case DialogTypes.DialogType.SaveNote:
-        <MDialog @bind-Value="Show" HideOverlay Persistent
-         MaxWidth="400">
+
+        <SNmodal Width="400" Height="300" IsOpen="Show">
             <MCard>
                 <MCardTitle Class="text-h5 gradient-blue">
                     Save Note
@@ -48,12 +48,14 @@
                     </MButton>
                 </MCardActions>
             </MCard>
-        </MDialog>
+    </SNmodal>
+
+        
 
     break;
     case DialogTypes.DialogType.GeneralSave:
-        <MDialog @bind-Value="Show" HideOverlay Persistent
-         MaxWidth="400">
+
+    <SNmodal Width="400" Height="300" IsOpen="Show">
             <MCard>
                 <MCardTitle Class="text-h5  gradient-danger">
                     <MIcon Large Left Class="text-danger">
@@ -69,7 +71,7 @@
                 <MCardActions>
                     <MSpacer></MSpacer>
                     <MButton Color="primary darken-1" @onclick="YesEvent"
-                     Text >
+                     Text>
                         Yes
                     </MButton>
 
@@ -79,7 +81,8 @@
                     </MButton>
                 </MCardActions>
             </MCard>
-        </MDialog>
+    </SNmodal>
+
 
         break;
 
