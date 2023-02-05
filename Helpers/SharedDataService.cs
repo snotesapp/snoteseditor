@@ -31,7 +31,8 @@ namespace BlazorApp1.Helpers
 
         public event Action OnChange;
 
-        
+        public Microsoft.AspNetCore.Components.Forms.IBrowserFile ProjectUploadedfile;
+
         public string menustatus { get; private set; } = "mainmenu";
         public bool ncDragingMode = false;
 
@@ -71,7 +72,24 @@ namespace BlazorApp1.Helpers
             set { this.RaiseAndSetIfChanged(ref _download_dialog, value); NotifyStateChanged(); }
 
         }
+        private bool _savingProject;
+        public bool SavingProject
+        {
+            get { return _savingProject; }
+            set { this.RaiseAndSetIfChanged(ref _savingProject, value); NotifyStateChanged(); }
 
+        }
+        public string CurrentStep { get; set; } = "Project";
+
+
+        private string _userAgent ;
+        public string? UserAgent
+
+        {
+            get { return _userAgent; }
+            set { this.RaiseAndSetIfChanged(ref _userAgent, value); NotifyStateChanged(); }
+
+        }
 
         #endregion
 
@@ -1127,6 +1145,45 @@ namespace BlazorApp1.Helpers
         }
 
         #endregion
+
+        public async Task BuildProject()
+        {
+            
+            if (ProjectPath is null || ProjectPath.Exists == false)
+            {
+                ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+            }
+  
+
+            var jsonProjectFile = ProjectPath.Parent.FullName + "/jsonFile.json";
+
+            using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
+            {
+                Project? newProject =
+                  await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+                MainProject = newProject;
+            }
+
+
+            await InsertProject(MainProject);
+
+            var jsonNoteCardsFile = ProjectPath.Parent.FullName + "/notecards.json";
+
+            using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
+            {
+                List<NotePacket>? noteCardsList =
+                  await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
+                await NewRangNoteCards(noteCardsList);
+            }
+
+
+            await GetNotes();
+            newProjectDialog = false;
+
+        }
+
+
+
 
         public async Task GetThumbUrl(IJSObjectReference _jsModule,Note note)
         {

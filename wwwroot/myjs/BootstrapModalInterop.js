@@ -246,3 +246,108 @@ export async function imgStreamToSrc(imageStream) {
 
 
 
+
+
+
+
+export function registerDotNetInstance(dotnetInstance) {
+    window.dotnetInstance = dotnetInstance;
+}
+
+
+let fileHandle;
+
+export async function getNewFileHandle(suggestedFileName) {
+    if (!fileHandle) {
+        try {
+            if (typeof window.chooseFileSystemEntries === 'function') {
+                // For Chrome 85 and earlier...
+                const opts = {
+                    type: 'save-file',
+                    accepts: [{
+                        description: 'sNotes File',
+                        extensions: ['snotes'],
+                        mimeTypes: ['application/snotes'],
+                    }],
+                    suggestedName: suggestedFileName,
+                };
+                fileHandle = await window.chooseFileSystemEntries(opts);
+            } else {
+                // handle the case where the function is not defined
+                // For Chrome 86 and later...
+                if ('showSaveFilePicker' in window) {
+                    const opts = {
+                        types: [{
+                            description: 'sNotes File',
+                            accept: { 'application/snotes': ['.snotes'] },
+                        }],
+                        suggestedName: suggestedFileName,
+                    };
+                    fileHandle = await window.showSaveFilePicker(opts);
+                }
+            }
+        } catch (e) {
+            console.error('File picker was cancelled by the user');
+        }
+    }
+}
+
+
+
+
+export async function OpenSnotesFile() {
+    const options = {
+        types: [
+            {
+                description: 'sNotes File',
+                accept: {
+                    'application/snotes': ['.snotes']
+                }
+            },
+        ],
+        excludeAcceptAllOption: true,
+        multiple: false
+    };
+
+
+    try {
+        [fileHandle] = await window.showOpenFilePicker(options);
+        const file = await fileHandle.getFile();
+        const arrayBuffer = await file.arrayBuffer();
+
+        const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+
+        updateFileArray(base64);
+    } catch (e) {
+        console.error('File picker was cancelled by the user');
+    }
+}
+
+ function updateFileArray(base64) {
+    window.dotnetInstance.invokeMethodAsync('UpdateFileArray', base64)
+         .then(() => console.log("File sent."))
+         .catch(error => console.error(error));
+
+}
+
+
+export async function blazorSaveFile(contentType, content) {
+    if (fileHandle) {
+        // Create a new Blob object from the content
+        const blob = new Blob([content], { type: contentType });
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+        // Write the contents of the file to the stream.
+        await writable.write(blob);
+        // Close the file and write the contents to disk.
+        await writable.close();
+    }
+
+
+}
+
+
+export function getBrowserName() {
+    return navigator.userAgent;
+}
+

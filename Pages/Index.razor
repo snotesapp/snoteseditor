@@ -125,6 +125,16 @@ else if (dataSvs.menustatus == "notecards")
 }
 else
 {
+    @if (dataSvs.SavingProject)
+    {
+        <div class="d-flex justify-content-center position-absolute top-0 start-50 translate-middle-x mt-3 text-white bg-primary shadow rounded-2 "
+     style="width:120px; height:30px; align-items: center;z-index:3;">
+            <span class="mr-2">Saving...</span>
+            <span class="spinner-border spinner-border-sm my-1" role="status" aria-hidden="true"></span>
+        </div>
+
+    }
+ 
     <div class="mx-auto mb-2 w-75" style="display:@(dataSvs.showFilterNotes ? "block" : "none")">
         <MTextField Dense Solo Placeholder="Filter Notes" TValue="string"
                 @bind-value:event=oninput @bind-value="@dataSvs.SearchTerm"
@@ -389,11 +399,15 @@ else
     }
 
 
+
     <AlertDialog Show="@dataSvs.showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
              Text="Confirm deleting collection with all notes inside?" YesEvent="() => dataSvs.DeleteNC(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
 
     </AlertDialog>
-    
+
+
+
+
 }
 
 
@@ -638,5 +652,8 @@ else
 
 
     }
+
+  
+    
 
 }

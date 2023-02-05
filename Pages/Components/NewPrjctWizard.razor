@@ -3,6 +3,7 @@
 @using BlazorApp1.Helpers
 @using System.IO.Compression
 @using System.Text.Json
+@using BlazorApp1.ViewModels;
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
 @using SkiaSharp;
@@ -14,9 +15,9 @@
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
 
+@inject IJSRuntime JSRuntime
 
-
-@switch (CurrentStep)
+@switch (dataSvs.CurrentStep)
 {
 
     case "Project":
@@ -45,7 +46,9 @@
                 </div>
                 <MDivider />
 
-                <div class="input-group elevation-2 rounded-3 shadow">
+              
+                <!-- On FireFox
+                       <div class="input-group elevation-2 rounded-3 shadow">
                     <span class="input-group-text " id="basic-addon1">
                         <MIcon>
                             mdi-file-upload-outline
@@ -60,8 +63,53 @@
 
                 </div>
 
+                -->
 
+                @if (dataSvs.UserAgent is null )
+                {
+
+                    <b>
+
+                    </b>
+                   
+
+                }
+                else if (!(dataSvs.UserAgent.Contains("Firefox")))
+                {
+                    <MButton Class="primary elevation-2 rounded-3 shadow w-100 " OnClick="() => OpenZipFile()">
+                        <MIcon>
+                            mdi-folder-open-outline
+                        </MIcon>
+                    </MButton>
+                }
+                else
+                {
+
+                                     <div class="input-group elevation-2 rounded-3 shadow">
+                        <span class="input-group-text " id="basic-addon1">
+                            <MIcon>
+                                mdi-file-upload-outline
+                            </MIcon>
+                        </span>
+
+                        <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
+                        PrependIcon="null"
+                        Accept="application/snotes"
+                        Label="Import SNotes File"></MFileInput>
+
+
+                    </div>
+
+
+                }
+
+
+
+   
+            
             </MCard>
+
+          
 
             <MCardActions>
 
@@ -80,14 +128,28 @@
         break;
 
     case "Progress":
-        <div class="col-md-12 position-absolute top-50 start-50 translate-middle " style="background-color:whitesmoke">
+        <!--
 
-            <MProgressLinear Value="@progress" Height="25"  Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3" OnChange="SetProgres">
+        <div class="col-md-12 position-absolute top-50 start-50 translate-middle " style="background-color:whitesmoke">
+           
+                 <MProgressLinear Value="@progress" Height="25"  Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3" OnChange="SetProgres">
                 <strong>@($"{context}%")</strong>
             </MProgressLinear>
-          
+            
            
         </div>
+            -->
+
+        <div class=" position-absolute top-50 start-50 translate-middle ">
+
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+
+
+        </div>
+       
+
         break;
 
   
@@ -95,9 +157,11 @@
 
 
 @code {
+    IJSObjectReference _module;
 
-    private string CurrentStep { get; set; } = "Project";
+    private GetProjectFileJS _getProjectFileJS;
 
+  
 
     private string projectname { get; set; } = $"Project {DateTime.Now.ToString("dd'_'MM'_'yyyy'_'HH'_'mm")}";
     private string collectionname { get; set; } = "Default Collection";
@@ -107,10 +171,38 @@
     [Parameter]
     public EventCallback<bool> CloseDialoge { get; set; }
 
+   // private GetProjectFileJS GetProjectFileJS = new GetProjectFileJS();
+   // private GetProjectFileJS _getProjectFileJS = new GetProjectFileJS();
+
+    protected override void OnInitialized()
+    {
+        _getProjectFileJS = new GetProjectFileJS(dataSvs);
+        // other code...
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //   await JSRuntime.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
+           
+            //for load JS File
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
+            await _module.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
+
+            dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
+        }
+
+
+    }
+
+
+    
+
 
     private async Task HandleOnChange(IBrowserFile file)
     {
-        CurrentStep = "Progress"; 
+        dataSvs.CurrentStep = "Progress";
         if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
         {
             dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
@@ -118,7 +210,7 @@
 
 
         IBrowserFile uploadedfile = file;
-
+        
         await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
         await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
 
@@ -176,7 +268,17 @@
     }
 
 
-        /*
+    private async Task OpenZipFile()
+    {
+
+
+        await _module.InvokeVoidAsync("OpenSnotesFile");
+
+
+    }
+
+
+    /*
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
             {
@@ -239,7 +341,7 @@
 
     void SetStep(string step)
     {
-        CurrentStep = step;
+        dataSvs.CurrentStep = step;
     }
 
     private async Task SetProgres(double progressValue)

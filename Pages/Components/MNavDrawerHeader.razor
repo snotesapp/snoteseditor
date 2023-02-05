@@ -5,19 +5,51 @@
 @inject IJSRuntime JSRuntime
 @inject IMessageService MessageService
 @inject SkiaServices skiaSvs
+@inject IJSRuntime JSRuntime
+
 
 @switch (dataSvs.menustatus)
 {
     case "mainmenu":
 
 
-      
+
         <div class="row m-2 ">
 
-            <MButton title="Download" OnClick="() => dataSvs.download_dialog = true"
+            @if (dataSvs.UserAgent is null)
+            {
+
+                <b>
+
+                </b>
+
+
+            }
+
+            else if ( !(dataSvs.UserAgent.Contains("Firefox")))
+    {
+
+        
+
+                 <MButton Class="primary" title="Save" OnClick="() => SaveProject()" Height="45">
+                    <span class="bi bi-save2" style="font-size:24px;"></span>
+
+                </MButton>
+
+            }
+            else
+            {
+                <MButton title="Download" OnClick="() => dataSvs.download_dialog = true"
              Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45">
 
-            </MButton>
+                </MButton>
+            }
+
+
+               
+
+ 
+
         </div>
         <MDivider Class="mt-0"></MDivider>
 
@@ -333,11 +365,6 @@
             <MDivider></MDivider>
         </MContainer>
 
-
-    
-
-       
-
         <!--
 
 
@@ -406,6 +433,7 @@
 
     ElementReference inputTextRef;
 
+    IJSObjectReference _module;
 
 
     bool download_dialog;
@@ -422,6 +450,21 @@
         dataSvs.OnChange += StateHasChanged;
 
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //   await JSRuntime.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
+
+            //for load JS File
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
+           
+        }
+
+
+    }
+
 
     protected void OpenCloseDialog(bool dialogState)
     {
@@ -518,7 +561,7 @@
                 await GoToMenu.InvokeAsync(menu);
             }
             //  await GoToMenu.InvokeAsync(menu);
-           
+
         }
         catch (Exception ex)
         {
@@ -533,7 +576,7 @@
     {
 
         //CreateThumbImg();
-        
+
         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
         if (dataSvs.editNote.NoteID == 0)
         {
@@ -576,6 +619,9 @@
     */
     }
 
+
+
+
     private async Task BackToCollections(string menu)
     {
 
@@ -612,7 +658,21 @@
 
     #endregion
 
+    private async Task SaveProject()
+    {
 
+
+        await dataSvs.DownloadProjectFile();
+
+        //var fileName = $"{dataSvs.MainProject.Name}.snotes";
+        await _module.InvokeVoidAsync("getNewFileHandle", dataSvs.MainProject.Name);
+        dataSvs.SavingProject = true;
+        await _module.InvokeVoidAsync("blazorSaveFile", "application/zip", dataSvs.fileArray);
+        dataSvs.SavingProject = false;
+
+    }
+
+ 
 
     private async Task DownloadProject()
     {

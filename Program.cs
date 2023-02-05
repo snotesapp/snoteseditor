@@ -1,6 +1,7 @@
 using BlazorApp1;
 using BlazorApp1.Data;
 using BlazorApp1.Helpers;
+using BlazorApp1.ViewModels;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
@@ -45,6 +46,7 @@ builder.Services.AddSingleton<CounterService, CounterService>();
 
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 builder.Services.AddSingleton<SkiaServices, SkiaServices>();
+builder.Services.AddSingleton<GetProjectFileJS, GetProjectFileJS>();
 
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddMasaBlazor();
