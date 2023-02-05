@@ -48,14 +48,14 @@
                     </MButton>
                 </MCardActions>
             </MCard>
-    </SNmodal>
+        </SNmodal>
 
-        
 
-    break;
+
+        break;
     case DialogTypes.DialogType.GeneralSave:
 
-    <SNmodal Width="400" Height="300" IsOpen="Show">
+        <SNmodal Width="400" Height="300" IsOpen="Show">
             <MCard>
                 <MCardTitle Class="text-h5  gradient-danger">
                     <MIcon Large Left Class="text-danger">
@@ -81,7 +81,7 @@
                     </MButton>
                 </MCardActions>
             </MCard>
-    </SNmodal>
+        </SNmodal>
 
 
         break;
@@ -91,11 +91,11 @@
 
 @code {
 
-  
+
 
     [Parameter]
-    public bool Show { get; set; } 
-    
+    public bool Show { get; set; }
+
     [Parameter]
     public DialogTypes.DialogType DialogType { get; set; }
 
@@ -124,7 +124,6 @@
         }
 
 
-
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -135,13 +134,10 @@
 
 
 
-
-
         }
 
 
     }
-
 
 
     private async Task BackToCollections(string menu)
@@ -182,13 +178,12 @@
     {
 
         await _module.InvokeVoidAsync("focusOnSummaryPannel");
-      
+
         Show = false;
         dataSvs.savenotedialog = false;
     }
 
 
-    // Unregister the drop zone events
     public async ValueTask DisposeAsync()
     {
 
@@ -198,84 +193,10 @@
         }
     }
 
-    
-   
-
-    /*
-        private void CreateThumbImg()
-        {
-        string bitmapPath;
-        if (dataSvs.editNote.MainImg is not null)
-            {
-
-            bitmapPath = dataSvs.editNote.MainImg;
-            using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-                {
-
-                SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
-                SKImage subImage = image.Subset(sKRectI);
-                SKData data = subImage.Encode();
-
-                //  SKData data = image.Encode();
-
-                FileStream fs = File.Create(bitmapPath);
-                data.SaveTo(fs);
-                fs.Close();
-
-
-                // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
-
-        }
-
-        }
-        else
-            {
-            // Generate a new file to avoid dublicates = (FileName withoutExtension - GUId.extension)
-
-            var fileName = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-            var path = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            if (Directory.Exists(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/"))
-                {
-                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            }
-            else
-                {
-                Directory.CreateDirectory(dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/");
-                bitmapPath = dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" + fileName;
-
-            }
-
-            //  bitmapPath = $"bitmap-{Guid.NewGuid().ToString()}.bmp";
-
-        }
-
-
-        using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-            {
-
-            SKRectI sKRectI = new SKRectI(0, 0, dataSvs.Wdimension.ThumbWidth, dataSvs.Wdimension.ThumbHeight);
-            SKImage subImage = image.Subset(sKRectI);
-            SKData data = subImage.Encode();
-
-            //  SKData data = image.Encode();
-            FileStream fs = File.Create(bitmapPath);
-            data.SaveTo(fs);
-            fs.Close();
-
-            dataSvs.editNote.MainImg = bitmapPath;
-            // var listfiles =Directory.GetFiles( dataSvs.ProjectPath.FullName + "/" + CollectionId + "/bitmaps/" );
-
-     }
-
-        }
-
-    */
 
 }
 
 
 
 
-   
+

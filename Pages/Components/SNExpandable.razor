@@ -1,10 +1,10 @@
-
-@if(Expanded){
+@if (Expanded)
+{
 
     <div class="expanded">
-      
-        <div id="label" @onclick ="Toggle">
-            <MIcon Dense 
+
+        <div id="label" @onclick="Toggle">
+            <MIcon Dense
                Color="grey darken-3">
                 mdi-chevron-up
             </MIcon>
@@ -14,52 +14,48 @@
                 </b>
 
             </span>
-           
+
         </div>
 
         <div class="w-100 childcontent ">
             @ChildContent
-       </div>
-           
-           
-       
-      
+        </div>
+
     </div>
 
-}else{
+}
+else
+{
+    <div class="unexpanded">
 
-    <div class="unexpanded" >
-
-       
         <div id="label" @onclick="Toggle">
-             <MIcon Dense
+            <MIcon Dense
                Color="grey darken-3">
                 mdi-chevron-down
-              </MIcon>
+            </MIcon>
             <span>
                 <b>
                     @Label
                 </b>
-               
+
             </span>
-           
+
         </div>
-       
+
     </div>
 
 }
 
-@code{
+@code {
     [Parameter]
     public bool Expanded { get; set; } = true;
     [Parameter]
-    public string Label { get; set; } 
+    public string Label { get; set; }
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-   
-	void Toggle()
-	{
-		Expanded = !Expanded;
-	}
+    void Toggle()
+    {
+        Expanded = !Expanded;
+    }
 }

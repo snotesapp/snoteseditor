@@ -13,16 +13,13 @@
 @inject IMessageService MessageService
 
 
-
 <MContainer Style="height:calc(100vh - 130px); overflow:auto">
-    
 
-            
-    <MRow Class="mx-0 w-100" >
+    <MRow Class="mx-0 w-100">
 
         <MList Subheader>
-           
-             @if(!dataSvs.filterPackets)
+
+            @if (!dataSvs.filterPackets)
             {
                 <ListTemplate Items="dataSvs.MainProject.Packets">
                     <RowTemplate Context="card">
@@ -91,43 +88,40 @@
 
                         @if (card.Editable == false)
                         {
-                            
-                                <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
+
+                            <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
                          @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,card);})">
 
-                                    @if (card.Parent is null)
-                                    {
-                                        <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectCard(card)"
-                                   Color="white" Class="elevation-4  rounded-3">
-                                            <MListItemContent>
-                                                <MListItemTitle>@card.Title </MListItemTitle>
-                                            </MListItemContent>
-                                        </MListItem>
-                                    }
-                                    else
-                                    {
+                                @if (card.Parent is null)
+                                {
+                                    <MListItem Link style="background-color:#1565c0"
+                                        OnClick="() => SelectCard(card)"
+                                        Color="white" Class="elevation-4  rounded-3">
+                                        <MListItemContent>
+                                            <MListItemTitle>@card.Title </MListItemTitle>
+                                        </MListItemContent>
+                                    </MListItem>
+                                }
+                                else
+                                {
 
 
-                                        <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectCard(card)"
-                                   Color="white" Class="elevation-4  rounded-3">
-                                            <MListItemContent>
-                                                <MListItemTitle>@card.Title </MListItemTitle>
+                                    <MListItem Link style="background-color:#1565c0"
+                                        OnClick="() => SelectCard(card)"
+                                        Color="white" Class="elevation-4  rounded-3">
+                                        <MListItemContent>
+                                            <MListItemTitle>@card.Title </MListItemTitle>
 
-                                                <MListItemSubtitle Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
-
-
-                                            </MListItemContent>
-                                        </MListItem>
+                                            <MListItemSubtitle Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
 
 
-                                    }
+                                        </MListItemContent>
+                                    </MListItem>
 
 
-                                </div>
+                                }
 
-                            
+                            </div>
 
                         }
                         else
@@ -144,104 +138,53 @@
                 </ListTemplate>
 
             }
-            
+
 
 
         </MList>
 
     </MRow>
-    <!--
-    <MDivider></MDivider>
 
-    <MRow Class="mx-0  " Style="height:35vh; overflow:auto">
-        <MList Class="cardsList" style="height:100%" Subheader>
-        
-            <MListGroup>
-                <ActivatorContent>
-                    <MListItemContent>
-                        <MListItemTitle>Pinned Packets</MListItemTitle>
-                    </MListItemContent>
-                </ActivatorContent>
-                <ChildContent>
-
-
-                    <ListTemplate Items="dataSvs.MainProject.Cards">
-                        <RowTemplate Context="card">
-
-                            @if (card.Editable == false)
-                            {
-                                <div class="p-0 mx-1 mb-1 " @oncontextmenu:preventDefault="true"
-                                 @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); CardContextMenuWithContent(args,card);})">
-                                    <MListItem Link style="background-color:#5e92f3"
-                                           OnClick="() => SelectCard(card)"
-                                           Color="white" Class="elevation-4  rounded-3">
-                                        <MListItemContent>
-                                            <MListItemTitle>@card.Title</MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-
-                                </div>
-
-                            }
-                            else
-                            {
-                                <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                                   placeholder="Card Name" aria-label="Card Name"
-                                   aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
-
-                            }
-
-
-                        </RowTemplate>
-
-                    </ListTemplate>
-                </ChildContent>
-            </MListGroup>
-
-
-        </MList>
-       
-    </MRow>
-     -->
 </MContainer>
 
-@if(ContextMenuCard != null){
+@if (ContextMenuCard != null)
+{
     <MMenu @bind-Value="ShowCardContext"
        PositionX="X"
        PositionY="Y"
        Absolute
        OffsetY
        CloseOnContentClick>
-    <MList Dense Width="200">
+        <MList Dense Width="200">
 
             <MListItem OnClick="() => RenameCard(ContextMenuCard)">
-            <MListItemIcon>
-                <MIcon>
-                    mdi-form-textbox
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-form-textbox
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
 
-                <MListItemTitle>
-                    Rename
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
+                    <MListItemTitle>
+                        Rename
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
 
             <MListItem OnClick="() =>{dataSvs.showDeletePacketConfirmation = true; dataSvs.ContextMenuCard = ContextMenuCard;}">
-            <MListItemIcon>
-                <MIcon>
-                    mdi-delete-outline
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
-                <MListItemTitle>
-                    Delete
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
-            
-        <MListItem  OnClick="() => GetSelectionCards(ContextMenuCard)">
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-delete-outline
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
+                    <MListItemTitle>
+                        Delete
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
+
+            <MListItem OnClick="() => GetSelectionCards(ContextMenuCard)">
                 <MListItemIcon>
                     <MIcon>
                         mdi-subdirectory-arrow-right
@@ -254,8 +197,6 @@
                     </MListItemTitle>
                 </MListItemContent>
             </MListItem>
-     
-
 
             @if (ContextMenuCard.Parent is not null)
             {
@@ -313,7 +254,7 @@
                         <MListItemIcon>
                             <MIcon>
                                 mdi-arrow-split-horizontal
-                                
+
                             </MIcon>
                         </MListItemIcon>
                         <MListItemContent>
@@ -328,179 +269,13 @@
             }
         </MList>
 
-       
-</MMenu>
+
+    </MMenu>
 
 }
 
 
-<!--
-<div class=" row h-50 overflow-auto ps-5 pe-2">
 
-    <MList Subheader>
-
-        <ListTemplate Items="dataSvs.MainProject.Cards">
-            <RowTemplate Context="card">
-
-@if (card.Editable == false)
-{
-                    <div class="p-0 mb-1 " @oncontextmenu:preventDefault="true"
-                     @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); CardContextMenuWithContent(args,card);})">
-                        <MListItem Link style="background-color:#5e92f3"
-                               OnClick="() => SelectCard(card)"
-                               Color="white" Class="elevation-4  rounded-3">
-                            <MListItemContent>
-                                <MListItemTitle>@card.Title</MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
-
-                    </div>
-
-}
-else
-{
-                    <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                       placeholder="Card Name" aria-label="Card Name"
-                       aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
-
-}
-
-
-            </RowTemplate>
-
-        </ListTemplate>
-
-
-
-    </MList>
-
-
-</div>
--->
-<!--
-
-
-<div class="row mx-0 h-50 overflow-auto" >
-    <MSubheader Style="height:20px">Roote Packets</MSubheader>
-
-    <div class="row mx-0 px-0 my-1 mb-3" style="height:30px">
-    <div class="input-group d-flex ">
-        <input type="text" class="form-control" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2" @bind-value="cardTitle">
-
-        <button class="btn btn-outline-success ms-1" type="button" onclick="@AddCard">Add</button>
-
-    </div>
-
-</div>
-
-    <ul class="list-group px-1 " style="width:100%">
-
-
-
-        <li class="input-group  d-flex my-2">
-
-        <input type="text" class="form-control" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2" @bind-value="cardTitle">
-
-        <button class="btn btn-outline-success ms-1" type="button" onclick="@AddCard">Add</button>
-
-    </li>
-
-        <ListTemplate Items="dataSvs.MainProject.Cards">
-            <RowTemplate Context="card">
-
-@if (card.Editable == false)
-{
-                    <button type="button" class="list-group-item list-group-item-action mb-1  text-white shadow rounded" style="background-color:#5e92f3"
-                        @onclick="() => SelectCard(card)"
-                        @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); CardContextMenuWithContent(args,card);})" @oncontextmenu:preventDefault="true">
-    @card.Title
-                    </button>
-}
-else
-{
-                    <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                       placeholder="Card Name" aria-label="Card Name"
-                       aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
-
-}
-
-
-            </RowTemplate>
-
-        </ListTemplate>
-
-    </ul>
-
-</div>
--->
-<!--
-<MDivider></MDivider>
-<div class=" row h-25 overflow-auto ps-5 pe-1">
-    <MSubheader Style="height:20px">Pinned Packets</MSubheader>
-
-    <MList Subheader>
-
-        <ListTemplate Items="dataSvs.MainProject.Cards">
-            <RowTemplate Context="card">
-
-@if (card.Editable == false)
-{
-                    <div class="p-0 mb-1 " @oncontextmenu:preventDefault="true"
-                     @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); CardContextMenuWithContent(args,card);})">
-                        <MListItem Link style="background-color:#5e92f3"
-                               OnClick="() => SelectCard(card)"
-                               Color="white" Class="elevation-4  rounded-3">
-                            <MListItemContent>
-                                <MListItemTitle>@card.Title</MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
-
-                    </div>
-
-}
-else
-{
-                    <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                       placeholder="Card Name" aria-label="Card Name"
-                       aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
-
-}
-
-
-            </RowTemplate>
-
-        </ListTemplate>
-
-        <MListItem Link style="background-color:#5e92f3" Color="white" Class="elevation-4  rounded-3">
-            <MListItemContent>
-                <MListItemTitle>Single-line item</MListItemTitle>
-            </MListItemContent>
-        </MListItem>
-
-        <MListItem Link Class="elevation-4 " TwoLine>
-            <MListItemContent>
-                <MListItemTitle>Two-line item</MListItemTitle>
-                <MListItemSubtitle>Secondary text</MListItemSubtitle>
-            </MListItemContent>
-        </MListItem>
-
-        <MListItem Link Class="elevation-4 " ThreeLine>
-            <MListItemContent>
-                <MListItemTitle>Three-line item</MListItemTitle>
-                <MListItemSubtitle>
-                    Secondary line text Lorem ipsum dolor sit amet,
-                </MListItemSubtitle>
-                <MListItemSubtitle>
-                    consectetur adipiscing elit.
-                </MListItemSubtitle>
-            </MListItemContent>
-        </MListItem>
-    </MList>
-
-
-</div>
-
--->
 @code {
 
     [Parameter]
@@ -549,26 +324,7 @@ else
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        /*
-        *
-        if (colPrjct.Cards == null)
-        {
-
-        colPrjct.Cards = new List<Card>();
-        colPrjct.Cards.Add(new Card { Title = "Card 1", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 2", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 3", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 4", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 5", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 6", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 7", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 8", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 9", Selected = true });
-        colPrjct.Cards.Add(new Card { Title = "Card 10", Selected = true });
-         }
-
-         */
-
+   
         dataSvs.WhenAnyValue(x => x.FilterPacketsTxt)
       .Throttle(TimeSpan.FromSeconds(1.5))
       .Subscribe(async FilterPacketsTxt =>
@@ -580,7 +336,7 @@ else
           else
           {
               dataSvs.FiltredPackets = await dataSvs.GetCards(FilterPacketsTxt);
-              //dataSvs.selectedNCNotes = dataSvs.selectedNCNotes.Where(n => n.Text.Contains(searchTerm)).ToList();
+             
           }
           StateHasChanged();
       });
@@ -596,33 +352,13 @@ else
     private async Task SelectCard(Packet selectedCard)
     {
 
-
-
         await dataSvs.GetCard(selectedCard);
         if (dataSvs.SelectedCard.NotePackets.Count > 0)
         {
 
-            //NoteCard snoteCard = await dataSvs.GetNoteCard(dataSvs.SelectedCard.NoteCards.OrderBy(no => no.NoteID).FirstOrDefault());
-            // NoteCard snoteCard = dataSvs.SelectedCard.NoteCards.FirstOrDefault();
-            /*
-            foreach (NoteCard noteCard in dataSvs.SelectedCard.NoteCards)
-                {
-                foreach (NoteImage ncimg in noteCard.Note.Images)
-                    {
-                    string imgLoc = await StreamToObjectURL(ncimg.ImgURI);
-
-                   ncimg.Location = imgLoc;
-
-
-            }
-            }
-            */
-
-
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
-
 
 
         await BackToMain.InvokeAsync("notecards");
@@ -640,8 +376,6 @@ else
         ShowCardContext = true;
     }
 
-
-
     private async Task GetSelectionCards(Packet chCard)
     {
         dataSvs.ContextMenuCard = chCard;
@@ -651,8 +385,6 @@ else
         dataSvs.moveto_dialog = true;
 
     }
-
-
 
     #region Rename Card
     string oldname;
@@ -695,8 +427,7 @@ else
         }
 
         await dataSvs.UpdateCard(card);
-        // dataSvs.MainProject = await dataSvs.GetProject();
-        // contextMenuService.Close();
+        
         ContextMenuCard = null;
     }
     private async Task RemoveSubPacket(Packet card)
@@ -706,7 +437,7 @@ else
         card.Selected = true;
         await dataSvs.UpdateCard(card);
         await dataSvs.GetCard(dataSvs.SelectedCard);
-        //contextMenuService.Close();
+
         ContextMenuCard = null;
 
     }

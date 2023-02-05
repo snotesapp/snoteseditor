@@ -101,25 +101,12 @@
                 }
 
 
-                <!--
-                   <svg style="position: absolute;
-                                                           top: 0;background-color:transparent;
-                                                           left: 0; width:inherit;height:inherit;
-                                                           pointer-events:none">
-                                      <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" @onclick="Log" />
-                                      <rect x="100" y="100" width="30" height="30" stroke="black" fill="transparent" stroke-width="5" />
-                                      <image width="500" height="350"  xlink:href="https://www.tutorialspoint.com/videotutorials/images/coding_ground_home.jpg" />
-
-                                  </svg>
-                -->
-
-
                 <div style="pointer-events:@(dataSvs.PointerEvent);
                             width: @(dataSvs.editNote.MainImgWidth)px;
                             height:@(dataSvs.editNote.MainImgHeight)px;">
 
 
-                    <SKCanvasView @ref="dataSvs.skiaView"  OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true" 
+                    <SKCanvasView @ref="dataSvs.skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
                                   @onpointerdown="OnPointerDown"
                                   @onpointermove="OnPointerMove"
                                   @onpointerup="OnPointerUp"
@@ -128,7 +115,7 @@
                                          top: 0;background-color:transparent;
                                          left: 0; width:inherit;height:inherit;
                                          pointer-events:inherit">
-                                  
+
 
 
                     </SKCanvasView>
@@ -172,10 +159,9 @@
 
                     </MExpansionPanelHeader>
                     <MExpansionPanelContent>
-                        <MTextarea Outlined NoResize Class="font-class" TextColor="black"  Counter="true" Clearable Rules="_rules"
-                           
+                        <MTextarea Outlined NoResize Class="font-class" TextColor="black" Counter="true" Clearable Rules="_rules"
                                    Placeholder="Write something"
-                                   OnChange= "() =>{ skiaSvs.UpdateBitmap();}"
+                                   OnChange="() =>{ skiaSvs.UpdateBitmap();}"
                                    @bind-Value="@(dataSvs.editNote.Text)">
 
 
@@ -193,7 +179,7 @@
                    PositionY="Y"
                    Absolute
                    CloseOnContentClick="false">
-                    <MList Dense Width="200"  >
+                    <MList Dense Width="200">
 
                         <MListItem OnClick="() =>  ImgZoomIn(ContextImg)">
                             <MListItemIcon>
@@ -288,8 +274,8 @@
     public Error? Error { get; set; }
 
     FilesAndDirectories filesAndDirectories;
-    //New Image from Clipboard Properties
 
+    //New Image from Clipboard Properties
     string imgsrc;
 
     //Zoom and Drag Properties
@@ -319,20 +305,13 @@
     protected override void OnInitialized()
     {
 
-
-
-        // dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
-        //   dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
-
         filesAndDirectories = new FilesAndDirectories(dataSvs);
-
         dataSvs.OnChange += StateHasChanged;
 
     }
 
     protected override Task OnInitializedAsync()
     {
-
         return base.OnInitializedAsync();
     }
 
@@ -353,8 +332,6 @@
             dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
 
             dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
-
-
 
             foreach (NotePath notePath in dataSvs.editNote.NotePaths)
             {
@@ -392,14 +369,6 @@
 
 
     }
-
-    void Change(string text)
-    {
-        Console.WriteLine(text);
-    }
-
-
-
 
     // Unregister the drop zone events
     public async ValueTask DisposeAsync()
@@ -439,9 +408,7 @@
     }
     private void ResizeMove(DragEventArgs re, NoteImage _noteImage)
     {
-        // _noteImage.Width += (int)Math.Round((double)(100 * 5) / _noteImage.Width );
-        //  _noteImage.Height += (int)Math.Round((double)(100 * 5) / _noteImage.Height);
-
+   
         if (resizing)
         {
             _noteImage.Width += (int)re.OffsetX;
@@ -453,16 +420,9 @@
     }
     private void ResizeEnd(DragEventArgs re, NoteImage _noteImage)
     {
-        /*
-        re.DataTransfer.DropEffect = "move";
-            _noteImage.Width += (int)re.OffsetX;
-            _noteImage.Height += (int)re.OffsetY;
-            */
 
         resizing = false;
 
-        // _noteImage.Width = dragedNoteImage.Width;
-        //_noteImage.Height = dragedNoteImage.Height;
     }
     private void ImgDragStart(PointerEventArgs de, NoteImage _noteImage)
     {
@@ -489,9 +449,7 @@
 
         if (dragstarted)
         {
-            // de.DataTransfer.DropEffect = "move";
-            // calculate the new cursor position:
-
+   
             pos1 = pos3 - Convert.ToInt16(de.ClientX);
             pos2 = pos4 - Convert.ToInt16(de.ClientY);
             pos3 = Convert.ToInt16(de.ClientX);
@@ -542,8 +500,6 @@
         _noteImage.Selected = false;
         skiaSvs.UpdateBitmap();
 
-        // dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
-
     }
     #endregion
 
@@ -574,106 +530,6 @@
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-
-          /*
-          if (dataSvs.EditMode == false)
-          {
-
-          // Create bitmap the size of the display surface
-          if (dataSvs.saveBitmap == null)
-          {
-          dataSvs.saveBitmap = new SKBitmap(info.Width, info.Height);
-        }
-        // Or create new bitmap for a new size of display surface
-        else if (dataSvs.saveBitmap.Width < info.Width || dataSvs.saveBitmap.Height < info.Height)
-        {
-        SKBitmap newBitmap = new SKBitmap(Math.Max(dataSvs.saveBitmap.Width, info.Width),
-        Math.Max(dataSvs.saveBitmap.Height, info.Height));
-
-        using (SKCanvas newCanvas = new SKCanvas(newBitmap))
-        {
-        newCanvas.Clear();
-        newCanvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
-        }
-
-        dataSvs.saveBitmap = newBitmap;
-        }
-
-
-
-
-        canvas.Clear(SKColors.Transparent);
-
-
-        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
-        {
-
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-        paint.BlendMode = polyline.StrokeBlendMode;
-        canvas.DrawPath(polyline.Path, paint);
-
-
-        }
-
-        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-        {
-
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-        paint.BlendMode = polyline.StrokeBlendMode;
-
-        canvas.DrawPath(polyline.Path, paint);
-
-        }
-
-
-
-        }
-        else
-        {
-
-        if (dataSvs.BitmapDrawed == false)
-        {
-        canvas.Clear();
-        // canvas.DrawBitmap(dataSvs.saveBitmap, 0, 0);
-
-        dataSvs.BitmapDrawed = true;
-
-        }
-
-
-
-        // canvas.Clear();
-
-
-        foreach (FingerPaintPolyline polyline in dataSvs.completedPolylines)
-        {
-
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-        paint.BlendMode = polyline.StrokeBlendMode;
-        canvas.DrawPath(polyline.Path, paint);
-
-
-        }
-
-        foreach (FingerPaintPolyline polyline in dataSvs.inProgressPolylines.Values)
-        {
-
-        paint.Color = polyline.StrokeColor;
-        paint.StrokeWidth = polyline.StrokeWidth;
-        paint.BlendMode = polyline.StrokeBlendMode;
-        canvas.DrawPath(polyline.Path, paint);
-
-
-        }
-
-
-
-        }
-
-        */
         canvas.Clear(SKColors.Transparent);
 
 
@@ -778,7 +634,7 @@
                                 dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
                             }
 
-                            // dataSvs.editNote.NotePaths.RemoveAll(pth => pth.SvgPath == deletePath.Path.ToSvgPathData());
+
                             dataSvs.skiaView.Invalidate();
                         }
 
@@ -799,9 +655,6 @@
 
 
 
-
-
-
     }
 
     void OnPointerUp(PointerEventArgs e)
@@ -815,11 +668,6 @@
                 {
 
                     dataSvs.completedPolylines.Add(dataSvs.inProgressPolylines[e.PointerId]);
-
-                    //string svgdata = dataSvs.completedPolylines[0].Path.ToSvgPathData();
-                    /*
-
-                    */
 
                     NotePath notePath = new NotePath()
                         {
@@ -987,7 +835,7 @@
 
             Stream stream = new MemoryStream(bitArrayImg);
             var dotnetImageStream = new DotNetStreamReference(stream);
-            //var urlstrng = await _module.InvokeAsync<string>("imgPathToSrc", fPath);
+           
             var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
 
             SaveImage(fPath, "image/png");
@@ -1016,20 +864,16 @@
                 Width = sKBitmapImg.Width,
                 Height = sKBitmapImg.Height
 
-
             });
 
-      
+
         skiaSvs.UpdateBitmap();
 
         StateHasChanged();
         dataSvs.EnableHand();
     }
     #endregion
-    public void Log()
-    {
-        Console.WriteLine("shape clicked");
-    }
+
 
     public void Dispose()
     {

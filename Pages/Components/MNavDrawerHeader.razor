@@ -18,20 +18,14 @@
 
             @if (dataSvs.UserAgent is null)
             {
-
                 <b>
-
                 </b>
-
-
             }
 
-            else if ( !(dataSvs.UserAgent.Contains("Firefox")))
-    {
+            else if (!(dataSvs.UserAgent.Contains("Firefox")))
+            {
 
-        
-
-                 <MButton Class="primary" title="Save" OnClick="() => SaveProject()" Height="45">
+                <MButton Class="primary" title="Save" OnClick="() => SaveProject()" Height="45">
                     <span class="bi bi-save2" style="font-size:24px;"></span>
 
                 </MButton>
@@ -46,14 +40,9 @@
             }
 
 
-               
-
- 
-
         </div>
         <MDivider Class="mt-0"></MDivider>
 
-       
 
         break;
     case "collection":
@@ -64,7 +53,6 @@
             {
 
                 <MRow Class="ps-4 pe-4">
-
 
                     <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
                         <input type="text" @ref="inputTextRef"
@@ -87,9 +75,7 @@
             {
                 <MRow>
 
-
                     <div class="d-flex justify-content-between  align-items-center">
-
 
                         <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("mainmenu"))">
                             <span class="bi bi-arrow-left"></span>
@@ -99,14 +85,14 @@
 
                         </p>
 
-                        <MMenu  OffsetY >
+                        <MMenu OffsetY>
                             <ActivatorContent>
 
                                 <button class="btn  btn-outline-primary me-1 my-1 "
                             type="button"
                             @attributes='@context.Attrs'>
                                     <span class="bi bi-caret-down">
-                                       
+
                                     </span>
 
                                 </button>
@@ -141,13 +127,12 @@
                                         </MListItemContent>
                                     </MListItem>
 
-                                    
                                 </MList>
                             </ChildContent>
                         </MMenu>
 
 
-                       
+
                     </div>
                 </MRow>
 
@@ -158,7 +143,6 @@
 
         break;
     case "cards":
-
 
         <MContainer Class="py-0 mt-2" Style="height:45px">
 
@@ -183,20 +167,20 @@
 
                     </div>
                 </MRow>
-            }else if (dataSvs.filterPackets)
+            }
+            else if (dataSvs.filterPackets)
             {
                 <MRow Class="ps-4 pe-4">
 
                     <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
-                        <input  type="text" @onfocusout="@(() => EnableFilterPacket())"
+                        <input type="text" @onfocusout="@(() => EnableFilterPacket())"
                    @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
-                   class="form-control border-0 shadow-none" placeholder="Filter Packets" aria-label="Filter Packets" aria-describedby="basic-addon2"
-                        >
+                   class="form-control border-0 shadow-none" placeholder="Filter Packets" aria-label="Filter Packets" aria-describedby="basic-addon2">
 
                         <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
                             <span class="bi bi-x"></span>
                         </button>
-                       
+
 
                     </div>
                 </MRow>
@@ -265,9 +249,6 @@
                             </ChildContent>
                         </MMenu>
 
-
-
-                      
                     </div>
                 </MRow>
 
@@ -315,11 +296,6 @@
                         }
 
 
-
-
-
-
-
                     </div>
 
                 }
@@ -339,63 +315,35 @@
                         else
                         {
                             <button class="btn btn-outline-danger  ms-1  my-1 rounded-3" type="button"
-                             onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
+                    onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
                                 <span class="bi bi-arrow-left"></span>
                             </button>
                         }
 
-                         <p class="text-center flex-fill my-1 text-white">
+                        <p class="text-center flex-fill my-1 text-white">
                             Note
 
                         </p>
 
-
-
-
-
-
                     </div>
 
                 }
-           
+
             </MRow>
-
-
 
             <MDivider></MDivider>
         </MContainer>
 
-        <!--
-
-
-        <div class="row m-2">
-            <button title="Collections" class="btn btn-outline-success" @onclick="@(() => SwitchMenu("collection"))">
-                <span class="bi bi-arrow-left"></span>
-            </button>
-        </div>
-
-        <MDivider></MDivider>
-                -->
         break;
     case "notecards":
-        <!--
-                 <div class="row m-2">
-                    <button title="Pockets" class="btn btn-outline-success" @onclick="@(() => SwitchMenu("cards"))">
-                        <span class="bi bi-arrow-left"></span>
-                    </button>
-                </div>
-        -->
 
         <MContainer Class="py-0 mt-2" Style="height:45px">
 
-
             <MRow>
-
 
                 <div class="d-flex justify-content-between   align-items-center">
 
-
-                    <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button"  @onclick="@(() => SwitchMenu("cards"))">
+                    <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("cards"))">
                         <span class="bi bi-arrow-left"></span>
                     </button>
 
@@ -439,7 +387,6 @@
     bool download_dialog;
 
 
-
     [CascadingParameter]
     public Error? Error { get; set; }
 
@@ -455,11 +402,10 @@
     {
         if (firstRender)
         {
-            //   await JSRuntime.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
 
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-           
+
         }
 
 
@@ -483,17 +429,6 @@
         {
             if (menu == "collection")
             {
-                /*
-                //Don't Update new note,update existing note.
-                    if (dataSvs.EditMode == true)
-                {
-                dataSvs.UpdateNote().GetAwaiter().GetResult();
-
-                }
-                */
-                //dataSvs.UpdateNote().GetAwaiter().GetResult();
-
-
 
 
                 if (dataSvs.editNote.NoteID == 0) //New Note
@@ -503,9 +438,6 @@
                     {
                         dataSvs.savenotedialog = true;
 
-                        //await dataSvs.SaveNote();
-                        //  dataSvs.BitmapDrawed = false;
-                        // dataSvs.ClearCanvas();
 
                     }
                     else
@@ -523,44 +455,41 @@
                     {
 
                         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
-                        //CreateThumbImg();
+
                         await dataSvs.UpdateNote();
 
                         await dataSvs.GetNotes();
                         dataSvs.BitmapDrawed = false;
                         dataSvs.completedPolylines.Clear();
-                        // dataSvs.ClearCanvas();
+
                         dataSvs.noteEdited = false;
 
                         await GoToMenu.InvokeAsync(menu);
-                        //savenotedialog = true;
+
                     }
                     else
                     {
                         dataSvs.BitmapDrawed = false;
                         dataSvs.completedPolylines.Clear();
-                        //dataSvs.ClearCanvas();
+
                         dataSvs.noteEdited = false;
-                        //await dataSvs.GetNotes();
+
                         await GoToMenu.InvokeAsync(menu);
                     }
-                    // await dataSvs.UpdateNote();
+
                 }
 
-
-                //dialog = true;
-                // dataSvs.ClearCanvas();
-                //await dataSvs.GetNotes();
             }
             else if (menu == "cards")
             {
                 dataSvs.SelectedNoteCard = null;
                 await GoToMenu.InvokeAsync(menu);
             }
-            else{
+            else
+            {
                 await GoToMenu.InvokeAsync(menu);
             }
-            //  await GoToMenu.InvokeAsync(menu);
+
 
         }
         catch (Exception ex)
@@ -575,8 +504,6 @@
     public async Task SaveNote()
     {
 
-        //CreateThumbImg();
-
         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
         if (dataSvs.editNote.NoteID == 0)
         {
@@ -590,8 +517,6 @@
 
             }
 
-
-
         }
         else
         {
@@ -604,19 +529,6 @@
         }
 
 
-
-        /*
-        using (SKImage image = SKImage.FromBitmap(dataSvs.saveBitmap))
-        {
-        SKData data = image.Encode();
-
-        SKRectI sKRectI = new SKRectI(0, 0, 500, 281);
-        SKImage subImage = image.Subset(sKRectI);
-        SKData thdata = subImage.Encode();
-        dataSvs.editNote.Thumbnail = "data:image/jpeg;base64," + Convert.ToBase64String(thdata.ToArray());
-
-    }
-    */
     }
 
 
@@ -625,7 +537,7 @@
     private async Task BackToCollections(string menu)
     {
 
-        dataSvs.savenotedialog  = false;
+        dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
         await dataSvs.GetNotes();
@@ -635,7 +547,7 @@
     private async Task SaveNTAndBack(string menu)
     {
         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
-        //CreateThumbImg();
+
         if (dataSvs.editNote.NoteID == 0)
         {
             await dataSvs.SaveNote();
@@ -661,10 +573,7 @@
     private async Task SaveProject()
     {
 
-
         await dataSvs.DownloadProjectFile();
-
-        //var fileName = $"{dataSvs.MainProject.Name}.snotes";
         await _module.InvokeVoidAsync("getNewFileHandle", dataSvs.MainProject.Name);
         dataSvs.SavingProject = true;
         await _module.InvokeVoidAsync("blazorSaveFile", "application/zip", dataSvs.fileArray);
@@ -672,83 +581,13 @@
 
     }
 
- 
-
-    private async Task DownloadProject()
-    {
-        #region after radzen
-                /*
-
-                await DialogService.OpenAsync<SaveProjectDialogPage>("Save Project", null,
-        new DialogOptions() { Width = "700px", Height = "auto", Resizable = false, Draggable = true, ShowClose = true });
-
-        */
-        #endregion
-
-
-
-
-        /*
-
-
-        #region Download file from GDrive as bitArray
-        HttpClient httpClient = new HttpClient()
-        {
-        BaseAddress = new Uri("https://www.googleapis.com/drive/v3/files/")
-        };
-        byte[] downloadFile = await httpClient.GetByteArrayAsync("12PVVjxsLQnK5zzpHN7IYpR3uWPyW6TkR?key=AIzaSyBl_QdS1lMUgHW2BY6blYTJWejuMeMjnMM&alt=media");
-        #endregion
-        */
-        /*
-        await dataSvs.DownloadProjectFile();
-        //  var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-        //'https://www.googleapis.com/drive/v3/files/12PVVjxsLQnK5zzpHN7IYpR3uWPyW6TkR?key=[YOUR_API_KEY]&alt=media'
-
-        #region Get Upload Location Uri
-
-        var gDriveApiclient = ClientFactory.CreateClient("GDriveApi");
-        GDriveFileId idContent = await gDriveApiclient.GetFromJsonAsync<GDriveFileId>("files/generateIds?count=1");
-        Console.WriteLine(idContent.ids[0].ToString());
-
-        var gDriveApiUploadclient = ClientFactory.CreateClient("GDriveApiUpload");
-
-        var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-        var metaContent = JsonContent.Create(new { name = fileName, mimeType = "application/zip", id = idContent.ids[0] });
-        HttpResponseMessage result = await gDriveApiUploadclient.PostAsync("?uploadType=resumable", metaContent);
-    var jsonresult = result.Headers.Location.Query;
-    #endregion
-    #region Upload File in chunks
-    IEnumerable<byte[]> chunksEnum = dataSvs.fileArray.Chunk(256 * 1024);
-    foreach (byte[] chunk in chunksEnum){
-    Stream stream = new MemoryStream(chunk);
-    var streamContent = new StreamContent(stream);
-    var uploadresult = await gDriveApiUploadclient.PutAsync(jsonresult, streamContent);
-        }
-        #endregion
-        #region Set File as public
-        var permissionContent = JsonContent.Create(new { role = "reader", type = "anyone" });
-        var setPermission = await gDriveApiclient.PostAsync($"files/{idContent.ids[0]}/permissions", permissionContent);
-        #endregion
-        Console.WriteLine($"Upload Finished");
-
-        */
-        /*
-
-        #region convert bitArray to zip and download it
-        var fileName = $"{dataSvs.MainProject.Name} - {DateTime.Now.ToString()}.snotes";
-        await _module.InvokeVoidAsync("blazorDownloadFile1", fileName, "application/zip", downloadFile);
-        #endregion
-
-    */
-    }
 
     private async Task AddCard()
     {
 
         if (!string.IsNullOrWhiteSpace(textValue))
         {
-            // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
-            // await  dataSvs.UpdateProject();
+
             await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
             textValue = "";
             await inputTextRef.FocusAsync();
@@ -766,8 +605,7 @@
 
             if (!string.IsNullOrWhiteSpace(textValue))
             {
-                // dataSvs.MainProject.Cards.Add(new Card { Title = cardTitle, Selected = true , ProjectFK = dataSvs.MainProject.ProjectID });
-                // await  dataSvs.UpdateProject();
+
                 await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
                 textValue = "";
                 await inputTextRef.FocusAsync();
@@ -829,7 +667,7 @@
             _addItem = true;
         }
 
-        
+
     }
 
     private async Task EnableFilterPacket()
@@ -851,7 +689,7 @@
 
     private async Task SelectChildCard(Packet chCard)
     {
-        
+
         try
         {
             await dataSvs.GetCard(chCard);
@@ -863,13 +701,8 @@
         }
 
 
-        //MessageService.SendMessage();
-
-        //StateHasChanged();
-       
     }
 
- 
 
 
     public void Dispose()

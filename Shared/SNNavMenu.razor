@@ -4,60 +4,11 @@
 @using System.Net.Mime
 @using BlazorApp1.Pages.Components
 @inject SharedDataService dataSvs
-@inject IHttpClientFactory ClientFactory
+
 @inject IJSRuntime JSRuntime
 
 @using Blazored.SessionStorage
 @inject ISessionStorageService sessionStorage
-
-
-    <!--
-
-    <MCard Height="400"
-           Width="256"
-           Class="mx-auto">
-        <MNavigationDrawer Permanent>
-            <MListItem>
-                <MListItemContent>
-                    <MListItemTitle class="text-h6">
-                        Application
-                    </MListItemTitle>
-                    <MListItemSubtitle>
-                        subtext
-                    </MListItemSubtitle>
-                </MListItemContent>
-            </MListItem>
-
-            <MDivider></MDivider>
-
-            <MList Dense
-                   Nav>
-               
-                 <MListItem Link>
-                        <MListItemIcon>
-                        <MIcon>mdi-image</MIcon>
-                        </MListItemIcon>
-
-                        <MListItemContent>
-                            <MListItemTitle>Collections</MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-                <MListItem Link>
-                    <MListItemIcon>
-                        <MIcon>mdi-tray-full</MIcon>
-                    </MListItemIcon>
-
-                    <MListItemContent>
-                        <MListItemTitle>Pockets</MListItemTitle>
-                    </MListItemContent>
-                </MListItem>
-
-
-            </MList>
-        </MNavigationDrawer>
-    </MCard>
-        -->
 
 
 <MList Dense Nav>
@@ -83,8 +34,6 @@
         </MListItemContent>
     </MListItem>
 
-   
-
 
 </MList>
 
@@ -96,107 +45,11 @@
 </div>
 
 
-<!--
-
-
-  <ul class="list-group  gap-2 px-1 ul-style"  style="width:100%;">
-              
-              <a class="list-group-item"  href="">Home</a>
-              <a class="list-group-item shadow-sm rounded" href="counter">Counter</a>
-              <a class="list-group-item" href="fetchdata">Fetch Data</a>
-
-
-
-         
-
-
-     
-            <li class="list-group-item list-group-item-action px-1 shadow rounded" style="background-color:#cbac88;">
-            <NavLink  onclick="@NavMenuGoToColl" >
-                <span class="px-4" >Collections</span>
-            </NavLink>
-            </li>
-
-            <li class="list-group-item list-group-item-action px-1 shadow rounded" style="background-color:#cbac88;">
-            <NavLink  onclick="@NavMenuGoToCards" >
-                <span class="px-4" > Cards</span>
-            </NavLink>
-            </li>
-
-           
-                <a class="list-group-item" href="dropzonepg">Drop Zone</a>
-              <a class="list-group-item" href="skiasharp">SkiaSharp </a>
-
-              <a class="list-group-item" onclick="@NavMenuGoToNoteTools">Note Tools </a>
-
-
-              <li class="list-group-item list-group-item-action px-1"  style="background-color:bisque">
-                <NavLink class="nav-link" @onclick="()=>collsexpandSubNav = !collsexpandSubNav">
-                    <span class="bi bi-collection px-2" aria-hidden="true"></span> Collections
-                </NavLink>
-             </li>
-              @if (collsexpandSubNav)
-                {
-                    <div class="list-group-item list-group-item-action px-2">
-                    <NavLink class="expand-menu "  onclick="@NavMenuGoToColl" >
-                        <span class="px-4" >Select Collections</span>
-                    </NavLink>
-                    </div>
-                    <div class="list-group-item list-group-item-action px-2">
-                    <NavLink class="" href="">
-                        <span class="px-4">Notes</span>
-                    </NavLink>
-                    </div>
-                }
-         
-
-                         <li class="list-group-item list-group-item-action px-1">
-        <NavLink class="nav-link" @onclick="()=>cardsexpandSubNav = !cardsexpandSubNav">
-            <span class="bi bi-card-text px-2" aria-hidden="true"></span> Cards
-        </NavLink>
-        </li>
-        @if (cardsexpandSubNav)
-        {
-            <div class="list-group-item list-group-item-action px-2">
-            <NavLink class="expand-menu " onclick="@NavMenuGoToCards" >
-                <span class="px-4" > Cards</span>
-            </NavLink>
-            </div>
-            <div class="list-group-item list-group-item-action px-2">
-            <NavLink class="" href="">
-                <span class="px-4">Search Card</span>
-            </NavLink>
-            </div>
-            
-        }
-        
-            <li class=" list-group-item list-group-item-action" >
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="list-group-item list-group-item-action"  style="background-color:bisque; ">
-              <a class="nav-link " href="#">Link1</a>
-            </li>
-            <li class="list-group-item list-group-item-action">
-              <a class="nav-link" href="#">Link2</a>
-            </li>
-          
-             
-
-
-
-       </ul>
-      -->
-
-
-      
-
 @code {
     private bool collsexpandSubNav;
     private bool cardsexpandSubNav;
 
-    private bool renameproject ;
-
-   
+    private bool renameproject;
 
     [Parameter]
     public EventCallback<string> GoToMenu { get; set; }
@@ -215,7 +68,7 @@
         {
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-            
+
         }
 
 
@@ -230,7 +83,7 @@
 
     private Task NavMenuGoToColl()
     {
-        
+
         return GoToMenu.InvokeAsync("collection");
     }
 
@@ -265,9 +118,10 @@
         {
             await dataSvs.UpdateProject();
 
-        }else
+        }
+        else
         {
-            dataSvs.MainProject.Name = tempName ;
+            dataSvs.MainProject.Name = tempName;
             await dataSvs.UpdateProject();
         }
         renameproject = false;

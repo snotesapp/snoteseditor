@@ -1,9 +1,8 @@
 ﻿@using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
 @inject IJSRuntime JSRuntime
-@inject IHttpClientFactory ClientFactory
 
-<MCard Class="p-1" >
+<MCard Class="p-1">
     <MCardTitle Class="text-h5 gradient-blue">
         Download Project
     </MCardTitle>
@@ -56,10 +55,10 @@
 @code {
 
     private string CurrentStep { get; set; } = "Storage";
-    
+
     IJSObjectReference _module;
 
-  
+
     double progress;
 
     [Parameter]
@@ -83,19 +82,17 @@
         CurrentStep = "Progress";
         SetProgres(10);
 
-
         await dataSvs.DownloadProjectFile();
         SetProgres(70);
         #region convert bitArray to zip and download it
         var fileName = $"{dataSvs.MainProject.Name}.snotes";
         await _module.InvokeVoidAsync("blazorDownloadFile", fileName, "application/zip", dataSvs.fileArray);
         SetProgres(100);
-        //dialogService.Close();
+        
         CurrentStep = "Storage";
         await CloseDialoge.InvokeAsync(false);
         #endregion
     }
-
 
 
 

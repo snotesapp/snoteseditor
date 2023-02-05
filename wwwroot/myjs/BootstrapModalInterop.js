@@ -184,6 +184,8 @@ export function zoomOutelement(elementid) {
 
 }
 
+
+
 export function blazorDownloadFile(filename, contentType, content) {
     try {
         // Create a new Blob object from the content

@@ -6,19 +6,9 @@
 @inject SharedDataService dataSvs
 
 
-<!--
-
-<div class="container d-flex justify-content-between py-2">
-    <a class="badge  text-wrap " style="width:100%;" href="">Collections</a>
-    <button title="Navigation menu" class="btn btn-outline-success ms-1" @onclick="GoToMainMenu">
-        <span class="bi bi-arrow-left"></span>
-    </button>
-</div>
--->
-
-<MContainer Style="height:calc(100vh - 140px); overflow:auto" >
+<MContainer Style="height:calc(100vh - 140px); overflow:auto">
     <MRow Class="mx-0 w-100">
-        <MList >
+        <MList>
             <ListTemplate Items="dataSvs.MainProject.NotesCollection">
                 <RowTemplate Context="coll">
 
@@ -34,42 +24,25 @@
                                    __internal_preventDefault_oncontextmenu
                                    Color="white" Class="elevation-4  rounded-3">
                                     <MListItemContent>
-                                        <MListItemTitle > @coll.Title </MListItemTitle>
+                                        <MListItemTitle> @coll.Title </MListItemTitle>
                                     </MListItemContent>
                                 </MListItem>
-                                <!--
 
 
-                                <button type="button" class="list-group-item  list-group-item-action  text-white shadow rounded" style="background-color:#5e92f3"
-                                @ondblclick="() => SetCollection(coll)"
-                                @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})" @oncontextmenu:preventDefault="true">
-                                @coll.Title
-                                </button>
-                                              -->
                             }
                             else
                             {
 
-                                <MListItem Link style="background-color:#ffb07e" 
+                                <MListItem Link style="background-color:#ffb07e"
                                    @ondblclick="() => SetCollection(coll)"
                                    @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
                                    __internal_preventDefault_oncontextmenu
                                    Color="black" Class="elevation-4  rounded-3">
                                     <MListItemContent>
-                                        <MListItemTitle > @coll.Title </MListItemTitle>
+                                        <MListItemTitle> @coll.Title </MListItemTitle>
                                     </MListItemContent>
                                 </MListItem>
 
-                                <!--
-
-
-
-                                <button type="button" class="list-group-item list-group-item-action shadow rounded" style="background-color:#cbac88"
-                                @ondblclick="() => SetCollection(coll)"
-                                @oncontextmenu="@(args => { NCContextMenuWithContent(args,coll);})" @oncontextmenu:preventDefault="true">
-                                @coll.Title
-                                </button>
-                                             -->
                             }
                         }
                         else
@@ -79,11 +52,10 @@
                                placeholder="Collection Name" aria-label="Collection Name"
                                aria-describedby="basic-addon2" @bind-value="coll.Title" @onfocusout="() => SaveCollectionName(coll)">
 
-
                         }
 
                     </div>
-                    
+
 
                 </RowTemplate>
 
@@ -93,100 +65,99 @@
 
     </MRow>
 
- 
+
 
 </MContainer>
 
 
-@if(ContextMenuNotesCollection != null){
-<MMenu @bind-Value="ShowNCContext"
+@if (ContextMenuNotesCollection != null)
+{
+    <MMenu @bind-Value="ShowNCContext"
        PositionX="X"
        PositionY="Y"
        Absolute
        OffsetY
        CloseOnContentClick>
-    <MList Dense Width="200">
+        <MList Dense Width="200">
 
-    <MListItem OnClick="() => AddNCNotes(ContextMenuNotesCollection)">
-            <MListItemIcon>
-                <MIcon>
-                    mdi-shape-rectangle-plus
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
-                <MListItemTitle>
-                    Add Notes
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
-
- @if (ContextMenuNotesCollection.Selected == true)
-{
-            <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+            <MListItem OnClick="() => AddNCNotes(ContextMenuNotesCollection)">
                 <MListItemIcon>
                     <MIcon>
-                        mdi-checkbox-blank-outline 
+                        mdi-shape-rectangle-plus
                     </MIcon>
                 </MListItemIcon>
                 <MListItemContent>
                     <MListItemTitle>
-                        UnSelect
+                        Add Notes
                     </MListItemTitle>
                 </MListItemContent>
             </MListItem>
 
+            @if (ContextMenuNotesCollection.Selected == true)
+            {
+                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+                    <MListItemIcon>
+                        <MIcon>
+                            mdi-checkbox-blank-outline
+                        </MIcon>
+                    </MListItemIcon>
+                    <MListItemContent>
+                        <MListItemTitle>
+                            UnSelect
+                        </MListItemTitle>
+                    </MListItemContent>
+                </MListItem>
 
-}
-else
-{
-            <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+
+            }
+            else
+            {
+                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+                    <MListItemIcon>
+                        <MIcon>
+                            mdi-checkbox-marked-outline
+                        </MIcon>
+                    </MListItemIcon>
+                    <MListItemContent>
+                        <MListItemTitle>
+                            Select
+                        </MListItemTitle>
+                    </MListItemContent>
+                </MListItem>
+
+            }
+
+            <MListItem OnClick="() => RenameCollection(ContextMenuNotesCollection)">
                 <MListItemIcon>
                     <MIcon>
-                        mdi-checkbox-marked-outline 
+                        mdi-form-textbox
                     </MIcon>
                 </MListItemIcon>
                 <MListItemContent>
+
                     <MListItemTitle>
-                        Select
+                        Rename
                     </MListItemTitle>
                 </MListItemContent>
             </MListItem>
-
-}
-
-
-       
-        <MListItem OnClick="() => RenameCollection(ContextMenuNotesCollection)">
-            <MListItemIcon>
-                <MIcon>
-                    mdi-form-textbox
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
-
-                <MListItemTitle>
-                    Rename
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
 
             <MListItem OnClick="() =>{dataSvs.showDeleteNCConfirmation = true; dataSvs.ContextMenuNotesCollection = ContextMenuNotesCollection;}">
-            <MListItemIcon>
-                <MIcon>
-                    mdi-delete-outline
-                </MIcon>
-            </MListItemIcon>
-            <MListItemContent>
+                <MListItemIcon>
+                    <MIcon>
+                        mdi-delete-outline
+                    </MIcon>
+                </MListItemIcon>
+                <MListItemContent>
 
-                <MListItemTitle>
-                    Delete
-                </MListItemTitle>
-            </MListItemContent>
-        </MListItem>
+                    <MListItemTitle>
+                        Delete
+                    </MListItemTitle>
+                </MListItemContent>
+            </MListItem>
 
 
-    </MList>
-</MMenu>
+        </MList>
+    </MMenu>
 
 
 }
@@ -202,7 +173,6 @@ else
     [Parameter]
     public EventCallback<string> GoToMenu { get; set; }
 
-    
     private string editNCTitle { get; set; }
 
     private NotesCollection? ContextMenuNotesCollection = null;
@@ -230,7 +200,7 @@ else
 
     private void ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
     {
-        ContextMenuNotesCollection =null;
+        ContextMenuNotesCollection = null;
         ShowNCContext = false;
         // await Task.Delay(16);
 
@@ -256,14 +226,13 @@ else
             await dataSvs.UpdateNCollection(nc);
         }
 
-      
+
         await dataSvs.GetNotes();
     }
 
 
     private Task AddNCNotes(NotesCollection notesCollection)
     {
-        //  dataSvs.EditMode = false;
 
         dataSvs.AddNotesSelectedNC = notesCollection;
         dataSvs.editNote = new Note()
@@ -277,6 +246,7 @@ else
         return GoToMenu.InvokeAsync("notetools");
 
     }
+
     #region Rename Collection
     string oldname;
     void RenameCollection(NotesCollection notesCollection)
@@ -307,7 +277,7 @@ else
 
 
 
- 
+
     public void Dispose()
     {
         dataSvs.OnChange -= StateHasChanged;

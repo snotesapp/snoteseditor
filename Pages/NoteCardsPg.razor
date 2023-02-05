@@ -12,175 +12,54 @@
 
 
 
+@if (dataSvs.SelectedNoteCard != null)
+{
 
-@if (dataSvs.SelectedNoteCard != null )
- {
-
-<MCol>
-    <MRow>
+    <MCol>
+        <MRow>
 
             <MCard Elevation="3" class=" m-1 p-0 gradient-coral shownavbtns"
                Width="@(dataSvs.SelectedNoteCard.Note.MainImgWidth )" Height="@(dataSvs.SelectedNoteCard.Note.MainImgHeight )"
-                @onpointerleave="@(() => navbuttonsEnabled = false)"
-                   Style="overflow:auto;">
+               @onpointerleave="@(() => navbuttonsEnabled = false)"
+               Style="overflow:auto;">
 
-                    <!--
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light" ondragover="event.preventDefault();"
-                          ondragstart="event.dataTransfer.setData('', event.target.id);">
-                      <div class="container-fluid">
-                        <a class="navbar-brand" href="#">Navbar</a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
-                          <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent2">
-                          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                    @if (dataSvs.SelectedCard != null)
-                    {
-
-                           <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
-                            <RowTemplate Context= "notecard">
-
-                                <div class="card p-2 bd-highlight" 
-                                style=" margin:8px;"
-                            @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" @oncontextmenu:preventDefault="true"
-
-                            @ondragstart="() => draggingModel = notecard"
-                            @ondragend="()=> draggingModel = null" draggable="true"
-                            >
-                                  <img src="..." class="card-img-top" alt="...">
-                                  <div class="card-body" @onclick ="()=> SelectNoteCard(notecard)">
-                                    <h5 class="card-title">Card title </h5>
-                                    <p class="card-text">@notecard.Note.Text</p>
-                                    <a href="#" class="btn btn-primary" @onclick ="()=> SelectNoteCard(notecard)">Select</a>
-                                  </div>
-
-                                @if (draggingModel is not null)
-                                {//this is overlay for droping. Otherwise it flickers between dragenter and leave, bsc of child elemnt
-                                //this overlays the child elements of <li>
-                                    <div class="position-absolute w-100 h-100 " style="top:0px;left:0px;
-                             @(notecard.IsDragOver?"border-top-color:blue;border-top-style: solid;border-top-width:thick;":"")"
-                             @ondrop="()=>HandleDrop(notecard)"
-                             @ondragenter="@(()=>{notecard.IsDragOver = true;})"
-                             @ondragleave="@(()=> {notecard.IsDragOver = false;})">
-                                    </div>
-                                }
-                                </div>
-
-
-
-                            </RowTemplate>
-
-                        </ListTemplate>
-
-                    }
-
-
-                          </ul>
-
-                        </div>
-                      </div>
-                    </nav>
-
-                    -->
-                    <!--
-                      <ul class="d-flex  align-content-start flex-wrap px-1 col-sm-4 "
-                      style="overflow:auto;background:green;height:130vh;"
-                          ondragover="event.preventDefault();"
-                          ondragstart="event.dataTransfer.setData('', event.target.id);"
-                            >
-                    @if (dataSvs.SelectedCard != null)
-                    {
-
-                           <ListTemplate Items="dataSvs.SelectedCard.NoteCards">
-                            <RowTemplate Context= "notecard">
-
-                                <div class="card p-2 bd-highlight w-100 " style=" margin:8px;"
-                            @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" @oncontextmenu:preventDefault="true"
-
-                            @ondragstart="() => draggingModel = notecard"
-                            @ondragend="()=> draggingModel = null" draggable="true"
-                            >
-                                  <img src="..." class="card-img-top" alt="...">
-                                  <div class="card-body" @onclick ="()=> SelectNoteCard(notecard)">
-                                    <h5 class="card-title">Card title </h5>
-                                    <p class="card-text">@notecard.Note.Text</p>
-                                    <a href="#" class="btn btn-primary" @onclick ="()=> SelectNoteCard(notecard)">Select</a>
-                                  </div>
-
-                                @if (draggingModel is not null)
-                                {//this is overlay for droping. Otherwise it flickers between dragenter and leave, bsc of child elemnt
-                                //this overlays the child elements of <li>
-                                    <div class="position-absolute w-100 h-100 " style="top:0px;left:0px;
-                             @(notecard.IsDragOver?"border-top-color:blue;border-top-style: solid;border-top-width:thick;":"")"
-                             @ondrop="()=>HandleDrop(notecard)"
-                             @ondragenter="@(()=>{notecard.IsDragOver = true;})"
-                             @ondragleave="@(()=> {notecard.IsDragOver = false;})">
-                                    </div>
-                                }
-                                </div>
-
-
-
-                            </RowTemplate>
-
-                        </ListTemplate>
-
-                    }
-
-
-
-                     </ul>
-
-                    -->
-                    <!--
-                    <div class="col-8">
-                        <div class="p-5 bg-primary text-light">
-                            Test Coll
-                        </div>
-                    </div>
-                    -->
-
-                    @if (dataSvs.SelectedNoteCard.Note != null)
-                    {
-                    <div class="position-absolute @((navbuttonsEnabled) ? "shownavbtns" : "navbuttons") 
+                @if (dataSvs.SelectedNoteCard.Note != null)
+                {
+                    <div class="position-absolute @((navbuttonsEnabled) ? "shownavbtns" : "navbuttons")
                     @(upAnimation ? "slide-animation-up" : "")
                     @(downAnimation ? "slide-animation-down" : "")
                     @(leftAnimation ? "slide-animation-left" : "")
                     @(rightAnimation ? "slide-animation-right" : "")"
-                     style=";
+                 style=";
         width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
         height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
+        background-color:@dataSvs.SelectedNoteCard.Note.BackgroundColor">
 
-        background-color:@dataSvs.SelectedNoteCard.Note.BackgroundColor
-
-    ">
-
-                            <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images">
-                                <ImgTemplate Context="ncimg">
-                                    <span class="position-relative" style="left:@(@ncimg.X)px;
+                        <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images">
+                            <ImgTemplate Context="ncimg">
+                                <span class="position-relative" style="left:@(@ncimg.X)px;
                         top:@(@ncimg.Y)px">
 
 
-                                        <img id="ncimage_@ncimg.NoteImageID" draggable="true"
-                                     style="
+                                    <img id="ncimage_@ncimg.NoteImageID" draggable="true"
+                                 style="
                     border:4px none #1565c0;
                     border-radius:6px"
-                                     width="@ncimg.Width" height="@ncimg.Height"
-                                     class="rounded mx-auto d-block position-absolute  "
-                                     src="@ncimg.Location" alt="zoom image">
+                                 width="@ncimg.Width" height="@ncimg.Height"
+                                 class="rounded mx-auto d-block position-absolute  "
+                                 src="@ncimg.Location" alt="zoom image">
 
-                                    </span>
+                                </span>
 
-                                </ImgTemplate>
+                            </ImgTemplate>
 
-                            </NoteCardsTemplate>
+                        </NoteCardsTemplate>
                         @if (dataSvs.SelectedNoteCard.Note is not null)
                         {
                             <div style="pointer-events:@(PointerEvent); width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
     height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px; ">
                                 <SKCanvasView @ref="skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
-                                      style="position: absolute;
+                                  style="position: absolute;
                 top: 0;background-color:transparent;
                 left: 0; width:inherit;height:inherit;
                 pointer-events:inherit">
@@ -188,7 +67,7 @@
                                 </SKCanvasView>
                             </div>
 
-                       
+
                             <div class="mb-3">
 
                                 <MExpansionPanels Class="elevation-6" Style="width:50%;position:absolute;bottom:10px;left:25%;background-color:white">
@@ -206,53 +85,36 @@
 
                             </div>
                         }
-                        
 
-                           
+                    </div>
 
+                }
 
+            </MCard>
 
-                        </div>
-
-                    }
-
-                    <!--
-
-
-                       <ReadOnlyNoteCard >
-
-                       </ReadOnlyNoteCard>
-                    -->
-
-                   
-
-
-                </MCard>
-
-            @if(dataSvs.SelectedCard.NotePackets is not null)
+            @if (dataSvs.SelectedCard.NotePackets is not null)
             {
-                <div  class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
+                <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
-                   
-					<div class="row" style="width:96px;">
-						<div class="col-4 offset-4 p-0">
 
-                         
-							<button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
+                    <div class="row" style="width:96px;">
+                        <div class="col-4 offset-4 p-0">
+
+
+                            <button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
                             @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
 							"
-                            
                             type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectChildCard(dataSvs.SelectedCard.Parent,true))">
-								<i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
-                                @if(dataSvs.SelectedCard.Parent is not null)
+                                <i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
+                                @if (dataSvs.SelectedCard.Parent is not null)
                                 {
-                                <span class="px-2 truncate-text tooltiptext">@dataSvs.SelectedCard.Parent.Title </span>    
+                                    <span class="px-2 truncate-text tooltiptext">@dataSvs.SelectedCard.Parent.Title </span>
                                 }
-                                
-							</button>
 
-						</div>
-					</div>
+                            </button>
+
+                        </div>
+                    </div>
 
                     <div class="row " style="width:96px;">
                         <div class="col-4 p-0">
@@ -279,7 +141,7 @@
 
                             <div class="dropdown">
 
-                                <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3 
+                                <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
                                  @((dataSvs.ChildCards is not null && dataSvs.ChildCards.Count > 0) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled") "
                                 type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
@@ -288,11 +150,11 @@
                                 <ul class="dropdown-menu  p-0" style="background-color:transparent;width:200px;max-height:30vh;overflow:auto" aria-labelledby="dropdownMenuButton1">
                                     <ListTemplate Items="dataSvs.ChildCards">
                                         <RowTemplate Context="card">
-                                            <MListItem Class="dropdown-item elevation-4 rounded-3" Link 
-                                                style="background-color:#1565c0; margin-bottom:2px"
+                                            <MListItem Class="dropdown-item elevation-4 rounded-3" Link
+                                               style="background-color:#1565c0; margin-bottom:2px"
                                                Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectChildCard(card,false)">
                                                 <MListItemContent>
-                                                    <MListItemTitle Class="truncate-text"  >@card.Title </MListItemTitle>
+                                                    <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
 
                                                 </MListItemContent>
                                             </MListItem>
@@ -312,9 +174,9 @@
                 </div>
 
             }
-            
+
         </MRow>
-</MCol>
+    </MCol>
 }
 else
 {
@@ -324,8 +186,8 @@ else
              OnClick='() => dataSvs.SwitchMenus("collection")'>
             <MIcon Left>mdi-arrow-left</MIcon>
             Add Notes
-            </MButton>
-</div>
+        </MButton>
+    </div>
 
 }
 
@@ -357,9 +219,6 @@ else
 
     }
 
-
-
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
 
@@ -376,9 +235,6 @@ else
     SKPoint? touchLocation;
     SKBitmap? saveBitmap;
 
-
-
-
     SKPaint paint = new SKPaint
         {
             Style = SKPaintStyle.Stroke,
@@ -388,9 +244,7 @@ else
             FilterQuality = SKFilterQuality.High,
             BlendMode = SKBlendMode.SrcOver,
             PathEffect = SKPathEffect.CreateCorner(45)
-            //  BlendMode = SKBlendMode.SrcOver,
-            //   Color = SKColors.Red,
-            //   StrokeWidth = 8
+            
 
 
         };
@@ -402,49 +256,17 @@ else
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-        /*
-        // Create bitmap the size of the display surface
-        if (saveBitmap == null)
-        {
-        saveBitmap = new SKBitmap(info.Width, info.Height);
-        }
-        // Or create new bitmap for a new size of display surface
-        else if (saveBitmap.Width < info.Width || saveBitmap.Height < info.Height)
-        {
-        SKBitmap newBitmap = new SKBitmap(Math.Max(saveBitmap.Width, info.Width),
-        Math.Max(saveBitmap.Height, info.Height));
-
-        using (SKCanvas newCanvas = new SKCanvas(newBitmap))
-        {
-        newCanvas.Clear();
-        newCanvas.DrawBitmap(saveBitmap, 0, 0);
-        }
-
-        saveBitmap = newBitmap;
-    }
-
-    canvas.Clear();
-    if (dataSvs.SelectedNoteCard.Note.MainImg is not null)
-        {
-        saveBitmap = SKBitmap.Decode(dataSvs.SelectedNoteCard.Note.MainImg);
-        canvas.DrawBitmap(saveBitmap, 0, 0);
-        }
-        */
-        try
+       try
         {
             canvas.Clear();
 
             foreach (NotePath notePath in dataSvs.SelectedNoteCard.Note.NotePaths)
             {
 
-
-
                 paint.BlendMode = Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode);
                 paint.Color = SKColor.Parse(notePath.StrokeColor);
                 paint.StrokeWidth = notePath.StrokeWidth;
                 canvas.DrawPath(SKPath.ParseSvgPathData(notePath.SvgPath), paint);
-
-
 
             }
 
@@ -455,12 +277,7 @@ else
 
         }
 
-
-
     }
-
-
-
 
     #endregion
 
@@ -483,19 +300,16 @@ else
 
         }
 
-
-
-
     }
     private void ResetAnimation()
     {
         rightAnimation = false;
         leftAnimation = false;
-        upAnimation= false;
+        upAnimation = false;
         downAnimation = false;
     }
 
-    private async Task SelectChildCard(Packet chCard,bool Up)
+    private async Task SelectChildCard(Packet chCard, bool Up)
     {
         try
         {
@@ -505,21 +319,18 @@ else
             {
 
 
-                upAnimation= true;
+                upAnimation = true;
             }
             else
             {
                 downAnimation = true;
             }
-            
-            //MessageService.SendMessage();
+
         }
         catch (Exception ex)
         {
             Error?.ProcessError(ex);
         }
-
-
 
 
     }
@@ -530,9 +341,9 @@ else
 
         StateHasChanged();
     }
+
     public void Dispose()
     {
-
 
         MessageService.OnMessage -= MessageHandler;
         dataSvs.OnChange -= StateHasChanged;
@@ -544,61 +355,5 @@ else
 
 
     }
-
-
-
-/*
-        private async Task DeleteNoteCard(NoteCard noteCard)
-        {
-            dataSvs.SelectedNoteCard = null;
-            await dataSvs.RemoveNoteCard(noteCard);
-
-
-        }
-        private NoteCard? draggingModel;//the model that is being dragged
-        private void HandleDrop(NoteCard landingModel)
-        {//landing model -> where the dragg happened
-            if (draggingModel is null) return;
-            // int originalOrderLanding = landingModel.CardID;//keep the original order for later
-            //increase model uned by 1
-            //Models.Where(x => x.Order >= landingModel.Order).ToList().ForEach(x => x.Order++);
-
-            //  draggingModel.CardID = originalOrderLanding;//replace landing model
-
-
-            dataSvs.SelectedCard.NoteCards.RemoveAt(dataSvs.SelectedCard.NoteCards.IndexOf(draggingModel));
-            dataSvs.SelectedCard.NoteCards.Insert(dataSvs.SelectedCard.NoteCards.IndexOf(landingModel), draggingModel);
-            dataSvs.SelectedCard.NoteCards.Select(dx => { dx.Order = dataSvs.SelectedCard.NoteCards.IndexOf(dx); return dx; }).ToList();
-
-            dataSvs.UpdateCard(dataSvs.SelectedCard).GetAwaiter().GetResult();
-            StateHasChanged();
-
-        }
-        private async Task SelectNoteCard(NoteCard noteCard)
-        {
-            dataSvs.SelectedNoteCard = await dataSvs.GetNoteCard(noteCard);
-
-            StateHasChanged();
-        }
-        private async Task UpdateCard(Card card)
-        {
-            if (card.Selected == true)
-            {
-                card.Selected = false;
-            }
-            else
-            {
-                card.Selected = true;
-            }
-
-            await dataSvs.UpdateCard(card);
-            dataSvs.MainProject = await dataSvs.GetProject();
-
-
-        }
-        */
-    
-    
-
 
 }

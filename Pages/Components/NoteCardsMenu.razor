@@ -35,72 +35,30 @@
 
                                 </MImage>
 
-
-
                             </MCard>
 
-
-
                         </MDragItem>
-
-
-                        <!--
-
-                             <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
-                                    Dark
-                        @onclick="()=> SelectNoteCard(notecard)"
-                        @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" __internal_preventDefault_oncontextmenu
-                                   >
-
-                                 <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
-                                     <MCardText Class="lh-sm text-body">
-                        @notecard.Note.Text
-                                     </MCardText>
-
-                                 </MImage>
-
-
-
-                             </MCard>
-                           -->
-                        <!--
-                                                         <div class="card nc-style shadow m-1 "
-                        @onclick="()=> SelectNoteCard(notecard)"
-                        @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" @oncontextmenu:preventDefault="true">
-                                                                       <img src="@notecard.Note.Thumbnail" class="card-img  alt="...">
-                                                                       <div class="card-img-overlay px-2 pt-1 ncText-style lh-sm text-body">
-
-
-                        @notecard.Note.Text
-
-
-
-                                                                       </div>
-                                                                   </div>
-
-                           -->
 
                     </RowTemplate>
 
                 </ListTemplate>
             </MDragZone>
 
-         @if (ContextMenuNoteCard != null)
-        {
-           <MMenu @bind-Value="ShowNoteCardContext"
+            @if (ContextMenuNoteCard != null)
+            {
+                <MMenu @bind-Value="ShowNoteCardContext"
            PositionX="X"
            PositionY="Y"
            CloseOnContentClick
            Absolute
-           OffsetY
-           >
-                <MList Dense Width="200">
-                
-               
+           OffsetY>
+                    <MList Dense Width="200">
+
+
                         <MListItem OnClick="() => SetDragMode()">
                             <MListItemIcon>
                                 <MIcon>
-                                   mdi-arrow-vertical-lock 
+                                    mdi-arrow-vertical-lock
                                 </MIcon>
                             </MListItemIcon>
                             <MListItemContent>
@@ -110,21 +68,16 @@
                             </MListItemContent>
                         </MListItem>
 
+                    </MList>
+                </MMenu>
+            }
 
-
-
-                   
-
-                </MList>
-            </MMenu>
-        }
-       
         }
         else
         {
 
 
-        <ListTemplate Items="dataSvs.SelectedCard.NotePackets">
+            <ListTemplate Items="dataSvs.SelectedCard.NotePackets">
                 <RowTemplate Context="notecard">
 
                     <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
@@ -139,50 +92,27 @@
 
                         </MImage>
 
-
-
                     </MCard>
-
-
-
-
-                    <!--
-                                                     <div class="card nc-style shadow m-1 "
-                    @onclick="()=> SelectNoteCard(notecard)"
-                    @oncontextmenu="@(args => { NoteCardContextMenuWithContent(args,notecard);})" @oncontextmenu:preventDefault="true">
-                                                                   <img src="@notecard.Note.Thumbnail" class="card-img  alt="...">
-                                                                   <div class="card-img-overlay px-2 pt-1 ncText-style lh-sm text-body">
-
-
-                    @notecard.Note.Text
-
-
-
-                                                                   </div>
-                                                               </div>
-
-                       -->
 
                 </RowTemplate>
 
             </ListTemplate>
-         
-        @if (ContextMenuNoteCard != null)
-        {
-         <MMenu @bind-Value="ShowNoteCardContext"
+
+            @if (ContextMenuNoteCard != null)
+            {
+                <MMenu @bind-Value="ShowNoteCardContext"
            PositionX="X"
            PositionY="Y"
            Absolute
            OffsetY
-           CloseOnContentClick
-           >
-                <MList Dense Width="200">
-               
-               
+           CloseOnContentClick>
+                    <MList Dense Width="200">
+
+
                         <MListItem OnClick="() => SetDragMode()">
                             <MListItemIcon>
                                 <MIcon>
-                                    mdi-swap-vertical 
+                                    mdi-swap-vertical
                                 </MIcon>
                             </MListItemIcon>
                             <MListItemContent>
@@ -206,15 +136,10 @@
                             </MListItemContent>
                         </MListItem>
 
+                    </MList>
+                </MMenu>
+            }
 
-
-
-                   
-
-                </MList>
-            </MMenu>
-        }
-       
 
         }
 
@@ -224,9 +149,6 @@
     {
 
         <MList>
-
-
-
 
             @if (dataSvs.ChildCards.Count > 0)
             {
@@ -240,8 +162,7 @@
                                @oncontextmenu="@(args => {ShowCardContextMenu(args,card);})"
                                __internal_preventDefault_oncontextmenu>
                                 <MListItemContent>
-                                    <MListItemTitle >@card.Title </MListItemTitle>
-                                   
+                                    <MListItemTitle>@card.Title </MListItemTitle>
                                 </MListItemContent>
                             </MListItem>
 
@@ -256,7 +177,7 @@
 
         @if (ContextMenuCard != null)
         {
-           <MMenu Value="true"
+            <MMenu Value="true"
            PositionX="X"
            PositionY="Y"
            Absolute
@@ -283,7 +204,7 @@
                         <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
                             <MListItemIcon>
                                 <MIcon>
-                                   
+
                                     mdi-arrow-split-horizontal
                                 </MIcon>
                             </MListItemIcon>
@@ -332,23 +253,25 @@
                 </MList>
             </MMenu>
         }
-       
-    }
 
-   
+    }
 
 </MContainer>
 
+
 <div class="d-inline-flex justify-content-evenly border-top border-secondary mb-0 align-items-center" style="height:40px">
 
-    @if(NotesMenuSelected){
+    @if (NotesMenuSelected)
+    {
         <button class="btn btn-primary p-1 shadow text-white rounded-3" style="background-color:#1565c0;height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = true)">
-        Notes
-    </button>
+            Notes
+        </button>
         <button class="btn btn-outline-primary shadow  p-1  rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = false)">
-        Sub-Packets
-    </button>
-    }else{
+            Sub-Packets
+        </button>
+    }
+    else
+    {
         <button class="btn btn-outline-primary shadow-sm p-1 rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = true)">
             Notes
         </button>
@@ -356,7 +279,7 @@
             Sub-Packets
         </button>
     }
-   
+
 </div>
 
 @code {
@@ -380,19 +303,17 @@
     private void ShowCardContextMenu(MouseEventArgs args, Packet chCard)
     {
         ContextMenuCard = null;
-        // await Task.Delay(16);
-
+       
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuCard = chCard;
     }
 
-    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket noteCard )
+    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket noteCard)
     {
         ShowNoteCardContext = false;
         ContextMenuNoteCard = null;
-        // await Task.Delay(16);
-
+       
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuNoteCard = noteCard;
@@ -403,7 +324,6 @@
     {
 
         _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-
 
 
     }
@@ -432,19 +352,15 @@
     {
         int indx = dataSvs.SelectedCard.NotePackets.IndexOf(noteCard);
 
-        //dataSvs.SelectedNoteCard = null;
-
-        //await dataSvs.GetCard(dataSvs.SelectedCard);
-
-
-        if(indx == 0 && dataSvs.SelectedCard.NotePackets.Count >1 )
+        if (indx == 0 && dataSvs.SelectedCard.NotePackets.Count > 1)
         {
 
-            
+
             dataSvs.SelectedCard.NotePackets.Remove(noteCard);
             await dataSvs.RemoveNoteCard(noteCard);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.First();
-        }else if(dataSvs.SelectedCard.NotePackets.Count == 1)
+        }
+        else if (dataSvs.SelectedCard.NotePackets.Count == 1)
         {
             dataSvs.SelectedNoteCard = null;
             await dataSvs.RemoveNoteCard(noteCard);
@@ -452,9 +368,8 @@
             await dataSvs.GetCard(dataSvs.SelectedCard);
             dataSvs.SwitchMenus("cards");
         }
-        else if (indx < dataSvs.SelectedCard.NotePackets.Count )
+        else if (indx < dataSvs.SelectedCard.NotePackets.Count)
         {
-            //   dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NoteCards.SkipWhile(x => x != noteCard).Skip(1).FirstOrDefault();
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.ElementAtOrDefault(indx - 1);
             dataSvs.SelectedCard.NotePackets.Remove(noteCard);
             await dataSvs.RemoveNoteCard(noteCard);
@@ -464,38 +379,22 @@
             await dataSvs.GetCard(dataSvs.SelectedCard);
             dataSvs.SwitchMenus("cards");
         }
-        //MessageService.SendMessage();
-        //  contextMenuService.Close();
+
         ShowNoteCardContext = false;
         MessageService.SendMessage();
         StateHasChanged();
 
     }
 
- 
+
 
     private async Task SelectNoteCard(NotePacket noteCard)
     {
 
 
         dataSvs.SelectedNoteCard = noteCard;
-
         MessageService.SendMessage();
-
         StateHasChanged();
-
-        //await BackToMain.InvokeAsync("notecards");
-
-
-
-        /*
-        if (dataSvs.ROnoteCard != null)
-      {
-      dataSvs.ROnoteCard.ChangeDrawing();
-
-         }
-         */
-
 
     }
 
@@ -507,7 +406,6 @@
         dataSvs.SelectedCard.NotePackets.RemoveAt(sorttableEventArgs.OldIndex);
         dataSvs.SelectedCard.NotePackets.Insert(sorttableEventArgs.NewIndex, movedNoteCard);
 
-
         //Update notecards Order
         dataSvs.SelectedCard.NotePackets.Select(dx => { dx.Order = dataSvs.SelectedCard.NotePackets.IndexOf(dx); return dx; }).ToList();
         await dataSvs.UpdateCard(dataSvs.SelectedCard);
@@ -518,17 +416,14 @@
     {
         try
         {
-             await dataSvs.GetCard(chCard);
-        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
+            await dataSvs.GetCard(chCard);
+            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
         catch (Exception ex)
         {
             Error?.ProcessError(ex);
         }
-
-
-       
 
     }
 
@@ -544,8 +439,7 @@
         }
 
         await dataSvs.UpdateCard(card);
-        // dataSvs.MainProject = await dataSvs.GetProject();
-        // contextMenuService.Close();
+
         ContextMenuCard = null;
     }
     private async Task RemoveSubPacket(Packet card)
@@ -555,7 +449,7 @@
         card.Selected = true;
         await dataSvs.UpdateCard(card);
         await dataSvs.GetCard(dataSvs.SelectedCard);
-        //contextMenuService.Close();
+
         ContextMenuCard = null;
 
     }
@@ -573,7 +467,7 @@
         }
         StateHasChanged();
         ShowNoteCardContext = false;
-        //contextMenuService.Close();
+       
     }
 
     private void SetOptions(SorttableOptions options)

@@ -49,63 +49,6 @@
     </div>
 
 
-             
-
-    <!--
-    <div class="row w-100 m-2   toolstyle">
-
-        <SNExpandable Label="Pen"  >
-            <ChildContent>
-
-                <label for="stylesWidthSlider" class="form-label mb-0">Thickness: @dataSvs.strokeWidth</label>
-                <input type="range" class="form-range mb-2" id="stylesWidthSlider" @bind=@dataSvs.strokeWidth @bind:event="oninput" min="3" max="40"  />
-
-                <span style="display:inline-block;width:100%;border-radius: 5px;border: 1px solid #003c8f; padding-bottom:1px; padding-left:2px;margin-bottom:10px;">
-
-                    <label for="pencolor">Color:</label>
-
-                    <input type="color" style="height:20px;width:80%;position:relative;top:3px; " id="pencolor" name="PenColor" value="@dataSvs.defaultColor" @onchange="@(chArgs => OnChangeColor(chArgs) )">
-
-                </span>
-
-
-            </ChildContent>
-
-        </SNExpandable>
-    </div>
-
-
-     <div class="row w-100 m-2   toolstyle">
-
-        <SNExpandable Label="Background"  >
-            <ChildContent>
-
-
-
-                <span style="display:inline-block;width:100%;border-radius: 5px;border: 1px solid #003c8f;  padding-bottom:1px; padding-left:2px">
-
-
-                    <label for="background">Color:</label>
-                    <input type="color" style="height:20px;width:80%;position:relative;top:3px; " id="background" aria-describedby="backgroundcolorgrp" name="BackgroundColor" value="@dataSvs.editNote.BackgroundColor" @onchange="@(chArgs => OnChangeBackgroundColor(chArgs) )">
-
-                </span>
-
-                <div class="hstack gap-1 my-2 ">
-                    <MTextField Label="Width" Placeholder="Width" Value="@(dataSvs.editNote.MainImgWidth)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
-
-                    &ensp;  X &ensp;
-
-                    <MTextField Label="Height" Placeholder="Height" Value="@(dataSvs.editNote.MainImgHeight)" @onfocusin="SetInitialValue" @onblur="SetCanvasDim"></MTextField>
-
-
-                </div>
-            </ChildContent>
-
-        </SNExpandable>
-    </div>
-    -->
-
-
 </div>
 
 @code {
@@ -136,17 +79,7 @@
 
     private Task GoToMainMenu()
     {
-        /*
-         
-        //Don't Update new note,update existing note.
-        if (dataSvs.EditMode == true)
-        {
-            dataSvs.UpdateNote().GetAwaiter().GetResult();
-
-        }
-        * 
-         */
-
+   
         dataSvs.UpdateNote().GetAwaiter().GetResult();
         dataSvs.completedPolylines.Clear();
         dataSvs.GetNotes().GetAwaiter().GetResult();
@@ -162,15 +95,6 @@
         dataSvs.defaultColor = chArgs?.Value?.ToString();
 
         dataSvs.EnableDraw();
-        /*
-        byte r = Byte.Parse(value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[0]);
-      byte g = Byte.Parse( value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[1]);
-      byte b = Byte.Parse( value.Replace("rgb", "").Replace("(", "").Replace(")", "").Split(",")[2]);
-      dataSvs.selectedColor = new SKColor(r, g, b);
-        */
-
-
-        // Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
     }
 
     void SetCanvasDim(FocusEventArgs focusEventArgs)
@@ -200,23 +124,18 @@
         widthInitialValue = dataSvs.editNote.MainImgWidth;
         heightInitialValue = dataSvs.editNote.MainImgHeight;
 
-
-
     }
 
 
     void OnChangeBackgroundColor(ChangeEventArgs chArgs)
     {
 
-        //Console.WriteLine($"Value changed to: {value}");
         dataSvs.SetBackgroundColor(chArgs?.Value?.ToString());
         skiaSvs.UpdateBitmap();
-        //Console.WriteLine($"Value changed to: {value.Replace("rgb", "").Replace("(","").Replace(")","").Split(",")[0]}");
     }
 
     public void Dispose()
     {
-
         dataSvs.OnChange -= StateHasChanged;
     }
 

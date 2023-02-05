@@ -1,5 +1,4 @@
-﻿
-@using BlazorApp1.Data
+﻿@using BlazorApp1.Data
 @using BlazorApp1.Helpers
 @using System.IO.Compression
 @using System.Text.Json
@@ -22,7 +21,7 @@
 
     case "Project":
 
-        <MCard Class="p-1 h-100 w-100" >
+        <MCard Class="p-1 h-100 w-100">
             <MCardTitle Class="text-h5 gradient-blue">
                 Create Project
             </MCardTitle>
@@ -31,47 +30,29 @@
 
                 <div class="input-group elevation-2 rounded-3 shadow mb-3">
                     <span class="input-group-text" id="basic-addon1">
-                        <MIcon >
+                        <MIcon>
                             mdi-plus
                         </MIcon>
                     </span>
                     <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Projec tName">
                     <MButton Class="primary" aria-label="Create SNotes Project" title="Create SNotes Project"
                      OnClick="CreateProject">
-                     <MIcon>
-                         mdi-play
-                     </MIcon>
+                        <MIcon>
+                            mdi-play
+                        </MIcon>
                     </MButton>
-                   
+
                 </div>
                 <MDivider />
 
-              
-                <!-- On FireFox
-                       <div class="input-group elevation-2 rounded-3 shadow">
-                    <span class="input-group-text " id="basic-addon1">
-                        <MIcon>
-                            mdi-file-upload-outline
-                        </MIcon>
-                    </span>
 
-                    <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
-                       PrependIcon="null"
-                        Accept="application/snotes"
-                        Label="Import SNotes File"></MFileInput>
-
-
-                </div>
-
-                -->
-
-                @if (dataSvs.UserAgent is null )
+                @if (dataSvs.UserAgent is null)
                 {
 
                     <b>
 
                     </b>
-                   
+
 
                 }
                 else if (!(dataSvs.UserAgent.Contains("Firefox")))
@@ -85,7 +66,7 @@
                 else
                 {
 
-                                     <div class="input-group elevation-2 rounded-3 shadow">
+                    <div class="input-group elevation-2 rounded-3 shadow">
                         <span class="input-group-text " id="basic-addon1">
                             <MIcon>
                                 mdi-file-upload-outline
@@ -104,26 +85,22 @@
                 }
 
 
-
-   
-            
             </MCard>
 
-          
 
             <MCardActions>
 
                 <span class="w-100 text-dark" style="font-size:16px">
                     By using this app, you are accepting the
-                    <a class="text-dark "  href="TermsAndConditions">Terms and Conditions</a> and
+                    <a class="text-dark " href="TermsAndConditions">Terms and Conditions</a> and
                     the <a class="text-dark " href="PrivacyPolicy">Privacy Policy</a>.
-                      
-                </span>                   
-              
+
+                </span>
+
             </MCardActions>
         </MCard>
 
-           
+
 
         break;
 
@@ -131,12 +108,12 @@
         <!--
 
         <div class="col-md-12 position-absolute top-50 start-50 translate-middle " style="background-color:whitesmoke">
-           
+
                  <MProgressLinear Value="@progress" Height="25"  Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3" OnChange="SetProgres">
                 <strong>@($"{context}%")</strong>
             </MProgressLinear>
-            
-           
+
+
         </div>
             -->
 
@@ -148,11 +125,11 @@
 
 
         </div>
-       
+
 
         break;
 
-  
+
 }
 
 
@@ -161,7 +138,7 @@
 
     private GetProjectFileJS _getProjectFileJS;
 
-  
+
 
     private string projectname { get; set; } = $"Project {DateTime.Now.ToString("dd'_'MM'_'yyyy'_'HH'_'mm")}";
     private string collectionname { get; set; } = "Default Collection";
@@ -171,20 +148,16 @@
     [Parameter]
     public EventCallback<bool> CloseDialoge { get; set; }
 
-   // private GetProjectFileJS GetProjectFileJS = new GetProjectFileJS();
-   // private GetProjectFileJS _getProjectFileJS = new GetProjectFileJS();
-
     protected override void OnInitialized()
     {
         _getProjectFileJS = new GetProjectFileJS(dataSvs);
-        // other code...
+       
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            //   await JSRuntime.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
            
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
@@ -197,7 +170,7 @@
     }
 
 
-    
+
 
 
     private async Task HandleOnChange(IBrowserFile file)
@@ -210,7 +183,7 @@
 
 
         IBrowserFile uploadedfile = file;
-        
+
         await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
         await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
 
@@ -218,7 +191,7 @@
         await SetProgres(20);
         try
         {
-           // await Task.Delay(200);
+           
             ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
         }
         catch
@@ -230,9 +203,7 @@
         await Task.Delay(20);
         await SetProgres(40);
 
-        //  var listfiles = Directory.GetFiles( AppDomain.CurrentDomain.BaseDirectory );
-        //  var listdirs = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory+"project");
-
+       
         var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
 
         using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
@@ -244,7 +215,7 @@
         await SetProgres(50);
 
         await dataSvs.InsertProject(dataSvs.MainProject);
-       // await Task.Delay(300);
+       
         await SetProgres(70);
 
         var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
@@ -258,10 +229,7 @@
         await SetProgres(80);
 
         await dataSvs.GetNotes();
-        // await dataSvs.SetInitialeNC();
-
-       // await Task.Delay(20);
-
+        
         await SetProgres(100);
 
         await CloseDialoge.InvokeAsync(false);
@@ -271,73 +239,10 @@
     private async Task OpenZipFile()
     {
 
-
         await _module.InvokeVoidAsync("OpenSnotesFile");
 
-
     }
 
-
-    /*
-
-    private async Task LoadFiles(InputFileChangeEventArgs e)
-            {
-
-    CurrentStep = "Progress";
-    if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
-    {
-    dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
-        }
-
-
-    IBrowserFile uploadedfile = e.File;
-
-    await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
-    await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
-
-    await SetProgres(20);
-
-    ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
-    await Task.Delay(20);
-    await SetProgres(40);
-
-    //  var listfiles = Directory.GetFiles( AppDomain.CurrentDomain.BaseDirectory );
-    //  var listdirs = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory+"project");
-
-    var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
-
-    using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-      {
-      Project? newProject =
-    await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-    dataSvs.MainProject = newProject;
-    }
-    await SetProgres(50);
-
-    await dataSvs.InsertProject(dataSvs.MainProject);
-    await Task.Delay(300);
-    await SetProgres(70);
-
-    var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
-
-    using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-      {
-      List<NoteCard>? noteCardsList =
-      await JsonSerializer.DeserializeAsync<List<NoteCard>>(openStreamNC);
-    await dataSvs.NewRangNoteCards(noteCardsList);
-    }
-    await SetProgres(80);
-
-    await dataSvs.GetNotes();
-    await Task.Delay(20);
-    await SetProgres(100);
-
-    await CloseDialoge.InvokeAsync(false);
-
-    }
-
-
-     */
 
     void SetStep(string step)
     {
@@ -350,8 +255,7 @@
         progress = progressValue;
         await Task.Delay(200);
         StateHasChanged();
-        //dialogService.Refresh();
-
+    
     }
 
     private async Task CreateProject()
@@ -359,8 +263,8 @@
         dataSvs.MainProject.Name = projectname;
 
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+
         
-        /**/
         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
         DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");
 
@@ -377,7 +281,7 @@
                         Typeface = SKTypeface.FromFamilyName("Arial")
                     };
                 canvas.DrawText("Copyright © 2023 sNotes. All rights reserved.", 20, 100, paint);
-               
+
             }
             using (var image = SkiaSharp.SKImage.FromBitmap(bitmap))
             using (var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 100))
@@ -403,5 +307,5 @@
     }
 
 
-   
+
 }

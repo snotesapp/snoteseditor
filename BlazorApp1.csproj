@@ -9,13 +9,10 @@
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
-    <Content Remove="Pages\SkiaSharpPg.razor" />
-    <Content Remove="Shared\MenuFooterLayout.razor" />
     <NativeFileReference Include="$(SkiaSharpStaticLibraryPath)\2.0.23\*.a" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.ContextMenu" Version="1.14.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="Masa.Blazor" Version="0.5.0" />
@@ -38,29 +35,12 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="Pages\SkiaSharpPg.razor" />
-    <None Include="Shared\MenuFooterLayout.razor" />
     <None Include="wwwroot\myjs\BootstrapModalInterop.js">
 	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\myjs\dropZone.js">
 	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Shared\MenuFooterLayout.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\SkiaSharpPg.razor" />
-    <_ContentIncludedByDefault Remove="Shared\MenuFooterLayout.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\SkiaSharpPg.razor" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

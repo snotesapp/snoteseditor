@@ -1,10 +1,6 @@
 ﻿@typeparam TItem
 
 
-
-
-
-
 @foreach (var item in Items)
 {
     @NoteTemplate(item)
@@ -19,7 +15,6 @@
 
     [Parameter]
     public RenderFragment<TItem> NoteTemplate { get; set; }
-
 
 
 }
