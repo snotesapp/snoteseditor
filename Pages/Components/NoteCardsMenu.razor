@@ -1,11 +1,13 @@
 @using BlazorApp1.Data
 @using System.Collections.ObjectModel
 
+@using BlazorApp1.ViewModels;
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
 
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
+@inject PacketViewModel PacketVM
 
 @inject IMessageService MessageService
 
@@ -201,7 +203,7 @@
                             </MListItemContent>
                         </MListItem>
 
-                        <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                        <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
                             <MListItemIcon>
                                 <MIcon>
 
@@ -235,7 +237,7 @@
                             </MListItemContent>
                         </MListItem>
 
-                        <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                        <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
                             <MListItemIcon>
                                 <MIcon>
                                     mdi-arrow-split-horizontal
@@ -365,7 +367,7 @@
             dataSvs.SelectedNoteCard = null;
             await dataSvs.RemoveNoteCard(noteCard);
 
-            await dataSvs.GetCard(dataSvs.SelectedCard);
+            await PacketVM.GetPacket(dataSvs.SelectedCard);
             dataSvs.SwitchMenus("cards");
         }
         else if (indx < dataSvs.SelectedCard.NotePackets.Count)
@@ -376,7 +378,7 @@
         }
         else
         {
-            await dataSvs.GetCard(dataSvs.SelectedCard);
+            await PacketVM.GetPacket(dataSvs.SelectedCard);
             dataSvs.SwitchMenus("cards");
         }
 
@@ -408,7 +410,7 @@
 
         //Update notecards Order
         dataSvs.SelectedCard.NotePackets.Select(dx => { dx.Order = dataSvs.SelectedCard.NotePackets.IndexOf(dx); return dx; }).ToList();
-        await dataSvs.UpdateCard(dataSvs.SelectedCard);
+        await PacketVM.UpdatePacket(dataSvs.SelectedCard);
 
     }
 
@@ -416,7 +418,7 @@
     {
         try
         {
-            await dataSvs.GetCard(chCard);
+            await PacketVM.GetPacket(chCard);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
@@ -427,28 +429,28 @@
 
     }
 
-    private async Task PinPacket(Packet card)
+    private async Task PinPacket(Packet packet)
     {
-        if (card.Selected == true)
+        if (packet.Selected == true)
         {
-            card.Selected = false;
+            packet.Selected = false;
         }
         else
         {
-            card.Selected = true;
+            packet.Selected = true;
         }
 
-        await dataSvs.UpdateCard(card);
+        await PacketVM.UpdatePacket(packet);
 
         ContextMenuCard = null;
     }
-    private async Task RemoveSubPacket(Packet card)
+    private async Task DetachSubPacket(Packet packet)
     {
-        card.Parent = null;
-        card.ParentID = null;
-        card.Selected = true;
-        await dataSvs.UpdateCard(card);
-        await dataSvs.GetCard(dataSvs.SelectedCard);
+        packet.Parent = null;
+        packet.ParentID = null;
+        packet.Selected = true;
+        await PacketVM.UpdatePacket(packet);
+        await PacketVM.GetPacket(dataSvs.SelectedCard);
 
         ContextMenuCard = null;
 

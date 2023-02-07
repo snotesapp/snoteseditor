@@ -134,20 +134,32 @@ namespace BlazorApp1.Helpers
 
         public NotesCollection AddNotesSelectedNC;
 
-        public Packet? SelectedCard;
+        //public Packet? SelectedCard;
+        private Packet _selectedCard;
+        public Packet? SelectedCard
+        {
+            get { return _selectedCard; }
+            set { this.RaiseAndSetIfChanged(ref _selectedCard, value); NotifyStateChanged(); }
+        }
+
 
         public List<Packet> AllCards;
         public List<Packet> SelectionCards = new();
         public List<Packet> ChildCards = new();
 
         public WindowDimension Wdimension = new();
-        public NotePacket? SelectedNoteCard;
+
+       // public NotePacket? SelectedNoteCard;
+        private NotePacket _selectedNoteCard;
+        public NotePacket? SelectedNoteCard
+        {
+            get { return _selectedNoteCard; }
+            set { this.RaiseAndSetIfChanged(ref _selectedNoteCard, value); NotifyStateChanged(); }
+        }
 
 
         private IDbContextFactory<SNotesDBContext> _dbContextFactory { get; set; }
         
-
-
         public SharedDataService(IDbContextFactory<SNotesDBContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
@@ -221,201 +233,56 @@ namespace BlazorApp1.Helpers
 
         #endregion
 
-        #region NCollections Crud
-        public async Task<bool> AddCollection(NotesCollection newNC)
+        #region Packet ViewModel
+        private string _filterPacketsTxt;
+        public string FilterPacketsTxt
         {
-            using (var collectionContext = _dbContextFactory.CreateDbContext())
-            {
+            get => _filterPacketsTxt;
+            set => this.RaiseAndSetIfChanged(ref _filterPacketsTxt, value);
+        }
 
-                collectionContext.NotesCollection.Add(newNC);
-                await collectionContext.SaveChangesAsync();
-                MainProject.NotesCollection.Add(newNC);
 
-            }
-            NotifyStateChanged();
-            return true;
+        private bool _filterPackets;
+        public bool filterPackets
+        {
+            get { return _filterPackets; }
+            set { this.RaiseAndSetIfChanged(ref _filterPackets, value); NotifyStateChanged(); }
 
         }
 
 
-        public async Task<bool> UpdateNCollection(NotesCollection updateNC)
-        {
-            using (var collectionContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = collectionContext.Update(updateNC);
-                await collectionContext.SaveChangesAsync();
 
-                var isModified = tracking.State == EntityState.Modified;
-                return isModified;
-            }
+        private bool _showDeletePacketConfirmation;
+        public bool showDeletePacketConfirmation
+        {
+            get { return _showDeletePacketConfirmation; }
+            set { this.RaiseAndSetIfChanged(ref _showDeletePacketConfirmation, value); NotifyStateChanged(); }
+
         }
 
 
-        public async Task<bool> DeleteNCollection(NotesCollection deleteNC)
+        private bool _moveto_dialog;
+        public bool moveto_dialog
         {
-            using (var collectionContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = collectionContext.Remove(deleteNC);
-                await collectionContext.SaveChangesAsync();
-                var isDeleted = tracking.State == EntityState.Deleted;
-                
-                return isDeleted;
-            }
+            get { return _moveto_dialog; }
+            set { this.RaiseAndSetIfChanged(ref _moveto_dialog, value); NotifyStateChanged(); }
+
         }
 
 
+        public Packet? ContextMenuCard = null;
+
+        private List<Packet> _filtredPackets = new List<Packet>();
+        public List<Packet> FiltredPackets
+        {
+            get => _filtredPackets;
+            set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
+        }
+
+   
         #endregion
 
-        #region Cards Crud
-        public async Task<bool> AddCard(Packet newCard)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
 
-                // cardsContext.Add(newCard);
-                cardsContext.Packets.Add(newCard);
-                await cardsContext.SaveChangesAsync();
-                MainProject = await GetProject();
-            //    MainProject.Cards.Add(newCard);
-
-            }
-            NotifyStateChanged();
-            return true;
-
-        }
-
-        public async Task<Packet> GetCard(Packet card)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-               
-              SelectedCard =  await cardsContext.Packets.Where(c => c.PacketID == card.PacketID)
-                    .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
-                    .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
-                    .Include(p => p.Parent).FirstOrDefaultAsync();
-
-                SelectedNoteCard = SelectedCard?.NotePackets.Count == 0 ? null : SelectedNoteCard;
-
-
-
-                ChildCards = await GetChildCards(card);
-                NotifyStateChanged();
-                return SelectedCard;
-
-            }
-        }
-
-        public async Task<Packet> SetInitialeNC()
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-                try{
-                    SelectedCard = await cardsContext.Packets.Where(c => c.PacketID == 1)
-                      .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(im => im.Images)
-                      .Include(nd => nd.NotePackets.OrderBy(od => od.Order)).ThenInclude(nt => nt.Note).ThenInclude(pth => pth.NotePaths)
-                      .Include(p => p.Parent).FirstOrDefaultAsync();
-                    ChildCards = await GetChildCards(SelectedCard);
-                    SelectedNoteCard = SelectedCard.NotePackets.FirstOrDefault();
-                    SwitchMenus("notecards");
-
-                    NotifyStateChanged();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Can't set the first card");
-                }
-                
-                return SelectedCard;
-
-            }
-        }
-
-
-
-        public async Task<List<Packet>> GetCards()
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-                // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
-
-                return await cardsContext.Packets.Where(sl => sl.Selected == true ).Include(pr => pr.Parent).ToListAsync();
-            }
-        }
-
-        public async Task<List<Packet>> GetCards(string filterText)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-                // return await cardsContext.Cards.Where(sl => sl.Selected == true ).Include(pj => pj.Project).Include(pr => pr.Parent).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.NotesCollection).Include(ci => ci.NoteCards).ThenInclude(sn => sn.Note).ThenInclude(im => im.Images).ToListAsync();
-
-                return await cardsContext.Packets.Where(sl => sl.Title.ToLower().Contains(filterText.Trim().ToLower())).Include(pr => pr.Parent).ToListAsync();
-            }
-        }
-
-        public async Task<List<Packet>> GetSelectionCards(Packet card)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-
-                List<Packet> chcards = new List<Packet> { card };
-                int i = 0;
-                do
-                {
-                    var templist = await GetChildCards(chcards[i]);
-                    if (templist.Count > 0)
-                    {
-                        chcards.AddRange(templist);
-                    }
-
-                    i++;
-                } while (i < chcards.Count);
-
-
-
-                Task<List<Packet>> selcard = cardsContext.Packets.Where(p => !chcards.Select(p2 => p2.PacketID).Contains(p.PacketID)).OrderBy(p => p.Title).ToListAsync();
-                return await selcard;
-            }
-        }
-
-        public async Task<List<Packet>> GetChildCards(Packet card)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-                return await cardsContext.Packets.Where(c => c.ParentID == card.PacketID).ToListAsync();
-                
-
-            }
-        }
-
-
-        public async Task<bool> UpdateCard(Packet card)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = cardsContext.Packets.Update(card);
-
-                await cardsContext.SaveChangesAsync();
-                var isModified = tracking.State == EntityState.Modified;
-                NotifyStateChanged();
-                return isModified;
-            }
-        }
-
-        public async Task<bool> DeleteCard(Packet Card)
-        {
-            using (var cardsContext = _dbContextFactory.CreateDbContext())
-            {              
-                var tracking = cardsContext.Remove(Card);
-                await cardsContext.SaveChangesAsync();
-                var isDeleted = tracking.State == EntityState.Deleted;
-                return isDeleted;
-            }
-        }
-
-
-
-
-        #endregion
 
         #region NoteCards Crud
 
@@ -700,7 +567,6 @@ namespace BlazorApp1.Helpers
             }
         }
 
-
         public async Task DeleteNoteImgFiles(Note note, bool notSavedImageOnly)
         {
             if(notSavedImageOnly)
@@ -747,7 +613,6 @@ namespace BlazorApp1.Helpers
 
         }
 
-
         public async Task<bool> DeleteNotePaths(Note note)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
@@ -773,7 +638,6 @@ namespace BlazorApp1.Helpers
                 return true;
             }
         }
-
 
         public async Task<bool> DeleteNoteImg(NoteImage noteImage)
         {
@@ -833,7 +697,6 @@ namespace BlazorApp1.Helpers
 
 
         #endregion
-
 
         #region DropZonePg
 
@@ -1049,102 +912,11 @@ namespace BlazorApp1.Helpers
         }
 
         public NotesCollection? ContextMenuNotesCollection = null;
-        public async Task DeleteNC(NotesCollection notesCollection)
-        {
-            try
-            {
-              
-                var filePath = Path.Combine(ProjectPath.FullName, notesCollection.NotesCollectionID.ToString());
-                if (Directory.Exists(filePath))
-                {
-                    Directory.Delete(filePath, true);
-                   
-                }
-                await DeleteNCollection(notesCollection);
-                MainProject = await GetProject();
-                await GetNotes();
-                showDeleteNCConfirmation = false;
-            }
-            catch (Exception ex)
-            {
-                // log the error
-                Console.WriteLine("Error deleting notes collection ");
-            }
-        }
 
 
         #endregion
 
 
-        
-       
-        #region Packet ViewModel
-        private string _filterPacketsTxt;
-        public string FilterPacketsTxt
-        {
-            get => _filterPacketsTxt;
-            set => this.RaiseAndSetIfChanged(ref _filterPacketsTxt, value);
-        }
-
-       
-        private bool _filterPackets;
-        public bool filterPackets
-        {
-            get { return _filterPackets; }
-            set { this.RaiseAndSetIfChanged(ref _filterPackets, value); NotifyStateChanged(); }
-
-        }
-
-
-
-        private bool _showDeletePacketConfirmation;
-        public bool showDeletePacketConfirmation
-        {
-            get { return _showDeletePacketConfirmation; }
-            set { this.RaiseAndSetIfChanged(ref _showDeletePacketConfirmation, value); NotifyStateChanged(); }
-
-        }
-
-
-        private bool _moveto_dialog;
-        public bool moveto_dialog
-        {
-            get { return _moveto_dialog; }
-            set { this.RaiseAndSetIfChanged(ref _moveto_dialog, value); NotifyStateChanged(); }
-
-        }
-
-
-        public Packet? ContextMenuCard = null;
-
-        private List<Packet> _filtredPackets = new List<Packet>();
-        public List<Packet> FiltredPackets
-        {
-            get => _filtredPackets;
-            set => this.RaiseAndSetIfChanged(ref _filtredPackets, value);
-        }
-
-        public async Task DeletePacket(Packet card)
-        {
-
-            await DeleteCard(card);
-            showDeletePacketConfirmation = false;
-            ContextMenuCard = null;
-        }
-
-        public async Task SetParentCard(Packet parentCard, Packet childCard)
-        {
-            childCard.ParentID = parentCard.PacketID;
-            childCard.Parent = null;
-            childCard.Selected = false;
-            await UpdateCard(childCard);
-
-            MainProject = await GetProject();
-            ContextMenuCard = null;
-
-        }
-
-        #endregion
 
         public async Task BuildProject()
         {
@@ -1182,33 +954,6 @@ namespace BlazorApp1.Helpers
 
         }
 
-
-
-
-        public async Task GetThumbUrl(IJSObjectReference _jsModule,Note note)
-        {
-
-            if (note.MainImg is not null)
-            {
-                using (SKImage image = SKImage.FromBitmap(SKBitmap.Decode(note.MainImg)))
-                {
-                    SKRectI sKRectI = new SKRectI(0, 0, 500, 500);
-                    SKImage subImage = image.Subset(sKRectI);
-                    SKData thdata = subImage.Encode();
-                    //_thumbnail = "data:image/jpeg;base64," + Convert.ToBase64String(thdata.ToArray());
-                    var mStream = new MemoryStream();
-                    thdata.SaveTo(mStream);
-                    DotNetStreamReference dotnetImageStream = new DotNetStreamReference(mStream);
-                   // note.Thumbnail = await _jsModule.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
-
-                }
-                NotifyStateChanged();
-            }
-
-
-            //await _jsModule.InvokeVoidAsync("showPrompt", "JS function called from .NET");
-
-        }
 
         private void NotifyStateChanged() => OnChange?.Invoke();
 
@@ -1259,109 +1004,4 @@ namespace BlazorApp1.Helpers
 
 
 
-    #region dbtest
-    /*
-    
-    namespace BlazorSQLiteWasm.Pages;
-
-using Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.JSInterop;
-using Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-
-public partial class Demo
-{
-  public const string SqliteDbFilename = "DemoData.db";
-
-  private string _version = "unknown";
-
-  private readonly List<Car> _cars = new();
-
-  [Inject]
-  private IJSRuntime _js { get; set; }
-
-  [Inject]
-  private IDbContextFactory<ClientSideDbContext> _dbContextFactory { get; set; }
-
-  protected override async Task OnInitializedAsync()
-  {
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("browser")))
-    {
-      // create SQLite database file in browser
-     // var module = await _js.InvokeAsync<IJSObjectReference>("import", "./dbstorage.js");
-     // await module.InvokeVoidAsync("synchronizeFileWithIndexedDb", SqliteDbFilename);
-    }
-
-    await using var db = await _dbContextFactory.CreateDbContextAsync();
-    await db.Database.EnsureCreatedAsync();
-
-    // create seed data
-    if (!db.Cars.Any())
-    {
-      var cars = new[]
-      {
-        new Car { Brand = "Audi", Price = 21000 },
-        new Car { Brand = "Volvo", Price = 11000 },
-        new Car { Brand = "Range Rover", Price = 135000 },
-        new Car { Brand = "Ford", Price = 8995 }
-      };
-
-      await db.Cars.AddRangeAsync(cars);
-    }
-
-    await Update(db);
-
-    await base.OnInitializedAsync();
-  }
-
-  private async Task SQLiteVersion()
-  {
-    //await using var db = new SqliteConnection($"Data Source={SqliteDbFilename}");
-   // await db.OpenAsync();
-   // await using var cmd = new SqliteCommand("SELECT SQLITE_VERSION()", db);
-   // _version = (await cmd.ExecuteScalarAsync())?.ToString();
-  }
-
-  private async Task Create(Car upCar)
-  {
-    var db = await _dbContextFactory.CreateDbContextAsync();
-    await db.Cars.AddAsync(upCar);
-    await Update(db);
-  }
-
-  private async Task Update(Car upCar)
-  {
-    var db = await _dbContextFactory.CreateDbContextAsync();
-    var car = await db.Cars.FindAsync(upCar.Id);
-    car.Brand = upCar.Brand;
-    car.Price = upCar.Price;
-    db.Cars.Update(car);
-    await Update(db);
-  }
-
-  private async Task Delete(int id)
-  {
-    var db = await _dbContextFactory.CreateDbContextAsync();
-    var car = await db.Cars.FindAsync(id);
-    db.Cars.Remove(car);
-    await Update(db);
-  }
-
-  private async Task Update(ClientSideDbContext db)
-  {
-    await db.SaveChangesAsync();
-    _cars.Clear();
-    _cars.AddRange(db.Cars);
-    StateHasChanged();
-  }
-}
-
-
-     */
-    #endregion
 }

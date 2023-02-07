@@ -6,6 +6,7 @@
 
 @using BlazorApp1.Helpers
 @using System.IO.Compression
+@using BlazorApp1.ViewModels;
 @using BlazorComponent
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
@@ -15,6 +16,8 @@
 
 
 @inject SharedDataService dataSvs
+@inject NotesCollectionViewModel NotesCollectionVM
+@inject PacketViewModel PacketVM
 
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
@@ -47,7 +50,7 @@ else if (dataSvs.menustatus == "cards")
               -->
 
         <AlertDialog Show="@dataSvs.showDeletePacketConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Packet"
-                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() => dataSvs.DeletePacket(dataSvs.ContextMenuCard)" NoEvent="()=> dataSvs.showDeletePacketConfirmation = false">
+                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() =>  PacketVM.DeletePacket(dataSvs.ContextMenuCard)" NoEvent="()=> dataSvs.showDeletePacketConfirmation = false">
 
         </AlertDialog>
 
@@ -77,11 +80,11 @@ else if (dataSvs.menustatus == "cards")
                 <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
 
                     <ListTemplate Items="@(moveto_filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.ToLower().Contains(dataSvs.FilterPacketsTxt.Trim().ToLower()) ).ToList() : dataSvs.SelectionCards)">
-                        <RowTemplate Context="card">
+                        <RowTemplate Context="packet">
 
-                            <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
-                                @onclick="@(() => {dataSvs.SetParentCard(card,dataSvs.ContextMenuCard); dataSvs.moveto_dialog = false;})">
-                                @card.Title
+                            <button type="button" title="@packet.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
+                                @onclick="@(() => { PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard).GetAwaiter().GetResult(); dataSvs.moveto_dialog = false;})">
+                                @packet.Title
                             </button>
 
                         </RowTemplate>
@@ -292,8 +295,8 @@ else
                     @if (filterPackets == false)
                     {
                         <div class="input-group shadow">
-                            <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddCard(eventArg)) " aria-describedby="addpktbtnGroup">
-                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddCard">
+                            <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddPacket(eventArg)) " aria-describedby="addpktbtnGroup">
+                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddPacket">
                                 Add
                             </button>
 
@@ -302,7 +305,7 @@ else
                     else
                     {
                         <div class="input-group shadow">
-                            <input type="text" class="form-control" placeholder=""
+                            <input type="text" class="form-control" placeholder="Filter Packets"
                        @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
                        aria-describedby="filterpktbtnGroup">
 
@@ -353,7 +356,7 @@ else
 
 
     <AlertDialog Show="@dataSvs.showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
-             Text="Confirm deleting collection with all notes inside?" YesEvent="() => dataSvs.DeleteNC(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
+             Text="Confirm deleting collection with all notes inside?" YesEvent="() => NotesCollectionVM.DeleteNotesCollection(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
 
     </AlertDialog>
 
@@ -422,7 +425,7 @@ else
            }
            else
            {
-               dataSvs.FiltredPackets = await dataSvs.GetCards(FilterPacketsTxt);
+               dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
                
            }
            StateHasChanged();
@@ -512,18 +515,18 @@ else
 
     private string cardTitle { get; set; }
 
-    private async Task AddCard()
+    private async Task AddPacket()
     {
         if (!string.IsNullOrWhiteSpace(cardTitle))
         {
 
-            await dataSvs.AddCard(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+            await PacketVM.AddPacket(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
             cardTitle = "";
         }
 
     }
 
-    private async Task AddCard(KeyboardEventArgs keyboardEvent)
+    private async Task AddPacket(KeyboardEventArgs keyboardEvent)
     {
         if (keyboardEvent.Key == "Enter")
         {
@@ -531,7 +534,7 @@ else
             if (!string.IsNullOrWhiteSpace(cardTitle))
             {
 
-                await dataSvs.AddCard(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                await PacketVM.AddPacket(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
                 cardTitle = "";
 
 

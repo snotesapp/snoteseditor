@@ -3,8 +3,9 @@
 @inject IJSRuntime JSRuntime
 
 @using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels;
 @inject SharedDataService dataSvs
-
+@inject NotesCollectionViewModel NotesCollectionVM
 
 <MContainer Style="height:calc(100vh - 140px); overflow:auto">
     <MRow Class="mx-0 w-100">
@@ -194,7 +195,7 @@
     protected override void OnInitialized()
     {
         dataSvs.OnChange += StateHasChanged;
-
+        NotesCollectionVM.OnChange += StateHasChanged;
     }
 
 
@@ -218,12 +219,12 @@
         if (nc.Selected == true)
         {
             nc.Selected = false;
-            await dataSvs.UpdateNCollection(nc);
+            await NotesCollectionVM.UpdateNotesCollection(nc);
         }
         else
         {
             nc.Selected = true;
-            await dataSvs.UpdateNCollection(nc);
+            await NotesCollectionVM.UpdateNotesCollection(nc);
         }
 
 
@@ -263,7 +264,7 @@
     {
         if (!string.IsNullOrWhiteSpace(nc.Title))
         {
-            await dataSvs.UpdateNCollection(nc);
+            await NotesCollectionVM.UpdateNotesCollection(nc);
 
         }
         else
@@ -281,6 +282,9 @@
     public void Dispose()
     {
         dataSvs.OnChange -= StateHasChanged;
+        NotesCollectionVM.OnChange -= StateHasChanged;
+
+
     }
 
 

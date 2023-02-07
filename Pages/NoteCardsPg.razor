@@ -2,9 +2,11 @@
 @using BlazorApp1.Helpers
 @using BlazorApp1.Pages.Components
 @inject SharedDataService dataSvs
+@inject PacketViewModel PacketVM
 @inject IMessageService MessageService
 
 
+@using BlazorApp1.ViewModels;
 @using Microsoft.JSInterop
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
@@ -92,7 +94,7 @@
 
             </MCard>
 
-            @if (dataSvs.SelectedCard.NotePackets is not null)
+            @if ( dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
             {
                 <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
@@ -104,7 +106,7 @@
                             <button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
                             @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
 							"
-                            type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectChildCard(dataSvs.SelectedCard.Parent,true))">
+                            type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent,true))">
                                 <i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
                                 @if (dataSvs.SelectedCard.Parent is not null)
                                 {
@@ -119,15 +121,18 @@
                     <div class="row " style="width:96px;">
                         <div class="col-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
-                                 @(!dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
+                                 @(!dataSvs.SelectedCard.NotePackets.Any() || !dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
                                 " type="button" @onpointerdown="ResetAnimation" @onclick="PrecedingNC">
                                 <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
                             </button>
 
                         </div>
+
+
+
                         <div class="col-4 offset-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
-                              @(!dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
+                              @(!dataSvs.SelectedCard.NotePackets.Any() || !dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
                             type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
                                 <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
                             </button>
@@ -152,7 +157,7 @@
                                         <RowTemplate Context="card">
                                             <MListItem Class="dropdown-item elevation-4 rounded-3" Link
                                                style="background-color:#1565c0; margin-bottom:2px"
-                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectChildCard(card,false)">
+                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
                                                 <MListItemContent>
                                                     <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
 
@@ -309,11 +314,11 @@ else
         downAnimation = false;
     }
 
-    private async Task SelectChildCard(Packet chCard, bool Up)
+    private async Task SelectSubPacket(Packet subPacket, bool Up)
     {
         try
         {
-            await dataSvs.GetCard(chCard);
+            await PacketVM.GetPacket(subPacket);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             if (Up)
             {

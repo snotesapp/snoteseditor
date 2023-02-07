@@ -3,7 +3,9 @@
 
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
+@inject PacketViewModel PacketVM
 
+@using BlazorApp1.ViewModels;
 @using BlazorComponent
 @using Microsoft.JSInterop
 @using ReactiveUI;
@@ -22,22 +24,22 @@
             @if (!dataSvs.filterPackets)
             {
                 <ListTemplate Items="dataSvs.MainProject.Packets">
-                    <RowTemplate Context="card">
+                    <RowTemplate Context="packet">
 
-                        @if (card.Editable == false)
+                        @if (packet.Editable == false)
                         {
-                            @if (card.Selected)
+                            @if (packet.Selected)
                             {
                                 <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
-                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,card);})">
+                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
 
-                                    @if (card.Parent is null)
+                                    @if (packet.Parent is null)
                                     {
                                         <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectCard(card)"
+                                   OnClick="() => SelectPacket(packet)"
                                    Color="white" Class="elevation-4  rounded-3">
                                             <MListItemContent>
-                                                <MListItemTitle>@card.Title </MListItemTitle>
+                                                <MListItemTitle>@packet.Title </MListItemTitle>
                                             </MListItemContent>
                                         </MListItem>
                                     }
@@ -47,12 +49,12 @@
 
 
                                         <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectCard(card)"
+                                   OnClick="() => SelectPacket(packet)"
                                    Color="white" Class="elevation-4  rounded-3">
                                             <MListItemContent>
-                                                <MListItemTitle>@card.Title </MListItemTitle>
+                                                <MListItemTitle>@packet.Title </MListItemTitle>
 
-                                                <MListItemSubtitle Class="ms-2" Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
+                                                <MListItemSubtitle Class="ms-2" Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
 
 
                                             </MListItemContent>
@@ -70,8 +72,8 @@
                         else
                         {
                             <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                           placeholder="Card Name" aria-label="Card Name"
-                           aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
+                           placeholder="Packet Name" aria-label="Packet Name"
+                           aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
 
                         }
 
@@ -84,21 +86,21 @@
             else
             {
                 <ListTemplate Items="dataSvs.FiltredPackets">
-                    <RowTemplate Context="card">
+                    <RowTemplate Context="packet">
 
-                        @if (card.Editable == false)
+                        @if (packet.Editable == false)
                         {
 
                             <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
-                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,card);})">
+                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
 
-                                @if (card.Parent is null)
+                                @if (packet.Parent is null)
                                 {
                                     <MListItem Link style="background-color:#1565c0"
-                                        OnClick="() => SelectCard(card)"
+                                   OnClick="() => SelectPacket(packet)"
                                         Color="white" Class="elevation-4  rounded-3">
                                         <MListItemContent>
-                                            <MListItemTitle>@card.Title </MListItemTitle>
+                                            <MListItemTitle>@packet.Title </MListItemTitle>
                                         </MListItemContent>
                                     </MListItem>
                                 }
@@ -107,12 +109,12 @@
 
 
                                     <MListItem Link style="background-color:#1565c0"
-                                        OnClick="() => SelectCard(card)"
+                                   OnClick="() => SelectPacket(packet)"
                                         Color="white" Class="elevation-4  rounded-3">
                                         <MListItemContent>
-                                            <MListItemTitle>@card.Title </MListItemTitle>
+                                            <MListItemTitle>@packet.Title </MListItemTitle>
 
-                                            <MListItemSubtitle Style="color:white; text-align:end;">@card.Parent.Title</MListItemSubtitle>
+                                            <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
 
 
                                         </MListItemContent>
@@ -127,8 +129,8 @@
                         else
                         {
                             <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                           placeholder="Card Name" aria-label="Card Name"
-                           aria-describedby="basic-addon2" @bind-value="card.Title" @onfocusout="() => SaveCardName(card)">
+                           placeholder="Packet Name" aria-label="Packet Name"
+                           aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
 
                         }
 
@@ -184,7 +186,7 @@
                 </MListItemContent>
             </MListItem>
 
-            <MListItem OnClick="() => GetSelectionCards(ContextMenuCard)">
+            <MListItem OnClick="() => GetSelectionPackets(ContextMenuCard)">
                 <MListItemIcon>
                     <MIcon>
                         mdi-subdirectory-arrow-right
@@ -217,7 +219,7 @@
                         </MListItemContent>
                     </MListItem>
 
-                    <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                    <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
                         <MListItemIcon>
                             <MIcon>
                                 mdi-arrow-split-horizontal
@@ -250,7 +252,7 @@
                         </MListItemContent>
                     </MListItem>
 
-                    <MListItem OnClick="() => RemoveSubPacket(ContextMenuCard)">
+                    <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
                         <MListItemIcon>
                             <MIcon>
                                 mdi-arrow-split-horizontal
@@ -324,7 +326,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-   
+
         dataSvs.WhenAnyValue(x => x.FilterPacketsTxt)
       .Throttle(TimeSpan.FromSeconds(1.5))
       .Subscribe(async FilterPacketsTxt =>
@@ -335,8 +337,8 @@
           }
           else
           {
-              dataSvs.FiltredPackets = await dataSvs.GetCards(FilterPacketsTxt);
-             
+              dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
+
           }
           StateHasChanged();
       });
@@ -349,10 +351,10 @@
     }
 
 
-    private async Task SelectCard(Packet selectedCard)
+    private async Task SelectPacket(Packet selectedPacket)
     {
-
-        await dataSvs.GetCard(selectedCard);
+        await PacketVM.GetPacket(selectedPacket);
+        //await dataSvs.GetCard(selectedCard);
         if (dataSvs.SelectedCard.NotePackets.Count > 0)
         {
 
@@ -376,12 +378,12 @@
         ShowCardContext = true;
     }
 
-    private async Task GetSelectionCards(Packet chCard)
+    private async Task GetSelectionPackets(Packet chPacket)
     {
-        dataSvs.ContextMenuCard = chCard;
+        dataSvs.ContextMenuCard = chPacket;
         dataSvs.filterPackets = false;
         dataSvs.FilterPacketsTxt = "";
-        dataSvs.SelectionCards = await dataSvs.GetSelectionCards(chCard);
+        dataSvs.SelectionCards = await PacketVM.GetSelectionPackets(chPacket);
         dataSvs.moveto_dialog = true;
 
     }
@@ -398,56 +400,51 @@
 
     }
 
-    private async Task SaveCardName(Packet card)
+    private async Task SavePacketName(Packet packet)
     {
-        if (!string.IsNullOrWhiteSpace(card.Title))
+        if (!string.IsNullOrWhiteSpace(packet.Title))
         {
-            await dataSvs.UpdateCard(card);
+            await PacketVM.UpdatePacket(packet);
 
 
         }
         else
         {
-            card.Title = oldname;
+            packet.Title = oldname;
         }
-        card.Editable = false;
+        packet.Editable = false;
 
     }
     #endregion
 
-    private async Task PinPacket(Packet card)
+    private async Task PinPacket(Packet packet)
     {
-        if (card.Selected == true)
+        if (packet.Selected == true)
         {
-            card.Selected = false;
+            packet.Selected = false;
         }
         else
         {
-            card.Selected = true;
+            packet.Selected = true;
         }
 
-        await dataSvs.UpdateCard(card);
-        
-        ContextMenuCard = null;
-    }
-    private async Task RemoveSubPacket(Packet card)
-    {
-        card.Parent = null;
-        card.ParentID = null;
-        card.Selected = true;
-        await dataSvs.UpdateCard(card);
-        await dataSvs.GetCard(dataSvs.SelectedCard);
+        await PacketVM.UpdatePacket(packet);
 
         ContextMenuCard = null;
-
     }
 
-
-    private async Task DeleteCard(Packet card)
+    private async Task DetachSubPacket(Packet packet)
     {
-
-        await dataSvs.DeleteCard(card);
-        showDeletePacketConfirmation = false;
+        packet.Parent = null;
+        packet.ParentID = null;
+        packet.Selected = true;
+        await PacketVM.UpdatePacket(packet);
+        // await dataSvs.GetCard(dataSvs.SelectedCard);
+        await PacketVM.GetPacket(dataSvs.SelectedCard);
+        ContextMenuCard = null;
 
     }
+
+
+   
 }

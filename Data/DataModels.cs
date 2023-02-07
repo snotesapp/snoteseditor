@@ -63,7 +63,6 @@ namespace BlazorApp1.Data
     }
 
     
-
     public class Note
     {
 
@@ -194,10 +193,8 @@ namespace BlazorApp1.Data
         public Note Note { get; set; }
     }
 
-
     public class NotesCollection
     {
-
 
         public int NotesCollectionID { get; set; }
         public string Title { get; set; }

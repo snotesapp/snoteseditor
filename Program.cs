@@ -1,6 +1,8 @@
 using BlazorApp1;
 using BlazorApp1.Data;
 using BlazorApp1.Helpers;
+using BlazorApp1.Repositories;
+using BlazorApp1.Services;
 using BlazorApp1.ViewModels;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
@@ -24,6 +26,14 @@ builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddFilter("Microsof
 
 
 builder.Services.AddScoped<Project>();
+
+builder.Services.AddSingleton<NotesCollectionViewModel, NotesCollectionViewModel>();
+builder.Services.AddSingleton<NotesCollectionService, NotesCollectionService>();
+builder.Services.AddSingleton<NotesCollectionRepository, NotesCollectionRepository>();
+
+builder.Services.AddSingleton<PacketService,PacketService>();
+builder.Services.AddSingleton<PacketViewModel,PacketViewModel>();
+
 
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 builder.Services.AddSingleton<SkiaServices, SkiaServices>();

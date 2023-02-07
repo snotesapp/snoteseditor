@@ -1,7 +1,10 @@
 ﻿@using BlazorApp1.Data
 @using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels;
 @using SkiaSharp
 @inject SharedDataService dataSvs
+@inject PacketViewModel PacketVM
+@inject NotesCollectionViewModel NotesCollectionVM
 @inject IJSRuntime JSRuntime
 @inject IMessageService MessageService
 @inject SkiaServices skiaSvs
@@ -154,14 +157,14 @@
 
                     <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
                         <input type="text" @ref="inputTextRef"
-                   @onkeypress="@((eventArg) => AddCard(eventArg) )" @onfocusout="@(() => EnableAddItem())"
+                   @onkeypress="@((eventArg) => AddPacket(eventArg) )" @onfocusout="@(() => EnableAddItem())"
                    class="form-control border-0 shadow-none" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2"
                    @bind-value="textValue">
 
                         <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
                             <span class="bi bi-x"></span>
                         </button>
-                        <button class="btn btn-outline-primary btn-sm ms-1  my-1 rounded-3" type="button" @onclick="AddCard">
+                        <button class="btn btn-outline-primary btn-sm ms-1  my-1 rounded-3" type="button" @onclick="AddPacket">
                             <span class="bi bi-plus-circle"></span>
                         </button>
 
@@ -357,7 +360,7 @@
                     {
 
 
-                        <button class="btn btn-outline-primary me-1 my-1 rounded-3" type="button" @onclick="@(()=>SelectChildCard(dataSvs.SelectedCard.Parent))">
+                        <button class="btn btn-outline-primary me-1 my-1 rounded-3" type="button" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent))">
                             <span class="bi bi-arrow-up"></span>
                         </button>
                     }
@@ -393,7 +396,7 @@
     protected override void OnInitialized()
     {
 
-
+        NotesCollectionVM.OnChange += StateHasChanged;
         dataSvs.OnChange += StateHasChanged;
 
     }
@@ -582,13 +585,14 @@
     }
 
 
-    private async Task AddCard()
+    private async Task AddPacket()
     {
 
         if (!string.IsNullOrWhiteSpace(textValue))
         {
 
-            await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+            await PacketVM.AddPacket(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+           
             textValue = "";
             await inputTextRef.FocusAsync();
         }
@@ -596,7 +600,7 @@
 
     }
 
-    private async Task AddCard(KeyboardEventArgs keyboardEvent)
+    private async Task AddPacket(KeyboardEventArgs keyboardEvent)
     {
         if (keyboardEvent.Key == "Enter")
         {
@@ -606,9 +610,11 @@
             if (!string.IsNullOrWhiteSpace(textValue))
             {
 
-                await dataSvs.AddCard(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                await PacketVM.AddPacket(new Packet { Title = textValue, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+           
                 textValue = "";
-                await inputTextRef.FocusAsync();
+                _addItem = false;
+               
             }
         }
 
@@ -619,9 +625,11 @@
     {
         if (!string.IsNullOrWhiteSpace(textValue))
         {
-            await dataSvs.AddCollection(new NotesCollection { Title = textValue, Selected = false, ProjectFK = dataSvs.MainProject.ProjectID, Note = new List<Note>() });
+
+            await NotesCollectionVM.AddNotesCollection(textValue);
 
             textValue = "";
+           
         }
 
     }
@@ -635,14 +643,16 @@
 
             if (!string.IsNullOrWhiteSpace(textValue))
             {
-                await dataSvs.AddCollection(new NotesCollection { Title = textValue, Selected = false, ProjectFK = dataSvs.MainProject.ProjectID, Note = new List<Note>() });
-
+                await NotesCollectionVM.AddNotesCollection(textValue);
                 textValue = "";
+                _addItem = false;
             }
 
         }
 
+       
     }
+
     private void ClearText()
     {
         textValue = "";
@@ -687,12 +697,12 @@
     }
 
 
-    private async Task SelectChildCard(Packet chCard)
+    private async Task SelectSubPacket(Packet subPacket)
     {
 
         try
         {
-            await dataSvs.GetCard(chCard);
+            await PacketVM.GetPacket(subPacket);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
         }
         catch (Exception ex)
@@ -707,7 +717,7 @@
 
     public void Dispose()
     {
-
+        NotesCollectionVM.OnChange -= StateHasChanged;
         dataSvs.OnChange -= StateHasChanged;
     }
 

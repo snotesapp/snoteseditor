@@ -8,11 +8,13 @@
 @using SkiaSharp;
 
 @inject SharedDataService dataSvs
-
+@inject NotesCollectionViewModel NotesCollectionVM
 @inject NavigationManager navigation
 
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
+
+
 
 @inject IJSRuntime JSRuntime
 
@@ -151,14 +153,14 @@
     protected override void OnInitialized()
     {
         _getProjectFileJS = new GetProjectFileJS(dataSvs);
-       
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-           
+
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             await _module.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
@@ -191,7 +193,7 @@
         await SetProgres(20);
         try
         {
-           
+
             ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
         }
         catch
@@ -203,7 +205,7 @@
         await Task.Delay(20);
         await SetProgres(40);
 
-       
+
         var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
 
         using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
@@ -215,7 +217,7 @@
         await SetProgres(50);
 
         await dataSvs.InsertProject(dataSvs.MainProject);
-       
+
         await SetProgres(70);
 
         var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
@@ -229,7 +231,7 @@
         await SetProgres(80);
 
         await dataSvs.GetNotes();
-        
+
         await SetProgres(100);
 
         await CloseDialoge.InvokeAsync(false);
@@ -255,7 +257,7 @@
         progress = progressValue;
         await Task.Delay(200);
         StateHasChanged();
-    
+
     }
 
     private async Task CreateProject()
@@ -264,7 +266,7 @@
 
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
 
-        
+
         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
         DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");
 
@@ -302,7 +304,9 @@
                 Selected = true,
                 Note = new List<Note>()
             };
-        await dataSvs.AddCollection(defaultNC);
+
+        await NotesCollectionVM.AddNotesCollection(defaultNC);
+       
         await CloseDialoge.InvokeAsync(false);
     }
 
