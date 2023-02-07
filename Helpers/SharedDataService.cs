@@ -129,6 +129,7 @@ namespace BlazorApp1.Helpers
             Packets = new List<Packet>(),
             NotesCollection = new List<NotesCollection>() ,
         };
+
         public DirectoryInfo ProjectPath { get; set; }
 
 
@@ -423,11 +424,38 @@ namespace BlazorApp1.Helpers
             return true;
         }
 
-       
+
 
         #endregion
 
         #region Notes Crud
+
+
+        public async Task<List<Note>> GetNotes()
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+
+                selectedNCNotes = await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).Take(20).ToListAsync();
+                NotifyStateChanged();
+                return selectedNCNotes;
+
+            }
+        }
+
+        public async Task<bool> DeleteNotePaths(Note note)
+        {
+            using (var notesContext = _dbContextFactory.CreateDbContext())
+            {
+                notesContext.RemoveRange(note.NotePaths);
+                await notesContext.SaveChangesAsync();
+
+                NotifyStateChanged();
+
+                return true;
+            }
+        }
+
 
         public async Task<bool> SaveNote()
         {
@@ -488,17 +516,6 @@ namespace BlazorApp1.Helpers
             return true;
         }
 
-        public async Task<List<Note>> GetNotes()
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                
-                selectedNCNotes =  await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).Take(20).ToListAsync();
-                NotifyStateChanged();
-                return selectedNCNotes;
-
-            }
-        }
 
         public async Task<List<Note>> GetNotes(int pageIndex = 0, int pageSize = 20)
         {
@@ -543,17 +560,7 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public async Task<Note> GetNote(Note note)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                editNote = await notesContext.Note.Where(nt => nt.NoteID == note.NoteID).Include(im =>im.Images).Include(np => np.NotePaths).FirstOrDefaultAsync();
-                NotifyStateChanged();
-                return editNote;
-
-            }
-        }
-
+      
         public async Task<bool> DeleteNote(Note note)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
@@ -567,65 +574,8 @@ namespace BlazorApp1.Helpers
             }
         }
 
-        public async Task DeleteNoteImgFiles(Note note, bool notSavedImageOnly)
-        {
-            if(notSavedImageOnly)
-            {
-                var imgURIs = note.Images.Where(im => im.NoteImageID == 0).Select(image => image.ImgURI).ToArray();
-                Parallel.ForEach(imgURIs, imgURI =>
-                {
-                    if (File.Exists(imgURI))
-                    {
-                        try
-                        {
-                            File.Delete(imgURI);
-                        }
-                        catch (IOException ex)
-                        {
-                            Console.WriteLine("File Not Found");
-                        }
-                    }
-                });
 
-            }
-            else
-            {
-                Note DeleteNote = await GetNote(note);
-                var imgURIs = DeleteNote.Images.Select(image => image.ImgURI).ToArray();
-
-
-                Parallel.ForEach(imgURIs, imgURI =>
-                {
-                    if (File.Exists(imgURI))
-                    {
-                        try
-                        {
-                            File.Delete(imgURI);
-                        }
-                        catch (IOException ex)
-                        {
-                            Console.WriteLine("File Not Found");
-                        }
-                    }
-                });
-            }
-           
-
-        }
-
-        public async Task<bool> DeleteNotePaths(Note note)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                notesContext.RemoveRange(note.NotePaths);
-                await notesContext.SaveChangesAsync();
-               
-                NotifyStateChanged();
-
-                return true;
-            }
-        }
-
+     
         public async Task<bool> UpdateNotePaths(Note note)
         {
             using (var notesContext = _dbContextFactory.CreateDbContext())
@@ -720,30 +670,6 @@ namespace BlazorApp1.Helpers
         //public string defaultBackgroundColor = "rgb(255,222,184)";
         //public string defaultBackgroundColor ;
 
-
-        public async Task ClearCanvas()
-        {
-            if (editNote.NoteID == 0)
-            {
-                completedPolylines.Clear();
-                editNote.NotePaths.Clear();
-            }
-            else
-            {
-                completedPolylines.Clear();
-                editNote.NotePaths = editNote.NotePaths.Where(nt => nt.PathID != 0).ToList();
-                await DeleteNotePaths(editNote);
-            }
-           
-           
-            //   inProgressPolylines.Clear();
-            saveBitmap = new SKBitmap(Wdimension.Width, Wdimension.Height);
-
-            skiaView.Invalidate();
-
-            NotifyStateChanged();
-            // StateHasChanged();
-        }
 
         public string PointerEvent = "none";
         public string? PenStyle;
@@ -949,13 +875,13 @@ namespace BlazorApp1.Helpers
             }
 
 
-            await GetNotes();
+         // Required   await GetNotes();
             newProjectDialog = false;
 
         }
 
 
-        private void NotifyStateChanged() => OnChange?.Invoke();
+        public void NotifyStateChanged() => OnChange?.Invoke();
 
     }
 

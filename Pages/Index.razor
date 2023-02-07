@@ -18,6 +18,7 @@
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
 @inject PacketViewModel PacketVM
+@inject NoteViewModel NoteVM
 
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
@@ -143,7 +144,7 @@ else
                 Clearable
                 OnClearClick="@(() => dataSvs.SearchTerm = "")"
                 AppendOuterIcon="mdi-close"
-                OnAppendOuterClick="@(() => {dataSvs.showFilterNotes = false;dataSvs.SearchTerm = "";dataSvs.GetNotes().GetAwaiter().GetResult();})"
+                OnAppendOuterClick="@(() => {dataSvs.showFilterNotes = false;dataSvs.SearchTerm = "";NoteVM.GetNotes().GetAwaiter().GetResult();})"
                 SingleLine
                 HideDetails=true></MTextField>
 
@@ -159,7 +160,7 @@ else
 
                    <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                    Dark
-                   OnClick="() => dataSvs.StyleSelectNote(note)"
+                   OnClick="() => NoteVM.StyleSelectNote(note)"
                    @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
@@ -179,7 +180,7 @@ else
                 {
                     <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
                    Dark
-                   OnClick="() => dataSvs.StyleSelectNote(note)"
+                   OnClick="() => NoteVM.StyleSelectNote(note)"
                    @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
@@ -409,7 +410,7 @@ else
            }
            else
            {
-               dataSvs.selectedNCNotes = await dataSvs.GetNotes(searchTerm);
+               dataSvs.selectedNCNotes = await NoteVM.GetNotes(searchTerm);
               
            }
            StateHasChanged();
@@ -497,16 +498,16 @@ else
     private async Task DeleteNote(Note note)
     {
 
-        await dataSvs.DeleteNoteImgFiles(note, false);
-        await dataSvs.DeleteNote(note);
-        await dataSvs.GetNotes();
+        await NoteVM.DeleteNoteImgFiles(note, false);
+        await NoteVM.DeleteNote(note);
+        await NoteVM.GetNotes();
 
     }
 
     private async Task EditNote(Note note)
     {
 
-        dataSvs.editNote = await dataSvs.GetNote(note);
+        dataSvs.editNote = await NoteVM.GetNote(note);
 
         dataSvs.BitmapDrawed = false;
         dataSvs.SwitchMenus("notetools");
@@ -555,7 +556,7 @@ else
 
     private async Task LoadMoreNotes()
     {
-        List<Note> append = await dataSvs.GetNotes(dataSvs.selectedNCNotes.Count, 20);
+        List<Note> append = await NoteVM.GetNotes(dataSvs.selectedNCNotes.Count, 20);
         dataSvs.selectedNCNotes.AddRange(append);
 
         _hasMore = append.Count > 0;

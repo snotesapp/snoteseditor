@@ -6,6 +6,7 @@
 @using BlazorApp1.ViewModels;
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
+@inject NoteViewModel NoteVM
 
 <MContainer Style="height:calc(100vh - 140px); overflow:auto">
     <MRow Class="mx-0 w-100">
@@ -228,7 +229,7 @@
         }
 
 
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
     }
 
 

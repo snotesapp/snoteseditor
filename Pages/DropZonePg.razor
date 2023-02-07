@@ -1,6 +1,7 @@
 ﻿@page "/dropzonepg"
 @using BlazorApp1.Data
 @using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels;
 @using BlazorComponent
 @using Microsoft.JSInterop
 @implements IAsyncDisposable
@@ -12,7 +13,7 @@
 @using System.Drawing
 @using SkiaSharp.Views.Blazor
 @inject SkiaServices skiaSvs
-
+@inject NoteViewModel NoteVM
 @inject SharedDataService dataSvs
 
 
@@ -631,7 +632,7 @@
                             }
                             else
                             {
-                                dataSvs.DeleteNotePath(notePath).GetAwaiter().GetResult();
+                                NoteVM.DeleteNotePath(notePath).GetAwaiter().GetResult();
                             }
 
 
@@ -775,7 +776,7 @@
             }
             else
             {
-                await dataSvs.DeleteNoteImg(noteImage);
+                await NoteVM.DeleteNoteImg(noteImage);
             }
         }
         catch (IOException ex)

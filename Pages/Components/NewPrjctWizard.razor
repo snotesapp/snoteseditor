@@ -9,6 +9,7 @@
 
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
+@inject NoteViewModel NoteVM
 @inject NavigationManager navigation
 
 @inject ILocalStorageService localstorage1
@@ -230,7 +231,7 @@
         }
         await SetProgres(80);
 
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
 
         await SetProgres(100);
 

@@ -1,10 +1,11 @@
 ﻿@using BlazorApp1.Helpers;
+@using BlazorApp1.ViewModels;
 @using SkiaSharp;
 @inject SharedDataService dataSvs
 @inject SkiaServices skiaSvs
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
-
+@inject NoteViewModel NoteVM
 
 @switch (DialogType)
 {
@@ -143,11 +144,11 @@
     private async Task BackToCollections(string menu)
     {
 
-        await dataSvs.DeleteNoteImgFiles(dataSvs.editNote, true);
+        await NoteVM.DeleteNoteImgFiles(dataSvs.editNote, true);
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
         dataSvs.SwitchMenus(menu);
 
     }
@@ -157,11 +158,11 @@
         skiaSvs.CreateThumbImg(CollectionId);
         if (dataSvs.editNote.NoteID == 0)
         {
-            await dataSvs.SaveNote();
+            await NoteVM.SaveNote();
         }
         else
         {
-            await dataSvs.UpdateNote();
+            await NoteVM.UpdateNote();
         }
 
 
@@ -170,7 +171,7 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
         dataSvs.SwitchMenus(menu);
     }
 

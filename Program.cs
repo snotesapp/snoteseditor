@@ -34,6 +34,10 @@ builder.Services.AddSingleton<NotesCollectionRepository, NotesCollectionReposito
 builder.Services.AddSingleton<PacketService,PacketService>();
 builder.Services.AddSingleton<PacketViewModel,PacketViewModel>();
 
+builder.Services.AddSingleton<NoteService, NoteService>();
+builder.Services.AddSingleton<NoteViewModel, NoteViewModel>();
+
+
 
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 builder.Services.AddSingleton<SkiaServices, SkiaServices>();

@@ -5,10 +5,11 @@
 @inject SharedDataService dataSvs
 @inject PacketViewModel PacketVM
 @inject NotesCollectionViewModel NotesCollectionVM
+@inject NoteViewModel NoteVM
 @inject IJSRuntime JSRuntime
 @inject IMessageService MessageService
 @inject SkiaServices skiaSvs
-@inject IJSRuntime JSRuntime
+
 
 
 @switch (dataSvs.menustatus)
@@ -459,9 +460,9 @@
 
                         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
 
-                        await dataSvs.UpdateNote();
+                        await NoteVM.UpdateNote();
 
-                        await dataSvs.GetNotes();
+                        await NoteVM.GetNotes();
                         dataSvs.BitmapDrawed = false;
                         dataSvs.completedPolylines.Clear();
 
@@ -512,7 +513,7 @@
         {
             if (dataSvs.noteEdited)
             {
-                await dataSvs.SaveNote();
+                await NoteVM.SaveNote();
                 dataSvs.BitmapDrawed = false;
                 dataSvs.completedPolylines.Clear();
                 dataSvs.skiaView.Invalidate();
@@ -525,7 +526,7 @@
         {
             if (dataSvs.noteEdited)
             {
-                await dataSvs.UpdateNote();
+                await NoteVM.UpdateNote();
                 dataSvs.noteEdited = false;
 
             }
@@ -543,7 +544,7 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
         await GoToMenu.InvokeAsync(menu);
     }
 
@@ -553,11 +554,11 @@
 
         if (dataSvs.editNote.NoteID == 0)
         {
-            await dataSvs.SaveNote();
+            await NoteVM.SaveNote();
         }
         else
         {
-            await dataSvs.UpdateNote();
+            await NoteVM.UpdateNote();
         }
 
 
@@ -566,7 +567,7 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await dataSvs.GetNotes();
+        await NoteVM.GetNotes();
         await GoToMenu.InvokeAsync(menu);
     }
 

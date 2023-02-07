@@ -24,6 +24,7 @@ namespace BlazorApp1.Services
             }
 
         }
+
         public async Task<List<Packet>> GetPackets(string filterText)
         {
             using (var packetContext = _dbContextFactory.CreateDbContext())
