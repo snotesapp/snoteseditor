@@ -12,13 +12,15 @@ namespace BlazorApp1.ViewModels
         private readonly NotesCollectionService _service;
         private readonly SharedDataService _dataSvs;
         private readonly NoteViewModel NoteVM;
+        private readonly ProjectViewModel ProjectVM;
         public NotesCollectionViewModel() { }
 
-        public NotesCollectionViewModel(NotesCollectionService service, SharedDataService dataSvs, NoteViewModel noteVM)
+        public NotesCollectionViewModel(NotesCollectionService service, SharedDataService dataSvs, NoteViewModel noteVM, ProjectViewModel projectVM)
         {
             _service = service;
             _dataSvs = dataSvs;
             NoteVM = noteVM;
+            ProjectVM = projectVM;
         }
 
 
@@ -63,7 +65,7 @@ namespace BlazorApp1.ViewModels
                 
                 await _service.DeleteNotesCollection(notesCollection.NotesCollectionID);
 
-                _dataSvs.MainProject = await _dataSvs.GetProject();
+                _dataSvs.MainProject = await ProjectVM.GetProject();
                 await NoteVM.GetNotes();
                 _dataSvs.showDeleteNCConfirmation = false;
             }

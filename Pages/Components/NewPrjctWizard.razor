@@ -10,6 +10,7 @@
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
 @inject NoteViewModel NoteVM
+@inject ProjectViewModel ProjectVM
 @inject NavigationManager navigation
 
 @inject ILocalStorageService localstorage1
@@ -19,10 +20,7 @@
 
 @inject IJSRuntime JSRuntime
 
-@switch (dataSvs.CurrentStep)
-{
 
-    case "Project":
 
         <MCard Class="p-1 h-100 w-100">
             <MCardTitle Class="text-h5 gradient-blue">
@@ -37,7 +35,7 @@
                             mdi-plus
                         </MIcon>
                     </span>
-                    <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Projec tName">
+                    <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Project Name">
                     <MButton Class="primary" aria-label="Create SNotes Project" title="Create SNotes Project"
                      OnClick="CreateProject">
                         <MIcon>
@@ -60,10 +58,21 @@
                 }
                 else if (!(dataSvs.UserAgent.Contains("Firefox")))
                 {
-                    <MButton Class="primary elevation-2 rounded-3 shadow w-100 " OnClick="() => OpenZipFile()">
-                        <MIcon>
-                            mdi-folder-open-outline
-                        </MIcon>
+                    <MButton Class="primary elevation-2 rounded-3 shadow w-100 "
+                        Loading="ProjectVM.Loader"
+                        Disabled="ProjectVM.Loader"
+                        OnClick="() => OpenZipFile()">
+
+                        <LoaderContent>
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </LoaderContent>
+                        <ChildContent>
+                            <MIcon>
+                                mdi-folder-open-outline
+                            </MIcon>
+
+                        </ChildContent>
+                        
                     </MButton>
                 }
                 else
@@ -77,6 +86,7 @@
                         </span>
 
                         <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
+                        Disabled="ProjectVM.Loader"
                         PrependIcon="null"
                         Accept="application/snotes"
                         Label="Import SNotes File"></MFileInput>
@@ -105,35 +115,7 @@
 
 
 
-        break;
 
-    case "Progress":
-        <!--
-
-        <div class="col-md-12 position-absolute top-50 start-50 translate-middle " style="background-color:whitesmoke">
-
-                 <MProgressLinear Value="@progress" Height="25"  Class="text-white" Color="#1565c0" BackgroundColor="#5e92f3" OnChange="SetProgres">
-                <strong>@($"{context}%")</strong>
-            </MProgressLinear>
-
-
-        </div>
-            -->
-
-        <div class=" position-absolute top-50 start-50 translate-middle ">
-
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-
-
-        </div>
-
-
-        break;
-
-
-}
 
 
 @code {
@@ -142,20 +124,20 @@
     private GetProjectFileJS _getProjectFileJS;
 
 
-
     private string projectname { get; set; } = $"Project {DateTime.Now.ToString("dd'_'MM'_'yyyy'_'HH'_'mm")}";
     private string collectionname { get; set; } = "Default Collection";
 
-    double progress;
 
     [Parameter]
     public EventCallback<bool> CloseDialoge { get; set; }
 
     protected override void OnInitialized()
     {
-        _getProjectFileJS = new GetProjectFileJS(dataSvs);
-
+        _getProjectFileJS = new GetProjectFileJS(dataSvs,ProjectVM);
+        ProjectVM.OnChange += StateHasChanged;
     }
+
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -164,7 +146,7 @@
 
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-            await _module.InvokeVoidAsync("registerDotNetInstance", DotNetObjectReference.Create(_getProjectFileJS));
+            await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
 
             dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
         }
@@ -174,24 +156,23 @@
 
 
 
-
-
     private async Task HandleOnChange(IBrowserFile file)
     {
-        dataSvs.CurrentStep = "Progress";
+
+        ProjectVM.Loader = true;
         if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
         {
             dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
         }
 
 
-        IBrowserFile uploadedfile = file;
+        //IBrowserFile uploadedfile = file;
 
         await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
-        await uploadedfile.OpenReadStream(uploadedfile.Size).CopyToAsync(fileContent);
+        await file.OpenReadStream(file.Size).CopyToAsync(fileContent);
 
 
-        await SetProgres(20);
+
         try
         {
 
@@ -203,9 +184,6 @@
         }
 
 
-        await Task.Delay(20);
-        await SetProgres(40);
-
 
         var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
 
@@ -215,11 +193,9 @@
               await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
             dataSvs.MainProject = newProject;
         }
-        await SetProgres(50);
 
-        await dataSvs.InsertProject(dataSvs.MainProject);
 
-        await SetProgres(70);
+        await ProjectVM.InsertProject(dataSvs.MainProject);
 
         var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
 
@@ -229,13 +205,14 @@
               await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
             await dataSvs.NewRangNoteCards(noteCardsList);
         }
-        await SetProgres(80);
 
-        await NoteVM.GetNotes();
 
-        await SetProgres(100);
+        //await NoteVM.GetNotes();
+
+        ProjectVM.Loader = false;
 
         await CloseDialoge.InvokeAsync(false);
+        
     }
 
 
@@ -244,22 +221,14 @@
 
         await _module.InvokeVoidAsync("OpenSnotesFile");
 
-    }
-
-
-    void SetStep(string step)
-    {
-        dataSvs.CurrentStep = step;
-    }
-
-    private async Task SetProgres(double progressValue)
-    {
-
-        progress = progressValue;
-        await Task.Delay(200);
+        ProjectVM.Loader = false;
         StateHasChanged();
 
+        dataSvs.newProjectDialog = false;
+        
     }
+
+
 
     private async Task CreateProject()
     {
@@ -296,7 +265,7 @@
             }
         }
 
-        await dataSvs.InsertProject(dataSvs.MainProject);
+        await ProjectVM.InsertProject(dataSvs.MainProject);
 
         NotesCollection defaultNC = new NotesCollection()
             {
@@ -311,6 +280,11 @@
         await CloseDialoge.InvokeAsync(false);
     }
 
+    public void Dispose()
+    {
+
+        ProjectVM.OnChange -= StateHasChanged;
+    }
 
 
 }

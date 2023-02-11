@@ -39,7 +39,13 @@ namespace BlazorApp1.Helpers
         public int menuCols = 2;
         public int bodyCols = 10;
 
-        public bool newProjectDialog;
+        private bool _newProjectDialog;
+        public bool newProjectDialog
+        {
+            get { return _newProjectDialog; }
+            set { this.RaiseAndSetIfChanged(ref _newProjectDialog, value); NotifyStateChanged(); }
+
+        }
 
         public bool noteEdited;
 
@@ -65,22 +71,8 @@ namespace BlazorApp1.Helpers
 
         }
 
-        private bool _download_dialog;
-        public bool download_dialog
-        {
-            get { return _download_dialog; }
-            set { this.RaiseAndSetIfChanged(ref _download_dialog, value); NotifyStateChanged(); }
-
-        }
-        private bool _savingProject;
-        public bool SavingProject
-        {
-            get { return _savingProject; }
-            set { this.RaiseAndSetIfChanged(ref _savingProject, value); NotifyStateChanged(); }
-
-        }
-        public string CurrentStep { get; set; } = "Project";
-
+       
+ 
 
         private string _userAgent ;
         public string? UserAgent
@@ -179,60 +171,9 @@ namespace BlazorApp1.Helpers
            
         }
 
-        #region Project Crud
-        public async Task<bool> InsertProject(Project project)
-        {
-            using (var projectsContext = _dbContextFactory.CreateDbContext())
-            {
-              // projectsContext.Add(project);
-                await projectsContext.AddAsync(project);
-                await projectsContext.SaveChangesAsync();
-                NotifyStateChanged();
-            }
-
-            return true;
-        }
-
-        public async Task<Project> GetProject()
-        {
-            using (var projectsContext = _dbContextFactory.CreateDbContext())
-            {
-                Project  mProject = await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Packets.Where(s => s.Selected == true)).ThenInclude(pc => pc.Parent).FirstOrDefaultAsync();
-                return mProject;
+       
 
 
-            }
-            
-        }
-
-
-        public async Task<bool> UpdateProject()
-        {
-            
-            using (var projectsContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = projectsContext.Update(MainProject);
-                await projectsContext.SaveChangesAsync();
-
-                var isModified = tracking.State == EntityState.Modified;
-                return isModified;
-            }
-        }
-
-        public async Task<Project> GetFullProject()
-        {
-            using (var projectsContext = _dbContextFactory.CreateDbContext())
-            {
-
-                 return await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images)
-                    .Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(pth => pth.NotePaths)
-                    .Include(cr => cr.Packets).FirstOrDefaultAsync();
-               // return await projectsContext.Projects.Include(nc => nc.NotesCollection).Include(cr => cr.Cards).FirstOrDefaultAsync();
-
-            }
-        }
-
-        #endregion
 
         #region Packet ViewModel
         private string _filterPacketsTxt;
@@ -428,226 +369,7 @@ namespace BlazorApp1.Helpers
 
         #endregion
 
-        #region Notes Crud
-
-
-        public async Task<List<Note>> GetNotes()
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-
-                selectedNCNotes = await notesContext.Note.Where(nc => nc.NotesCollection.Selected == true).Take(20).ToListAsync();
-                NotifyStateChanged();
-                return selectedNCNotes;
-
-            }
-        }
-
-        public async Task<bool> DeleteNotePaths(Note note)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                notesContext.RemoveRange(note.NotePaths);
-                await notesContext.SaveChangesAsync();
-
-                NotifyStateChanged();
-
-                return true;
-            }
-        }
-
-
-        public async Task<bool> SaveNote()
-        {
-             noteBackgroundColor = editNote.BackgroundColor;
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-              
-                editNote.NotesCollectionFK = AddNotesSelectedNC.NotesCollectionID;
-                //   editNote.Images.AddRange(imagelist);
-                if (!string.IsNullOrWhiteSpace(editNote.Text))
-                {
-                    notesContext.Add(editNote);
-                    await notesContext.SaveChangesAsync();
-
-                }
-
-                //NotesCollection notesCollection = notesContext.NotesCollection.Where(p => p.ProjectFK == 1).Where(nc => nc.NotesCollectionID == 1).Include(n => n.Note).FirstOrDefault();
-
-            }
-
-            editNote = new Note()
-            {
-                NotesCollectionFK = AddNotesSelectedNC.NotesCollectionID,
-                Images = new List<NoteImage>(),
-                NotePaths = new List<NotePath>(),
-                BackgroundColor = noteBackgroundColor,
-                MainImgWidth = Wdimension.Width,
-                MainImgHeight = Wdimension.Height
-            };
-            saveBitmap = new SKBitmap(Wdimension.Width, Wdimension.Height);
-            // await GetNotes();
-            NotifyStateChanged();
-
-            return true;
-        }
-
-        public async Task<bool> UpdateNote()
-        {
-
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-
-               
-                notesContext.Update(editNote);
-                await notesContext.SaveChangesAsync();
-              
-
-
-                //NotesCollection notesCollection = notesContext.NotesCollection.Where(p => p.ProjectFK == 1).Where(nc => nc.NotesCollectionID == 1).Include(n => n.Note).FirstOrDefault();
-
-            }
-
-
-
-            // await GetNotes();
-            NotifyStateChanged();
-
-            return true;
-        }
-
-
-        public async Task<List<Note>> GetNotes(int pageIndex = 0, int pageSize = 20)
-        {
-            if (pageIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException("pageIndex must be greater than or equal to 0.");
-            }
-            if (pageSize <= 0)
-            {
-                throw new ArgumentOutOfRangeException("pageSize must be greater than 0.");
-            }
-
-            try
-            {
-                using (var notesContext = _dbContextFactory.CreateDbContext())
-                {
-                    var selectedNotes = await notesContext.Note
-                        .Where(nc => nc.NotesCollection.Selected == true)
-                        .Skip(pageIndex )
-                        .Take(pageSize)
-                        .ToListAsync();
-
-                    NotifyStateChanged();
-                    return selectedNotes;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error occurred while fetching notes.", ex);
-            }
-        }
-
-
-        public async Task<List<Note>> GetNotes(string NotesTextFilter)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                selectedNCNotes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).Take(20).ToListAsync();
-                NotifyStateChanged();
-                return selectedNCNotes;
-
-            }
-        }
-
-      
-        public async Task<bool> DeleteNote(Note note)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = notesContext.Remove(note);
-                await notesContext.SaveChangesAsync();
-                var isDeleted = tracking.State == EntityState.Deleted;
-                NotifyStateChanged();
-
-                return isDeleted;
-            }
-        }
-
-
-     
-        public async Task<bool> UpdateNotePaths(Note note)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                notesContext.UpdateRange(note.NotePaths);
-                await notesContext.SaveChangesAsync();
-
-                NotifyStateChanged();
-
-                return true;
-            }
-        }
-
-        public async Task<bool> DeleteNoteImg(NoteImage noteImage)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = notesContext.Remove(noteImage);
-                await notesContext.SaveChangesAsync();
-                var isDeleted = tracking.State == EntityState.Deleted;
-                NotifyStateChanged();
-
-                return isDeleted;
-            }
-        }
-
-        public bool AddNotePath(NotePath notePath)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = notesContext.Add(notePath);
-                notesContext.SaveChanges();
-                var isAdded = tracking.State == EntityState.Added;
-                NotifyStateChanged();
-
-                return isAdded;
-            }
-        }
-
-        public async Task<bool> DeleteNotePath(NotePath notePath)
-        {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
-            {
-                var tracking = notesContext.Remove(notePath);
-                await notesContext.SaveChangesAsync();
-                var isDeleted = tracking.State == EntityState.Deleted;
-                NotifyStateChanged();
-
-                return isDeleted;
-            }
-        }
-
-
-
-        public void StyleSelectNote(Note note)
-        {
-            if (note.Selected == false)
-            {
-
-                note.Selected = true;
-            }
-            else
-            {
-                note.Selected = false;
-            }
-
-        }
-
-
-
-        #endregion
-
+   
         #region DropZonePg
 
         public Dictionary<long, FingerPaintPolyline> inProgressPolylines = new Dictionary<long, FingerPaintPolyline>();
@@ -734,98 +456,7 @@ namespace BlazorApp1.Helpers
         }
         #endregion
 
-        #region Download Project
-
-        private static readonly JsonSerializerOptions ProjectOptions = new()
-        {
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            WriteIndented = true,
-            IgnoreReadOnlyProperties = true,
-        };
-
-        private static readonly JsonSerializerOptions NoteCardsOptions = new()
-        {
-            WriteIndented = true,
-        };
-
-        public byte[] fileArray;
-
-        public async Task DownloadProjectFile()
-        {
-            try
-            {
-                // Create the package directory
-                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory);
-
-                // Create the meta object and serialize it to a byte array
-                var metaObject = new MetaObject
-                {
-                    Version = "1.0"
-                };
-                byte[] metaJsonBytes = SerializeMetaObject(metaObject);
-
-                // Write the serialized meta object to a file
-                File.WriteAllBytes(ProjectPath.Parent.FullName + "/"+ FilePaths.MetaFilePath, metaJsonBytes);
-
-                // Serialize the full project object to a file
-                Project fullPrjct = await GetFullProject();
-                if (fullPrjct != null)
-                {
-                    await SerializeProjectAsync(fullPrjct);
-                }
-
-                // Serialize the list of note cards to a file
-                List<NotePacket> allNoteCards = await GetAllNoteCards();
-                if (allNoteCards != null)
-                {
-                    await SerializeNoteCardsAsync(allNoteCards);
-                }
-
-                // Create the package file
-                var packageFilePath = AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory + "/" + FilePaths.PackageFilePath;
-                ZipFile.CreateFromDirectory(ProjectPath.Parent.FullName, packageFilePath);
-
-                // Read the package file into a byte array
-                fileArray = await File.ReadAllBytesAsync(packageFilePath);
-
-                // Delete the package file
-                if (Path.HasExtension(packageFilePath))
-                {
-                    File.Delete(packageFilePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log the error or display an error message to the user
-            }
-        }
-
-        private byte[] SerializeMetaObject(MetaObject metaObject)
-        {
-            return JsonSerializer.SerializeToUtf8Bytes(metaObject);
-        }
-
-        private async Task SerializeProjectAsync(Project project)
-        {
-            var jsonProjectFilePath = ProjectPath.Parent.FullName + "/" + FilePaths.ProjectFilePath;
-            await using (FileStream createProjectStream = File.Create(jsonProjectFilePath))
-            {
-                await JsonSerializer.SerializeAsync<Project>(createProjectStream, project, ProjectOptions);
-            }
-        }
-        private async Task SerializeNoteCardsAsync(List<NotePacket> noteCards)
-        {
-            var jsonNoteCardsFilePath = ProjectPath.Parent.FullName + "/" + FilePaths.NoteCardsFilePath;
-            await using (FileStream createNotecardsStream = File.Create(jsonNoteCardsFilePath))
-            {
-                await JsonSerializer.SerializeAsync<List<NotePacket>>(createNotecardsStream, noteCards, NoteCardsOptions);
-            }
-        }
-
-
-
-        #endregion
-
+      
         #region Collection ViewModel
 
         
@@ -842,43 +473,6 @@ namespace BlazorApp1.Helpers
 
         #endregion
 
-
-
-        public async Task BuildProject()
-        {
-            
-            if (ProjectPath is null || ProjectPath.Exists == false)
-            {
-                ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
-            }
-  
-
-            var jsonProjectFile = ProjectPath.Parent.FullName + "/jsonFile.json";
-
-            using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-            {
-                Project? newProject =
-                  await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-                MainProject = newProject;
-            }
-
-
-            await InsertProject(MainProject);
-
-            var jsonNoteCardsFile = ProjectPath.Parent.FullName + "/notecards.json";
-
-            using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-            {
-                List<NotePacket>? noteCardsList =
-                  await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
-                await NewRangNoteCards(noteCardsList);
-            }
-
-
-         // Required   await GetNotes();
-            newProjectDialog = false;
-
-        }
 
 
         public void NotifyStateChanged() => OnChange?.Invoke();

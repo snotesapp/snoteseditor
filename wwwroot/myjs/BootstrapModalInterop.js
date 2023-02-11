@@ -184,48 +184,121 @@ export function zoomOutelement(elementid) {
 
 }
 
+let fileHandle;
+window.interop = {
+
+    blazorDownloadFile: function (filename, contentType, content) {
+        try {
+            // Create a new Blob object from the content
+            const blob = new Blob([content], { type: contentType });
+
+            // Use the fetch API to download the file
+            fetch(URL.createObjectURL(blob))
+                .then(response => {
+                    // Check if the response is successful
+                    if (response.ok) {
+                        // Create a new Blob object from the response
+                        return response.blob();
+                    }
+                    throw new Error("Failed to download file");
+                })
+                .then(blob => {
+                    // Create an object URL from the blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Create a new <a> element and set its href attribute
+                    const a = document.createElement("a");
+                    a.href = url;
+
+                    // Set the download attribute of the <a> element
+                    a.download = filename;
+
+                    // Append the <a> element to the document and click on it
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Release the object URL
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    },
 
 
-export function blazorDownloadFile(filename, contentType, content) {
-    try {
-        // Create a new Blob object from the content
-        const blob = new Blob([content], { type: contentType });
-
-        // Use the fetch API to download the file
-        fetch(URL.createObjectURL(blob))
-            .then(response => {
-                // Check if the response is successful
-                if (response.ok) {
-                    // Create a new Blob object from the response
-                    return response.blob();
+    getNewFileHandle: async function (suggestedFileName) {
+        if (!fileHandle) {
+            try {
+                if (typeof window.chooseFileSystemEntries === 'function') {
+                    // For Chrome 85 and earlier...
+                    const opts = {
+                        type: 'save-file',
+                        accepts: [{
+                            description: 'sNotes File',
+                            extensions: ['snotes'],
+                            mimeTypes: ['application/snotes'],
+                        }],
+                        suggestedName: suggestedFileName,
+                    };
+                    fileHandle = await window.chooseFileSystemEntries(opts);
+                } else {
+                    // handle the case where the function is not defined
+                    // For Chrome 86 and later...
+                    if ('showSaveFilePicker' in window) {
+                        const opts = {
+                            types: [{
+                                description: 'sNotes File',
+                                accept: { 'application/snotes': ['.snotes'] },
+                            }],
+                            suggestedName: suggestedFileName,
+                        };
+                        fileHandle = await window.showSaveFilePicker(opts);
+                    }
                 }
-                throw new Error("Failed to download file");
-            })
-            .then(blob => {
-                // Create an object URL from the blob
-                const url = URL.createObjectURL(blob);
+            } catch (e) {
+                console.error('File picker was cancelled by the user');
+            }
+        } 
 
-                // Create a new <a> element and set its href attribute
-                const a = document.createElement("a");
-                a.href = url;
+    },
 
-                // Set the download attribute of the <a> element
-                a.download = filename;
+    blazorSaveFile: async function (contentType, content) {
 
-                // Append the <a> element to the document and click on it
-                document.body.appendChild(a);
-                a.click();
+        if (fileHandle) {
+            // Define the chunk size, e.g. 1 MB
+            const chunkSize = 512 * 1024;
+            // Calculate the number of chunks
+            const numOfChunks = Math.ceil(content.length / chunkSize);
 
-                // Release the object URL
-                URL.revokeObjectURL(url);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    } catch (error) {
-        console.error(error);
-    }
-}
+            // Create a FileSystemWritableFileStream to write to.
+            const writable = await fileHandle.createWritable();
+
+            // Write each chunk to the stream.
+            for (let i = 0; i < numOfChunks; i++) {
+                // Get the current chunk
+                const start = i * chunkSize;
+                const end = (i + 1) * chunkSize;
+                const chunk = content.slice(start, end);
+
+                // Create a new Blob object from the chunk
+                const blob = new Blob([chunk], { type: contentType });
+
+                // Write the contents of the chunk to the stream.
+                await writable.write(blob);
+            }
+
+            // Close the file and write the contents to disk.
+            await writable.close();
+        }
+
+    },
+
+
+};
+
 
 
 
@@ -247,53 +320,9 @@ export async function imgStreamToSrc(imageStream) {
 
 
 
-
-
-
-
-
-export function registerDotNetInstance(dotnetInstance) {
-    window.dotnetInstance = dotnetInstance;
+export function registeGetProjectFileJSInstance(dotnetInstance) {
+    window.GetProjectFileJSInstance = dotnetInstance;
 }
-
-
-let fileHandle;
-
-export async function getNewFileHandle(suggestedFileName) {
-    if (!fileHandle) {
-        try {
-            if (typeof window.chooseFileSystemEntries === 'function') {
-                // For Chrome 85 and earlier...
-                const opts = {
-                    type: 'save-file',
-                    accepts: [{
-                        description: 'sNotes File',
-                        extensions: ['snotes'],
-                        mimeTypes: ['application/snotes'],
-                    }],
-                    suggestedName: suggestedFileName,
-                };
-                fileHandle = await window.chooseFileSystemEntries(opts);
-            } else {
-                // handle the case where the function is not defined
-                // For Chrome 86 and later...
-                if ('showSaveFilePicker' in window) {
-                    const opts = {
-                        types: [{
-                            description: 'sNotes File',
-                            accept: { 'application/snotes': ['.snotes'] },
-                        }],
-                        suggestedName: suggestedFileName,
-                    };
-                    fileHandle = await window.showSaveFilePicker(opts);
-                }
-            }
-        } catch (e) {
-            console.error('File picker was cancelled by the user');
-        }
-    }
-}
-
 
 
 
@@ -314,39 +343,34 @@ export async function OpenSnotesFile() {
 
     try {
         [fileHandle] = await window.showOpenFilePicker(options);
+        const writable = await fileHandle.createWritable();
+        window.GetProjectFileJSInstance.invokeMethod('SetLoaderValue', true);
+        
         const file = await fileHandle.getFile();
         const arrayBuffer = await file.arrayBuffer();
 
-        const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+        if (arrayBuffer.byteLength > 0) {
+            const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+            updateFileArray(base64);
+        } else {
+            console.error("arrayBuffer is empty");
+        }
 
-        updateFileArray(base64);
+        
+
     } catch (e) {
+        
         console.error('File picker was cancelled by the user');
     }
 }
 
  function updateFileArray(base64) {
-    window.dotnetInstance.invokeMethodAsync('UpdateFileArray', base64)
+     window.GetProjectFileJSInstance.invokeMethodAsync('UpdateFileArray', base64)
          .then(() => console.log("File sent."))
          .catch(error => console.error(error));
 
 }
 
-
-export async function blazorSaveFile(contentType, content) {
-    if (fileHandle) {
-        // Create a new Blob object from the content
-        const blob = new Blob([content], { type: contentType });
-        // Create a FileSystemWritableFileStream to write to.
-        const writable = await fileHandle.createWritable();
-        // Write the contents of the file to the stream.
-        await writable.write(blob);
-        // Close the file and write the contents to disk.
-        await writable.close();
-    }
-
-
-}
 
 
 export function getBrowserName() {

@@ -11,11 +11,12 @@ namespace BlazorApp1.ViewModels
     {
         private PacketService PacketService_service;
         private SharedDataService SharedDataService_service;
-        public PacketViewModel(SharedDataService sharedDataService, PacketService packetService )
+        private ProjectViewModel ProjectVM;
+        public PacketViewModel(SharedDataService sharedDataService, PacketService packetService, ProjectViewModel projectVM)
         {
             this.SharedDataService_service = sharedDataService;
-            this.PacketService_service= packetService;
-
+            this.PacketService_service = packetService;
+            ProjectVM = projectVM;
         }
 
 
@@ -23,7 +24,7 @@ namespace BlazorApp1.ViewModels
         {
             await PacketService_service.AddPacket(newPacket);
 
-            SharedDataService_service.MainProject = await SharedDataService_service.GetProject();
+            SharedDataService_service.MainProject = await ProjectVM.GetProject();
             
         }
 
@@ -96,7 +97,7 @@ namespace BlazorApp1.ViewModels
             childPacket.Selected = false;
             await UpdatePacket(childPacket);
 
-           SharedDataService_service.MainProject = await SharedDataService_service.GetProject();
+           SharedDataService_service.MainProject = await ProjectVM.GetProject();
            SharedDataService_service.ContextMenuCard = null;
 
         }

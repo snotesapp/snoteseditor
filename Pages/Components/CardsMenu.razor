@@ -4,7 +4,7 @@
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
 @inject PacketViewModel PacketVM
-
+@inject ProjectViewModel ProjectVM
 @using BlazorApp1.ViewModels;
 @using BlazorComponent
 @using Microsoft.JSInterop
@@ -347,7 +347,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        dataSvs.MainProject = await dataSvs.GetProject();
+        dataSvs.MainProject = await ProjectVM.GetProject();
     }
 
 

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.JSInterop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,6 +26,7 @@ builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddFilter("Microsof
 
 
 builder.Services.AddScoped<Project>();
+builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 
 builder.Services.AddSingleton<NotesCollectionViewModel, NotesCollectionViewModel>();
 builder.Services.AddSingleton<NotesCollectionService, NotesCollectionService>();
@@ -37,11 +38,14 @@ builder.Services.AddSingleton<PacketViewModel,PacketViewModel>();
 builder.Services.AddSingleton<NoteService, NoteService>();
 builder.Services.AddSingleton<NoteViewModel, NoteViewModel>();
 
+builder.Services.AddSingleton<ProjectService, ProjectService>();
+builder.Services.AddSingleton<ProjectViewModel, ProjectViewModel>();
 
 
-builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 builder.Services.AddSingleton<SkiaServices, SkiaServices>();
 builder.Services.AddSingleton<GetProjectFileJS, GetProjectFileJS>();
+
+
 
 builder.Services.AddSingleton<IMessageService, MessageService>();
 builder.Services.AddMasaBlazor();

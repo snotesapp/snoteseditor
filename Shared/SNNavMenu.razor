@@ -3,11 +3,14 @@
 @using System.Net.Http.Headers
 @using System.Net.Mime
 @using BlazorApp1.Pages.Components
-@inject SharedDataService dataSvs
+@using BlazorApp1.ViewModels;
+@using Blazored.SessionStorage
 
+@inject SharedDataService dataSvs
+@inject ProjectViewModel ProjectVM
+@inject NoteViewModel NoteVM
 @inject IJSRuntime JSRuntime
 
-@using Blazored.SessionStorage
 @inject ISessionStorageService sessionStorage
 
 
@@ -81,11 +84,18 @@
         dataSvs.OnChange -= StateHasChanged;
     }
 
-    private Task NavMenuGoToColl()
+    private async Task NavMenuGoToColl()
     {
-
-        return GoToMenu.InvokeAsync("collection");
+        if (dataSvs.selectedNCNotes is null || dataSvs.selectedNCNotes.Count == 0)
+        {
+            await NoteVM.GetNotes();
+        }
+        
+        await GoToMenu.InvokeAsync("collection");
     }
+
+    
+
 
     private Task NavMenuGoToCards()
     {
@@ -116,13 +126,13 @@
 
         if (!string.IsNullOrWhiteSpace(dataSvs.MainProject.Name))
         {
-            await dataSvs.UpdateProject();
+            await ProjectVM.UpdateProject();
 
         }
         else
         {
             dataSvs.MainProject.Name = tempName;
-            await dataSvs.UpdateProject();
+            await ProjectVM.UpdateProject();
         }
         renameproject = false;
     }

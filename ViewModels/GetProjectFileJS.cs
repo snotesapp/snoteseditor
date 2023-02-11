@@ -1,6 +1,6 @@
 ﻿using BlazorApp1.Helpers;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using System.Data;
 using System.IO.Compression;
 
 namespace BlazorApp1.ViewModels
@@ -9,37 +9,56 @@ namespace BlazorApp1.ViewModels
     {
 
         private readonly SharedDataService _dataSvs;
-        public GetProjectFileJS(SharedDataService dataSvs)
+        private readonly ProjectViewModel ProjectVM;
+
+        public GetProjectFileJS(SharedDataService dataSvs, ProjectViewModel projectVM)
         {
             _dataSvs = dataSvs;
+            ProjectVM = projectVM;
         }
 
 
         [JSInvokable]
         public async Task UpdateFileArray(string base64)
         {
+
+            // _dataSvs.CurrentStep = "Progress";
+
            
-                _dataSvs.CurrentStep = "Progress";
 
-                var fileArray = Convert.FromBase64String(base64);
-
-                using (var memoryStream = new MemoryStream(fileArray))
-                using (var zipArchive = new ZipArchive(memoryStream))
+            byte[] fileArray = Convert.FromBase64String(base64);
+            
+            using (var memoryStream = new MemoryStream(fileArray))
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
                 {
+                    if (archive.Entries.Count == 0)
+                    {
+                        Console.WriteLine("The contents of the base64 string is not a valid zip file.");
+                        return;
+                    }
+
                     var extractPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project");
-                    zipArchive.ExtractToDirectory(extractPath);
-
-
+                    archive.ExtractToDirectory(extractPath);
                 }
-
-
-                await _dataSvs.BuildProject();
-                Console.WriteLine("File Extracted");
             }
-    
-        
 
-       
-        // other methods...
+         
+
+            await ProjectVM.BuildProject();
+            
+
+        }
+
+
+        [JSInvokable]
+        public bool SetLoaderValue(bool value)
+        {
+            ProjectVM.Loader = value;
+            return value;
+        }
+
+
+
     }
 }

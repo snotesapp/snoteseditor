@@ -4,12 +4,12 @@
 @using SkiaSharp
 @inject SharedDataService dataSvs
 @inject PacketViewModel PacketVM
+@inject ProjectViewModel ProjectVM
 @inject NotesCollectionViewModel NotesCollectionVM
 @inject NoteViewModel NoteVM
 @inject IJSRuntime JSRuntime
 @inject IMessageService MessageService
 @inject SkiaServices skiaSvs
-
 
 
 @switch (dataSvs.menustatus)
@@ -22,27 +22,57 @@
 
             @if (dataSvs.UserAgent is null)
             {
-                <b>
-                </b>
-            }
 
-            else if (!(dataSvs.UserAgent.Contains("Firefox")))
+                <b>
+
+                </b>
+
+
+            }
+            else if ( !(dataSvs.UserAgent.Contains("Firefox")))
             {
 
-                <MButton Class="primary" title="Save" OnClick="() => SaveProject()" Height="45">
-                    <span class="bi bi-save2" style="font-size:24px;"></span>
 
+
+                <MButton Class="primary" title="Save"
+                    OnClick="() =>  ProjectVM.SaveProject()"
+                    Loading="ProjectVM.Loader"
+                    Disabled="ProjectVM.Loader"
+                    Height="45">
+
+                    <LoaderContent>
+                        <span class="spinner-border spinner-border-sm"></span>
+                    </LoaderContent>
+                    <ChildContent>
+                        <MIcon>
+                            mdi-content-save-outline
+                        </MIcon>
+
+                    </ChildContent>
+
+        
                 </MButton>
+              
 
             }
             else
             {
-                <MButton title="Download" OnClick="() => dataSvs.download_dialog = true"
-             Style="background-image:url(./images/download_icon.png);background-size:contain;background-position: center center" Height="45">
 
-                </MButton>
+                <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
+                    Loading="ProjectVM.Loader"
+                    Disabled="ProjectVM.Loader"
+			        Height="45">
+                    <LoaderContent>
+                        <span class="spinner-border spinner-border-sm"></span>
+                    </LoaderContent>
+                    <ChildContent>
+                        <MIcon>
+                            mdi-content-save-outline
+                        </MIcon>
+
+                    </ChildContent>
+				</MButton>
             }
-
 
         </div>
         <MDivider Class="mt-0"></MDivider>
@@ -51,7 +81,7 @@
         break;
     case "collection":
 
-        <MContainer Class="py-0 mt-2" Style="height:45px">
+        <MContainer Class="py-0 mt-3" Style="height:45px">
 
             @if (_addItem)
             {
@@ -148,7 +178,7 @@
         break;
     case "cards":
 
-        <MContainer Class="py-0 mt-2" Style="height:45px">
+        <MContainer Class="py-0 mt-3" Style="height:45px">
 
             @if (_addItem)
             {
@@ -261,11 +291,10 @@
             <MDivider></MDivider>
         </MContainer>
 
-
         break;
     case "notetools":
 
-        <MContainer Class="py-0 mt-2" Style="height:45px">
+        <MContainer Class="py-0 mt-3" Style="height:45px">
 
 
             <MRow>
@@ -341,7 +370,7 @@
         break;
     case "notecards":
 
-        <MContainer Class="py-0 mt-2" Style="height:45px">
+        <MContainer Class="py-0 mt-3" Style="height:45px">
 
             <MRow>
 
@@ -382,7 +411,7 @@
     private string textValue { get; set; }
     private bool _addItem { get; set; }
 
-
+   
     ElementReference inputTextRef;
 
     IJSObjectReference _module;
@@ -399,7 +428,7 @@
 
         NotesCollectionVM.OnChange += StateHasChanged;
         dataSvs.OnChange += StateHasChanged;
-
+        ProjectVM.OnChange += StateHasChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -574,16 +603,7 @@
 
     #endregion
 
-    private async Task SaveProject()
-    {
 
-        await dataSvs.DownloadProjectFile();
-        await _module.InvokeVoidAsync("getNewFileHandle", dataSvs.MainProject.Name);
-        dataSvs.SavingProject = true;
-        await _module.InvokeVoidAsync("blazorSaveFile", "application/zip", dataSvs.fileArray);
-        dataSvs.SavingProject = false;
-
-    }
 
 
     private async Task AddPacket()
@@ -685,7 +705,7 @@
     {
         if (dataSvs.filterPackets == true && dataSvs.FilterPacketsTxt == "")
         {
-            dataSvs.MainProject = await dataSvs.GetProject();
+            dataSvs.MainProject = await ProjectVM.GetProject();
             dataSvs.filterPackets = false;
         }
         else
@@ -720,6 +740,8 @@
     {
         NotesCollectionVM.OnChange -= StateHasChanged;
         dataSvs.OnChange -= StateHasChanged;
+
+        ProjectVM.OnChange -= StateHasChanged;
     }
 
 
