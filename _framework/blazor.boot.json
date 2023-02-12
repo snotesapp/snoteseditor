@@ -9,7 +9,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BlazorApp1.dll": "sha256-Nsrvlm+yJ118cWTouPMBCXMgixbOQHqE+T30ntJMgDU=",
+      "BlazorApp1.dll": "sha256-UofqJRkQumnLjB5Iufxf5sg39x\/NfdLo90kkXaengP4=",
       "BlazorComponent.dll": "sha256-E7X1sh0D5ouC4xt5DLyaHcE6+VRpOm9z3Gu7RQ7NCGU=",
       "Blazored.LocalStorage.dll": "sha256-6RRoYeDP3d0xabXmcCMF66wXeJlXVPem28Trs8sQiis=",
       "Blazored.SessionStorage.dll": "sha256-XkZNIC6OGMeHZDbBGnhfc9yXdLIvGa8LlKDd4ZPWkS8=",
@@ -55,7 +55,7 @@
       "OneOf.dll": "sha256-5P0aItpWxPIV7KrAC8xn1oUbB\/1dAF7D6bse5brMVTw=",
       "ReactiveUI.Blazor.dll": "sha256-AMRi7S0B3+dimiFpM6cWK2qpH87VUpjVGn8J1TVpcFs=",
       "ReactiveUI.dll": "sha256-AopA4cqb5fb7kXuT2VhIkij\/oo4K\/DMXj0iBEJIUKTo=",
-      "SkiaSharp.dll": "sha256-BLne99kNF8a3WEYNPkIr8u09JfBkgWiRskt65H2WUJ4=",
+      "SkiaSharp.dll": "sha256-XO2JqkmL\/rM5LsWPW+D\/cSc9TMkw9QL6NIUQdyJeZYg=",
       "SkiaSharp.Views.Blazor.dll": "sha256-m0\/YvrmLnHMtqOKUSqAyvxiKSd63EIAMPk32D8qpLd8=",
       "Splat.dll": "sha256-+pEUseJF47FVRujrtgkCtZp6MXuGCUh\/XAkm28UEBDs=",
       "SQLitePCLRaw.batteries_v2.dll": "sha256-D5mV7qdzeshgoUyamVwEItfefkw9X0Srm34u57kfJxA=",
@@ -124,7 +124,7 @@
     "libraryInitializers": null,
     "pdb": null,
     "runtime": {
-      "dotnet.6.0.13.oxu5eoyyg7.js": "sha256-XjBobr4CvH2MzODfBP3qDdqfKEJ+aySZN60alE6Quw8=",
+      "dotnet.6.0.13.x7eitbtfg1.js": "sha256-XjBobr4CvH2MzODfBP3qDdqfKEJ+aySZN60alE6Quw8=",
       "dotnet.timezones.blat": "sha256-WPkGR3RGK4nRx1ZL+q1a\/p6EefifFVyR\/nGNrnu\/vls=",
       "dotnet.wasm": "sha256-4FHRM77hxDRcx7PowAbBTfamXD05rDapRLCnOm4nwEI=",
       "icudt_CJK.dat": "sha256-WPyI4hWDPnOw62Nr27FkzGjdbucZnQD+Ph+GOPhAedw=",
