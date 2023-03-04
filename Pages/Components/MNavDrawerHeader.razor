@@ -721,6 +721,10 @@
 
         try
         {
+            if (dataSvs.ncDragingMode)
+        {
+            dataSvs.ncDragingMode = false;
+        }
             await PacketVM.GetPacket(subPacket);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
         }

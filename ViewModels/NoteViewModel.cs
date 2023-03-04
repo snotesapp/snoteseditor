@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
+using System.Data;
 
 namespace BlazorApp1.ViewModels
 {
@@ -19,6 +20,22 @@ namespace BlazorApp1.ViewModels
             SharedDataService_service = sharedDataService_service;
         }
 
+        public void AddNCNotes(NotesCollection notesCollection)
+        {
+
+            SharedDataService_service.AddNotesSelectedNC = notesCollection;
+            SharedDataService_service.editNote = new Note()
+            {
+                NotesCollectionFK = notesCollection.NotesCollectionID,
+                Images = new List<NoteImage>(),
+                NotePaths = new List<NotePath>(),
+                BackgroundColor = SharedDataService_service.noteBackgroundColor,
+            };
+
+            SharedDataService_service.SwitchMenus("notetools");
+           
+
+        }
         public async Task SaveNote()
         {
             SharedDataService_service.noteBackgroundColor = SharedDataService_service.editNote.BackgroundColor;

@@ -212,7 +212,7 @@
         ProjectVM.Loader = false;
 
         await CloseDialoge.InvokeAsync(false);
-        
+
     }
 
 
@@ -222,10 +222,11 @@
         await _module.InvokeVoidAsync("OpenSnotesFile");
 
         ProjectVM.Loader = false;
+        dataSvs.SwitchMenus("cards");
         StateHasChanged();
 
         dataSvs.newProjectDialog = false;
-        
+
     }
 
 
@@ -276,7 +277,7 @@
             };
 
         await NotesCollectionVM.AddNotesCollection(defaultNC);
-       
+        NoteVM.AddNCNotes(defaultNC);
         await CloseDialoge.InvokeAsync(false);
     }
 
