@@ -154,8 +154,6 @@
 
     }
 
-
-
     private async Task HandleOnChange(IBrowserFile file)
     {
 
@@ -215,7 +213,6 @@
 
     }
 
-
     private async Task OpenZipFile()
     {
 
@@ -229,14 +226,11 @@
 
     }
 
-
-
     private async Task CreateProject()
     {
         dataSvs.MainProject.Name = projectname;
 
         dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
-
 
         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
         DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");

@@ -73,7 +73,6 @@ namespace BlazorApp1.Data
             modelBuilder.Entity<NotePacket>().HasOne(cd => cd.Note).WithMany(i => i.NotePackets).HasForeignKey(cd => cd.NoteID);
             modelBuilder.Entity<NotePacket>().Ignore(dv => dv.IsDragOver);
    
-
             modelBuilder.Entity<Packet>().HasOne(c => c.Parent).WithMany().HasForeignKey(p => p.ParentID).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Packet>().Ignore(ed => ed.Editable);
 
