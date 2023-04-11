@@ -1,3 +1,5 @@
+@import '_content/Blazor.Bootstrap/Blazor.Bootstrap.bundle.scp.css';
+
 /* /Pages/Components/CardsMenu.razor.rz.scp.css */
 body[b-qrno289psk] {
 }
@@ -78,13 +80,6 @@ body[b-vle9q6oerg] {
 [b-vle9q6oerg]::-webkit-scrollbar {
     width: 1px;
 }
-/* /Pages/Components/NewPrjctWizard.razor.rz.scp.css */
-body[b-6bpc3fogjw] {
-}
-
-
-
-
 /* /Pages/Components/NoteCardsMenu.razor.rz.scp.css */
 body[b-z1ve5mkxkt] {
 }
