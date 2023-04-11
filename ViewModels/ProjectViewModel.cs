@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Data;
 using BlazorApp1.Helpers;
 using BlazorApp1.Services;
+using BlazorBootstrap;
 using DynamicData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -18,7 +19,7 @@ namespace BlazorApp1.ViewModels
         private readonly SharedDataService SharedDataService_service;
         private readonly IJSRuntime jSRuntime_JS;
 
-
+        public Modal? newProjectModal;
         public ProjectViewModel(SharedDataService sharedDataService,ProjectService projectService,IJSRuntime jsRuntime)
         {
             this.SharedDataService_service = sharedDataService;

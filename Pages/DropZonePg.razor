@@ -46,17 +46,17 @@
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
                              @oncontextmenu="@(args => ShowImgContextMenu(args,ncimg))"
                              @oncontextmenu:preventDefault="true"
-                             @oncontextmenu:stopPropagation>
+                                @oncontextmenu:stopPropagation>
 
                                     <img id="ncimage_@ncimg.NoteImageID" title="image_@(ncimg.NoteImageID)"
                                  @onclick="(() => SelectImage(ncimg))"
-                                 class="rounded mx-auto d-block  "
-                                 width="@ncimg.Width" height="@ncimg.Height"
-                                 style="
+                                         class="rounded mx-auto d-block  "
+                                         width="@ncimg.Width" height="@ncimg.Height"
+                                         style="
                                         border:2px none gray;
                                         border-radius:6px"
-                                 draggable="false"
-                                 src="@ncimg.Location">
+                                         draggable="false"
+                                         src="@ncimg.Location">
 
                                 </div>
 
@@ -67,23 +67,23 @@
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
                              @oncontextmenu="@(args =>  ShowImgContextMenu(args,ncimg))"
                              @oncontextmenu:preventDefault="true"
-                             @oncontextmenu:stopPropagation>
+                                @oncontextmenu:stopPropagation>
 
 
                                     <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))" title="image_@(ncimg.NoteImageID)"
                                  @onpointerdown="((de) => ImgDragStart(de,ncimg))"
                                  @onpointerup="((de) => ImgDragEnd(de,ncimg))"
-                                 class="rounded mx-auto d-block  "
-                                 width="@ncimg.Width" height="@ncimg.Height"
-                                 style="
+                                         class="rounded mx-auto d-block  "
+                                         width="@ncimg.Width" height="@ncimg.Height"
+                                         style="
 
                                         border:2px dotted gray;
                                         border-radius:6px"
-                                 draggable="false"
-                                 src="@ncimg.Location">
+                                         draggable="false"
+                                         src="@ncimg.Location">
 
                                     <div class="position-absolute top-100 start-100 translate-middle" draggable="true"
-                                 style="cursor:nwse-resize;border-style:none solid solid none;width:15px;height:15px"
+                                         style="cursor:nwse-resize;border-style:none solid solid none;width:15px;height:15px"
                                  @ondragstart="((re) => ResizeStart(re,ncimg))"
                                  @ondrag="((re) => ResizeMove(re,ncimg))"
                                  @ondragend="((re) => ResizeEnd(re,ncimg))">
@@ -168,66 +168,66 @@
 
                         </MTextarea>
 
-                    </MExpansionPanelContent>
-                </MExpansionPanel>
+                        </MExpansionPanelContent>
+                        </MExpansionPanel>
 
-            </MExpansionPanels>
-
-
+                        </MExpansionPanels>
 
 
-            @if (ContextImg != null)
+
+
+                        @if (ContextImg != null)
             {
                 <MMenu @bind-Value="ShowImgContext" OnOutsideClick="()=> skiaSvs.UpdateBitmap()"
                    PositionX="X"
                    PositionY="Y"
                    Absolute
                    CloseOnContentClick="false">
-                    <MList Dense Width="200">
+                <MList Dense Width="200">
 
-                        <MListItem OnClick="() =>  ImgZoomIn(ContextImg)">
-                            <MListItemIcon>
-                                <MIcon>
-                                    mdi-magnify-plus-outline
-                                </MIcon>
-                            </MListItemIcon>
-                            <MListItemContent>
+                    <MListItem OnClick="() =>  ImgZoomIn(ContextImg)">
+                        <MListItemIcon>
+                            <MIcon>
+                                mdi-magnify-plus-outline
+                            </MIcon>
+                        </MListItemIcon>
+                        <MListItemContent>
 
-                                <MListItemTitle>
-                                    ZoomIn
-                                </MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
+                            <MListItemTitle>
+                                ZoomIn
+                            </MListItemTitle>
+                        </MListItemContent>
+                    </MListItem>
 
-                        <MListItem OnClick="() => ImgZoomOut(ContextImg)">
-                            <MListItemIcon>
-                                <MIcon>
-                                    mdi-magnify-minus-outline
-                                </MIcon>
-                            </MListItemIcon>
-                            <MListItemContent>
+                    <MListItem OnClick="() => ImgZoomOut(ContextImg)">
+                        <MListItemIcon>
+                            <MIcon>
+                                mdi-magnify-minus-outline
+                            </MIcon>
+                        </MListItemIcon>
+                        <MListItemContent>
 
-                                <MListItemTitle>
-                                    ZoomOut
-                                </MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
-                        <MListItem OnClick="() => RemoveNoteImg(ContextImg)">
-                            <MListItemIcon>
-                                <MIcon>
+                            <MListItemTitle>
+                                ZoomOut
+                            </MListItemTitle>
+                        </MListItemContent>
+                    </MListItem>
+                    <MListItem OnClick="() => RemoveNoteImg(ContextImg)">
+                        <MListItemIcon>
+                            <MIcon>
 
-                                    mdi-image-remove
-                                </MIcon>
-                            </MListItemIcon>
-                            <MListItemContent>
-                                <MListItemTitle>
-                                    Remove
-                                </MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
+                                mdi-image-remove
+                            </MIcon>
+                        </MListItemIcon>
+                        <MListItemContent>
+                            <MListItemTitle>
+                                Remove
+                            </MListItemTitle>
+                        </MListItemContent>
+                    </MListItem>
 
                     </MList>
-                </MMenu>
+                    </MMenu>
 
             }
 
@@ -252,20 +252,20 @@
                     </MListItem>
 
                 </MList>
-            </MMenu>
+                </MMenu>
 
-        </MCard>
+                </MCard>
 
-    </MRow>
+                </MRow>
 
-    <AlertDialog DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
+                <AlertDialog DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
 
-    </AlertDialog>
+                </AlertDialog>
 
-</MCol>
+                </MCol>
 
 
-@code {
+                @code {
 
     ElementReference dropZoneElement;
     ElementReference inputFileContainer;
@@ -412,7 +412,7 @@
     }
     private void ResizeMove(DragEventArgs re, NoteImage _noteImage)
     {
-   
+
         if (resizing)
         {
             _noteImage.Width += (int)re.OffsetX;
@@ -453,7 +453,7 @@
 
         if (dragstarted)
         {
-   
+
             pos1 = pos3 - Convert.ToInt16(de.ClientX);
             pos2 = pos4 - Convert.ToInt16(de.ClientY);
             pos3 = Convert.ToInt16(de.ClientX);
@@ -839,7 +839,7 @@
 
             Stream stream = new MemoryStream(bitArrayImg);
             var dotnetImageStream = new DotNetStreamReference(stream);
-           
+
             var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
 
             SaveImage(fPath, "image/png");

@@ -2,6 +2,7 @@
 @using BlazorApp1.Data
 @using BlazorApp1.Pages.Components
 @using System.Collections.ObjectModel
+@using BlazorBootstrap
 @inject Project newprjct;
 
 @using BlazorApp1.Helpers
@@ -33,7 +34,7 @@
 
 @if (dataSvs.menustatus == "notetools")
 {
-    <MRow>
+    <MRow >
 
         <DropZonePg />
     </MRow>
@@ -208,16 +209,17 @@ else
     </div>
 
 
-    @if (dataSvs.MainProject.ProjectID == 0)
-    {
-        <SNmodal Width="700" Height="300" IsOpen="@dataSvs.newProjectDialog">
-            <NewPrjctWizard CloseDialoge="OpenCloseDialog">
 
-            </NewPrjctWizard>
-        </SNmodal>
+    @if(@dataSvs.newProjectDialog){
+        <Modal @ref="ProjectVM.newProjectModal" BodyCssClass="p-0" ShowCloseButton="false" IsVerticallyCentered="true"
+             Size="ModalSize.Large" UseStaticBackdrop="true">
+            <BodyTemplate>
+                <NewProjectModal CloseDialoge="OpenCloseDialog"></NewProjectModal>
+            </BodyTemplate>
 
+        </Modal>
     }
-
+ 
 
     @if (ContextMenuNote != null)
     {
@@ -380,7 +382,7 @@ else
 
     private string? filterNotes;
 
-
+   
 
     protected override void OnInitialized()
     {
@@ -395,7 +397,7 @@ else
            else
            {
                dataSvs.selectedNCNotes = await NoteVM.GetNotes(searchTerm);
-              
+
            }
            StateHasChanged();
        });
@@ -411,7 +413,7 @@ else
            else
            {
                dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
-               
+
            }
            StateHasChanged();
        });
@@ -435,7 +437,14 @@ else
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
+         
+            if (dataSvs.MainProject.ProjectID == 0)
+            {
+                await ProjectVM.newProjectModal?.ShowAsync();
 
+            }
+            
+           
 
         }
 
@@ -529,11 +538,11 @@ else
     }
 
 
-    protected void OpenCloseDialog(bool dialogState)
+    private async Task OpenCloseDialog(bool dialogState)
     {
-
+       
         dataSvs.newProjectDialog = dialogState;
-
+       
     }
 
 

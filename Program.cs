@@ -4,6 +4,7 @@ using BlazorApp1.Helpers;
 using BlazorApp1.Repositories;
 using BlazorApp1.Services;
 using BlazorApp1.ViewModels;
+using BlazorBootstrap;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
@@ -15,7 +16,6 @@ using Microsoft.JSInterop;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-
 
 
 
@@ -53,6 +53,7 @@ builder.Services.AddMasaBlazor();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
+builder.Services.AddBlazorBootstrap();
 
 //builder.Services.AddDbContext<DataContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlite<SNotesDBContext>("Data Source=snotesonline.db");

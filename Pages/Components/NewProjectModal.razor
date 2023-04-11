@@ -3,6 +3,7 @@
 @using System.IO.Compression
 @using System.Text.Json
 @using BlazorApp1.ViewModels;
+@using BlazorBootstrap;
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
 @using SkiaSharp;
@@ -22,96 +23,96 @@
 
 
 
-        <MCard Class="p-1 h-100 w-100">
-            <MCardTitle Class="text-h5 gradient-blue">
+<MCard Class="p-0  h-100 w-100">
+   
+     <MCardTitle Class="text-h5 gradient-blue">
                 Create Project
-            </MCardTitle>
+    </MCardTitle>
+    <MCard Flat Class="mx-3 py-4">
 
-            <MCard Flat Class="mx-3 py-4">
-
-                <div class="input-group elevation-2 rounded-3 shadow mb-3">
-                    <span class="input-group-text" id="basic-addon1">
-                        <MIcon>
-                            mdi-plus
-                        </MIcon>
-                    </span>
-                    <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Project Name">
-                    <MButton Class="primary" aria-label="Create SNotes Project" title="Create SNotes Project"
+        <div class="input-group elevation-2 rounded-3 shadow mb-3">
+            <span class="input-group-text" id="basic-addon1">
+                <MIcon>
+                    mdi-plus
+                </MIcon>
+            </span>
+            <input type="text" class="form-control" placeholder="Project Name" @bind-value="projectname" aria-label="Project Name">
+            <MButton Class="primary" aria-label="Create SNotes Project" title="Create SNotes Project"
                      OnClick="CreateProject">
-                        <MIcon>
-                            mdi-play
-                        </MIcon>
-                    </MButton>
+                <MIcon>
+                    mdi-play
+                </MIcon>
+            </MButton>
 
-                </div>
-                <MDivider />
-
-
-                @if (dataSvs.UserAgent is null)
-                {
-
-                    <b>
-
-                    </b>
+        </div>
+        <MDivider />
 
 
-                }
-                else if (!(dataSvs.UserAgent.Contains("Firefox")))
-                {
-                    <MButton Class="primary elevation-2 rounded-3 shadow w-100 "
-                        Loading="ProjectVM.Loader"
-                        Disabled="ProjectVM.Loader"
-                        OnClick="() => OpenZipFile()">
+        @if (dataSvs.UserAgent is null)
+        {
 
-                        <LoaderContent>
-                            <span class="spinner-border spinner-border-sm"></span>
-                        </LoaderContent>
-                        <ChildContent>
-                            <MIcon>
-                                mdi-folder-open-outline
-                            </MIcon>
+            <b>
 
-                        </ChildContent>
-                        
-                    </MButton>
-                }
-                else
-                {
+            </b>
 
-                    <div class="input-group elevation-2 rounded-3 shadow">
-                        <span class="input-group-text " id="basic-addon1">
-                            <MIcon>
-                                mdi-file-upload-outline
-                            </MIcon>
-                        </span>
 
-                        <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
+        }
+        else if (!(dataSvs.UserAgent.Contains("Firefox")))
+        {
+            <MButton Class="primary elevation-2 rounded-3 shadow w-100 "
+                 Loading="ProjectVM.Loader"
+                 Disabled="ProjectVM.Loader"
+                 OnClick="() => OpenZipFile()">
+
+                <LoaderContent>
+                    <span class="spinner-border spinner-border-sm"></span>
+                </LoaderContent>
+                <ChildContent>
+                    <MIcon>
+                        mdi-folder-open-outline
+                    </MIcon>
+
+                </ChildContent>
+
+            </MButton>
+        }
+        else
+        {
+
+            <div class="input-group elevation-2 rounded-3 shadow">
+                <span class="input-group-text " id="basic-addon1">
+                    <MIcon>
+                        mdi-file-upload-outline
+                    </MIcon>
+                </span>
+
+                <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
                         Disabled="ProjectVM.Loader"
                         PrependIcon="null"
                         Accept="application/snotes"
                         Label="Import SNotes File"></MFileInput>
 
 
-                    </div>
+            </div>
 
 
-                }
+        }
 
 
-            </MCard>
+    </MCard>
 
 
-            <MCardActions>
+    <MCardActions>
 
-                <span class="w-100 text-dark" style="font-size:16px">
-                    By using this app, you are accepting the
-                    <a class="text-dark " href="TermsAndConditions">Terms and Conditions</a> and
-                    the <a class="text-dark " href="PrivacyPolicy">Privacy Policy</a>.
+        <span class="w-100 text-dark" style="font-size:16px">
+            By using this app, you are accepting the
+            <a class="text-dark " href="TermsAndConditions">Terms and Conditions</a> and
+            the <a class="text-dark " href="PrivacyPolicy">Privacy Policy</a>.
 
-                </span>
+        </span>
 
-            </MCardActions>
-        </MCard>
+    </MCardActions>
+</MCard>
 
 
 
@@ -131,9 +132,11 @@
     [Parameter]
     public EventCallback<bool> CloseDialoge { get; set; }
 
+    
+
     protected override void OnInitialized()
     {
-        _getProjectFileJS = new GetProjectFileJS(dataSvs,ProjectVM);
+        _getProjectFileJS = new GetProjectFileJS(dataSvs, ProjectVM);
         ProjectVM.OnChange += StateHasChanged;
     }
 
@@ -272,7 +275,10 @@
 
         await NotesCollectionVM.AddNotesCollection(defaultNC);
         NoteVM.AddNCNotes(defaultNC);
+
         await CloseDialoge.InvokeAsync(false);
+
+        //await ProjectVM.newProjectModal.HideAsync();
     }
 
     public void Dispose()
