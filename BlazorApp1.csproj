@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <WasmBuildNative>true</WasmBuildNative>
+    <EmccTotalMemory>16777216</EmccTotalMemory>
   </PropertyGroup>
 
   <ItemGroup>
