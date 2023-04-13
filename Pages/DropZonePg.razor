@@ -16,9 +16,9 @@
 @inject NoteViewModel NoteVM
 @inject SharedDataService dataSvs
 
-
-        <MContainer Fluid Class="m-1 overflow-auto">
-
+<MCol>
+    <MRow>
+        <MCard  Elevation="3" class=" m-1 p-0 overflow-auto" >
             <div @ref="@dropZoneElement" class="position-relative "
                  style="
                         width: @(dataSvs.editNote.MainImgWidth)px;
@@ -128,52 +128,51 @@
                 </div>
 
             </div>
+        
+        <MExpansionPanels id="summarypannel" Style="width:50%;position:absolute;bottom:10px;left:25%" Class="elevation-6 m-2">
+
+                <MExpansionPanel>
+                    <MExpansionPanelHeader DisableIconRotate>
+
+                        <ChildContent>
+                            Summary
+                        </ChildContent>
+
+                        <ActionsContent>
+                            @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                            {
+                                <MIcon Color="teal">
+                                    mdi-check
+                                </MIcon>
+                            }
+                            else
+                            {
+                                <MIcon Color="error">
+                                    mdi-alert-circle
+                                </MIcon>
+                            }
+
+                        </ActionsContent>
+
+                    </MExpansionPanelHeader>
+                    <MExpansionPanelContent>
+                        <MTextarea Outlined NoResize Class="font-class" TextColor="black" Counter="true" Clearable Rules="_rules"
+                                   Placeholder="Write something"
+                                   OnChange="() =>{ skiaSvs.UpdateBitmap();}"
+                                   @bind-Value="@(dataSvs.editNote.Text)">
 
 
-    <MExpansionPanels id="summarypannel" Style="width:75%;position:absolute;bottom:30px;left:12%" Class="elevation-6 m-2">
+                        </MTextarea>
 
-        <MExpansionPanel>
-            <MExpansionPanelHeader DisableIconRotate>
+                        </MExpansionPanelContent>
+                        </MExpansionPanel>
 
-                <ChildContent>
-                    Summary
-                </ChildContent>
-
-                <ActionsContent>
-                    @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
-                    {
-                        <MIcon Color="teal">
-                            mdi-check
-                        </MIcon>
-                    }
-                    else
-                    {
-                        <MIcon Color="error">
-                            mdi-alert-circle
-                        </MIcon>
-                    }
-
-                </ActionsContent>
-
-            </MExpansionPanelHeader>
-            <MExpansionPanelContent>
-                <MTextarea Outlined NoResize Class="font-class" TextColor="black" Counter="true" Clearable Rules="_rules"
-                           Placeholder="Write something"
-                           OnChange="() =>{ skiaSvs.UpdateBitmap();}"
-                           @bind-Value="@(dataSvs.editNote.Text)">
-
-
-                </MTextarea>
-
-                </MExpansionPanelContent>
-                </MExpansionPanel>
-
-                </MExpansionPanels>
+                        </MExpansionPanels>
 
 
 
 
-           @if (ContextImg != null)
+         @if (ContextImg != null)
             {
                 <MMenu @bind-Value="ShowImgContext" OnOutsideClick="()=> skiaSvs.UpdateBitmap()"
                    PositionX="X"
@@ -251,16 +250,16 @@
                 </MList>
                 </MMenu>
 
-        </MContainer>
-       
+        </MCard>
+    </MRow>
 
- 
-
-
-                <AlertDialog DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
+    <AlertDialog DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
 
                 </AlertDialog>
 
+
+</MCol>
+       
 
 
 
