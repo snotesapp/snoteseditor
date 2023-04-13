@@ -57,7 +57,7 @@
 
 
         }
-        else if (!(dataSvs.UserAgent.Contains("Firefox")))
+        else if (!(dataSvs.UserAgent.Contains("Firefox")) || !(dataSvs.UserAgent.Contains("Mobile")))
         {
             <MButton Class="primary elevation-2 rounded-3 shadow w-100 "
                  Loading="ProjectVM.Loader"

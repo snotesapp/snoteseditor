@@ -7,6 +7,7 @@
 
 
 @using BlazorApp1.ViewModels;
+@using BlazorBootstrap;
 @using Microsoft.JSInterop
 @using SkiaSharp
 @using SkiaSharp.Views.Blazor
@@ -32,24 +33,21 @@
                     @(downAnimation ? "slide-animation-down" : "")
                     @(leftAnimation ? "slide-animation-left" : "")
                     @(rightAnimation ? "slide-animation-right" : "")"
-                 style=";
-        width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
-        height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
-        background-color:@dataSvs.SelectedNoteCard.Note.BackgroundColor">
+                         style=";
+                            width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
+                            height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
+                            background-color:@dataSvs.SelectedNoteCard.Note.BackgroundColor">
 
                         <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images">
                             <ImgTemplate Context="ncimg">
-                                <span class="position-relative" style="left:@(@ncimg.X)px;
-                        top:@(@ncimg.Y)px">
+                                <span class="position-relative" style="left:@(@ncimg.X)px;top:@(@ncimg.Y)px">
 
 
                                     <img id="ncimage_@ncimg.NoteImageID" draggable="true"
-                                 style="
-                    border:4px none #1565c0;
-                    border-radius:6px"
-                                 width="@ncimg.Width" height="@ncimg.Height"
-                                 class="rounded mx-auto d-block position-absolute  "
-                                 src="@ncimg.Location" alt="zoom image">
+                                         style="border:4px none #1565c0;border-radius:6px"
+                                         width="@ncimg.Width" height="@ncimg.Height"
+                                         class="rounded mx-auto d-block position-absolute  "
+                                         src="@ncimg.Location" alt="zoom image">
 
                                 </span>
 
@@ -59,9 +57,9 @@
                         @if (dataSvs.SelectedNoteCard.Note is not null)
                         {
                             <div style="pointer-events:@(PointerEvent); width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
-    height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px; ">
+                                    height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px; ">
                                 <SKCanvasView @ref="skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
-                                  style="position: absolute;
+                                              style="position: absolute;
                 top: 0;background-color:transparent;
                 left: 0; width:inherit;height:inherit;
                 pointer-events:inherit">
@@ -94,7 +92,7 @@
 
             </MCard>
 
-            @if ( dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
+            @if (dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
             {
                 <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
@@ -106,7 +104,7 @@
                             <button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
                             @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
 							"
-                            type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent,true))">
+                                    type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent,true))">
                                 <i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
                                 @if (dataSvs.SelectedCard.Parent is not null)
                                 {
@@ -133,7 +131,7 @@
                         <div class="col-4 offset-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3
                               @(!dataSvs.SelectedCard.NotePackets.Any() || !dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")"
-                            type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
+                                    type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
                                 <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
                             </button>
 
@@ -144,39 +142,38 @@
 
                         <div class="col-4 offset-4 p-0">
 
-                            <div class="dropdown">
-
-                                <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
+                           
+                            <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
                                  @((dataSvs.ChildCards is not null && dataSvs.ChildCards.Count > 0) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled") "
-                                type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
-                                </button>
+                                    type="button" @onclick="ToggleContentAsync">
+                                <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
+                            </button>
 
-                                <ul class="dropdown-menu  p-0" style="background-color:transparent;width:200px;max-height:30vh;overflow:auto" aria-labelledby="dropdownMenuButton1">
-                                    <ListTemplate Items="dataSvs.ChildCards">
-                                        <RowTemplate Context="card">
-                                            <MListItem Class="dropdown-item elevation-4 rounded-3" Link
-                                               style="background-color:#1565c0; margin-bottom:2px"
-                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
-                                                <MListItemContent>
-                                                    <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
+                            <Collapse @ref="collapse1" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
+                                <ListTemplate Items="dataSvs.ChildCards">
+                                    <RowTemplate Context="card">
+                                        <MListItem Class="dropdown-item elevation-4 rounded-3" Link
+                                                               style="background-color:#1565c0; margin-bottom:2px"
+                                           Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
+                                        <MListItemContent>
+                                        <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
 
-                                                </MListItemContent>
-                                            </MListItem>
+                                        </MListItemContent>
+                                        </MListItem>
 
-                                        </RowTemplate>
+                                    </RowTemplate>
 
                                     </ListTemplate>
 
-                                </ul>
+                            </Collapse>
+
+
                             </div>
 
                         </div>
 
+
                     </div>
-
-
-                </div>
 
             }
 
@@ -190,9 +187,9 @@ else
         <MButton Class="primary position-absolute top-50 start-50 translate-middle"
              OnClick='() => dataSvs.SwitchMenus("collection")'>
             <MIcon Left>mdi-arrow-left</MIcon>
-            Add Notes
-        </MButton>
-    </div>
+        Add Notes
+    </MButton>
+</div>
 
 }
 
@@ -212,6 +209,9 @@ else
 
     [CascadingParameter]
     public Error? Error { get; set; }
+
+    Collapse? collapse1 = default!;
+
 
     protected override void OnInitialized()
     {
@@ -249,7 +249,7 @@ else
             FilterQuality = SKFilterQuality.High,
             BlendMode = SKBlendMode.SrcOver,
             PathEffect = SKPathEffect.CreateCorner(45)
-            
+
 
 
         };
@@ -261,7 +261,7 @@ else
         SKSurface surface = args.Surface;
         SKCanvas canvas = args.Surface.Canvas;
 
-       try
+        try
         {
             canvas.Clear();
 
@@ -319,9 +319,9 @@ else
         try
         {
             if (dataSvs.ncDragingMode)
-             {
+            {
                 dataSvs.ncDragingMode = false;
-             }
+            }
 
             await PacketVM.GetPacket(subPacket);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
@@ -344,6 +344,8 @@ else
 
 
     }
+
+    private async Task ToggleContentAsync() => await collapse1.ToggleAsync();
     #endregion
 
     private void MessageHandler()

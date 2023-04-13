@@ -39,7 +39,7 @@ namespace BlazorApp1.Helpers
         public int menuCols = 2;
         public int bodyCols = 10;
 
-        private bool _newProjectDialog;
+        private bool _newProjectDialog ;
         public bool newProjectDialog
         {
             get { return _newProjectDialog; }

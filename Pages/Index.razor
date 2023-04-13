@@ -144,7 +144,7 @@ else
     </div>
 
 
-    <div class="overflow-auto d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" @ref="_mainPg">
+    <div class="overflow-auto  d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" @ref="_mainPg">
 
         <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
             <NoteTemplate Context="note">
@@ -209,16 +209,19 @@ else
     </div>
 
 
+   
+  
 
-    @if(@dataSvs.newProjectDialog){
-        <Modal @ref="ProjectVM.newProjectModal" BodyCssClass="p-0" ShowCloseButton="false" IsVerticallyCentered="true"
-             Size="ModalSize.Large" UseStaticBackdrop="true">
-            <BodyTemplate>
-                <NewProjectModal CloseDialoge="OpenCloseDialog"></NewProjectModal>
-            </BodyTemplate>
+    @if (dataSvs.MainProject.ProjectID == 0)
+    {
+        <SNmodal Width="700" Height="300" IsOpen="@dataSvs.newProjectDialog">
+            <NewProjectModal CloseDialoge="OpenCloseDialog">
 
-        </Modal>
+            </NewProjectModal>
+        </SNmodal>
+
     }
+
  
 
     @if (ContextMenuNote != null)
@@ -349,7 +352,6 @@ else
 
 
 
-
 }
 
 
@@ -381,9 +383,7 @@ else
     double Y = 0;
 
     private string? filterNotes;
-
-   
-
+  
     protected override void OnInitialized()
     {
         dataSvs.WhenAnyValue(x => x.SearchTerm)
@@ -424,8 +424,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        dataSvs.newProjectDialog = true;
-
+       
+        
     }
 
 
@@ -437,14 +437,14 @@ else
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-         
+
             if (dataSvs.MainProject.ProjectID == 0)
             {
-                await ProjectVM.newProjectModal?.ShowAsync();
-
+               //await ProjectVM.newProjectModal?.ShowAsync();
+                dataSvs.newProjectDialog = true;
             }
-            
-           
+
+
 
         }
 
@@ -540,7 +540,7 @@ else
 
     private async Task OpenCloseDialog(bool dialogState)
     {
-       
+       // await ProjectVM.newProjectModal?.HideAsync();
         dataSvs.newProjectDialog = dialogState;
        
     }
