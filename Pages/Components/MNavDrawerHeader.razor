@@ -29,12 +29,12 @@
 
 
             }
-            else if (!(dataSvs.UserAgent.Contains("Mobile")))
+            else if (dataSvs.UserAgent.Contains("Mobile"))
             {
                 <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
-             Loading="ProjectVM.Loader"
-             Disabled="ProjectVM.Loader"
-             Height="45">
+                    Loading="ProjectVM.Loader"
+                    Disabled="ProjectVM.Loader"
+                    Height="45">
                     <LoaderContent>
                         <span class="spinner-border spinner-border-sm"></span>
                     </LoaderContent>
@@ -52,10 +52,10 @@
 
 
                 <MButton Class="primary" title="Save"
-                    OnClick="() =>  ProjectVM.SaveProject()"
-                    Loading="ProjectVM.Loader"
-                    Disabled="ProjectVM.Loader"
-                    Height="45">
+             OnClick="() =>  ProjectVM.SaveProject()"
+             Loading="ProjectVM.Loader"
+             Disabled="ProjectVM.Loader"
+             Height="45">
 
                     <LoaderContent>
                         <span class="spinner-border spinner-border-sm"></span>
@@ -67,7 +67,7 @@
 
                     </ChildContent>
 
-        
+
                 </MButton>
 
 
@@ -76,9 +76,9 @@
             {
 
                 <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
-                    Loading="ProjectVM.Loader"
-                    Disabled="ProjectVM.Loader"
-			        Height="45">
+             Loading="ProjectVM.Loader"
+             Disabled="ProjectVM.Loader"
+             Height="45">
                     <LoaderContent>
                         <span class="spinner-border spinner-border-sm"></span>
                     </LoaderContent>
@@ -88,7 +88,7 @@
                         </MIcon>
 
                     </ChildContent>
-				</MButton>
+                </MButton>
             }
 
         </div>
