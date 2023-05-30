@@ -309,12 +309,40 @@ else
                 <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
 
                     <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
-                        <RowTemplate Context="card">
+                        <RowTemplate Context="packet">
 
-                            <button type="button" title="@card.Title" class="list-group-item list-group-item-action mb-1 shadow rounded truncate-text" style="background-color:#5e92f3"
-                            @onclick="@(() => {AddUserSelectedNotes(card).GetAwaiter().GetResult(); addcard_dialog=false; })">
-                                @card.Title
-                            </button>
+
+                            @if (packet.Parent is null)
+                            {
+                                <MListItem Link style="background-color:#1565c0"
+                                    OnClick ="@(() => {AddUserSelectedNotes(packet).GetAwaiter().GetResult(); addcard_dialog=false; })"
+                                   Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
+                            <MListItemContent >
+                                <MListItemTitle>@packet.Title </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+                            }
+                            else
+                            {
+
+
+                                <MListItem Link style="background-color:#1565c0"
+                                   OnClick ="@(() => {AddUserSelectedNotes(packet).GetAwaiter().GetResult(); addcard_dialog=false; })"
+                                   Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
+                            <MListItemContent>
+                                <MListItemTitle>@packet.Title </MListItemTitle>
+
+                                <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
+
+
+                            </MListItemContent>
+                        </MListItem>
+
+
+                            }
+
+                          
+
 
                         </RowTemplate>
 
