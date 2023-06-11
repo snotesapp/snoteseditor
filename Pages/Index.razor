@@ -83,11 +83,35 @@ else if (dataSvs.menustatus == "cards")
 
                     <ListTemplate Items="@(moveto_filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.ToLower().Contains(dataSvs.FilterPacketsTxt.Trim().ToLower()) ).ToList() : dataSvs.SelectionCards)">
                         <RowTemplate Context="packet">
+                            @if (packet.Parent is null)
+                            {
+                                <MListItem Link style="background-color:#1565c0"
+                                       OnClick="@(() => { PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard).GetAwaiter().GetResult(); dataSvs.moveto_dialog = false;})"
+                                       Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
+                                <MListItemContent>
+                                    <MListItemTitle>@packet.Title </MListItemTitle>
+                                </MListItemContent>
+                            </MListItem>
+                            }
+                            else
+                            {
 
-                            <button type="button" title="@packet.Title" class="list-group-item list-group-item-action mb-1 shadow truncate-text rounded" style="background-color:#5e92f3"
-                                @onclick="@(() => { PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard).GetAwaiter().GetResult(); dataSvs.moveto_dialog = false;})">
-                                @packet.Title
-                            </button>
+
+                                <MListItem Link style="background-color:#1565c0"
+                                       OnClick="@(() => { PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard).GetAwaiter().GetResult(); dataSvs.moveto_dialog = false;})"
+                                       Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
+                                <MListItemContent>
+                                    <MListItemTitle>@packet.Title </MListItemTitle>
+
+                                    <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
+
+
+                                </MListItemContent>
+                            </MListItem>
+
+
+                            }
+                           
 
                         </RowTemplate>
 
