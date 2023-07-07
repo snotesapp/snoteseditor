@@ -19,7 +19,7 @@ namespace BlazorApp1.Services
         {
             using (var noteContext = _dbContextFactory.CreateDbContext())
             {
-                List<Note> notes= await noteContext.Note.Where(nc => nc.NotesCollection.Selected).Take(20).ToListAsync();
+                List<Note> notes= await noteContext.Note.Where(nc => nc.NotesCollection.Selected).OrderByDescending(ord => ord.NoteID).Take(20).ToListAsync();
 
                 return notes;
 
@@ -44,6 +44,7 @@ namespace BlazorApp1.Services
                 {
                     var selectedNotes = await notesContext.Note
                         .Where(nc => nc.NotesCollection.Selected == true)
+                        .OrderByDescending(ord => ord.NoteID)
                         .Skip(pageIndex)
                         .Take(pageSize)
                         .ToListAsync();
@@ -61,9 +62,10 @@ namespace BlazorApp1.Services
 
         public async Task<List<Note>> GetNotes(string NotesTextFilter)
         {
+
             using (var notesContext = _dbContextFactory.CreateDbContext())
             {
-                List<Note> notes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).Take(20).ToListAsync();
+                List<Note> notes = await notesContext.Note.Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower())).OrderByDescending(ord => ord.NoteID).ToListAsync();
                 
                 return notes;
 

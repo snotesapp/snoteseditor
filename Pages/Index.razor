@@ -218,9 +218,9 @@ else
             </NoteTemplate>
         </NotesTemplate>
 
-        @if (dataSvs.selectedNCNotes.Count == 20 || _hasMore)
+        @if ((dataSvs.selectedNCNotes.Count == 20 || _hasMore) && dataSvs.showFilterNotes is false)
         {
-            <MButton class="position-absolute bottom-0 start-50 translate-middle-x my-6 mx-3 "
+            <MButton class="position-fixed bottom-0 start-50 translate-middle-x my-6 mx-3 "
              OnClick='() => LoadMoreNotes()'
              title="Add To Packet"
              Fab
@@ -330,27 +330,27 @@ else
 
                 </MCardTitle>
 
-                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+                
+               
+                     <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
 
                     <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
                         <RowTemplate Context="packet">
 
-
-                            @if (packet.Parent is null)
-                            {
-                                <MListItem Link style="background-color:#1565c0"
-                                    OnClick ="@(() => {AddUserSelectedNotes(packet).GetAwaiter().GetResult(); addcard_dialog=false; })"
+                        @if (packet.Parent is null)
+                        {
+                            <MListItem Link style="background-color:#1565c0"
+                            OnClick="@(() => {AddUserSelectedNotes(packet).GetAwaiter().GetResult(); addcard_dialog=false; })"
                                    Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
-                            <MListItemContent >
+                            <MListItemContent>
                                 <MListItemTitle>@packet.Title </MListItemTitle>
                             </MListItemContent>
                         </MListItem>
-                            }
-                            else
-                            {
+                        }
+                        else
+                        {
 
-
-                                <MListItem Link style="background-color:#1565c0"
+                           <MListItem Link style="background-color:#1565c0"
                                    OnClick ="@(() => {AddUserSelectedNotes(packet).GetAwaiter().GetResult(); addcard_dialog=false; })"
                                    Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
                             <MListItemContent>
@@ -362,11 +362,7 @@ else
                             </MListItemContent>
                         </MListItem>
 
-
-                            }
-
-                          
-
+                        }
 
                         </RowTemplate>
 
@@ -374,6 +370,9 @@ else
 
                 </MList>
 
+             
+
+               
                 <MDivider Class="my-1"></MDivider>
 
                 <MCardActions>
@@ -435,7 +434,7 @@ else
     double Y = 0;
 
     private string? filterNotes;
-  
+
     protected override void OnInitialized()
     {
         dataSvs.WhenAnyValue(x => x.SearchTerm)
@@ -476,8 +475,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-       
-        
+
+
     }
 
 
@@ -492,7 +491,7 @@ else
 
             if (dataSvs.MainProject.ProjectID == 0)
             {
-               //await ProjectVM.newProjectModal?.ShowAsync();
+                //await ProjectVM.newProjectModal?.ShowAsync();
                 dataSvs.newProjectDialog = true;
             }
 
@@ -525,10 +524,10 @@ else
     }
 
 
-    public async Task AddUserSelectedNotes(Packet card)
+    public async Task AddUserSelectedNotes(Packet packet)
     {
         List<Note> UserSelectedNotes = dataSvs.selectedNCNotes.Where(sl => sl.Selected == true).ToList();
-        await dataSvs.AddRangNoteCard(card, UserSelectedNotes);
+        await dataSvs.AddRangNoteCard(packet, UserSelectedNotes);
 
         UserSelectedNotes.Select(nts => { nts.Selected = false; return nts; }).ToList();
     }
@@ -592,17 +591,17 @@ else
 
     private async Task OpenCloseDialog(bool dialogState)
     {
-       // await ProjectVM.newProjectModal?.HideAsync();
+        // await ProjectVM.newProjectModal?.HideAsync();
         dataSvs.newProjectDialog = dialogState;
-       
+
     }
 
 
     private async Task LoadMoreNotes()
     {
         List<Note> append = await NoteVM.GetNotes(dataSvs.selectedNCNotes.Count, 20);
-        dataSvs.selectedNCNotes.AddRange(append);
-
+        dataSvs.selectedNCNotes.AddRange(append) ;
+        
         _hasMore = append.Count > 0;
     }
 
