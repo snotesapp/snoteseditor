@@ -295,7 +295,7 @@ else
     {
 
         <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 "
-         OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";}'
+         OnClick='() => {addcard_dialog = true;filterPackets=false;dataSvs.FilterPacketsTxt="";PacketVM.NotesToPackeList=PacketVM.GetPackets(Pinned:true).GetAwaiter().GetResult(); }'
          title="Add To Packet"
          Fab
          Dark
@@ -330,11 +330,9 @@ else
 
                 </MCardTitle>
 
-                
-               
                      <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
 
-                    <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : dataSvs.MainProject.Packets)">
+                    <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : PacketVM.NotesToPackeList)">
                         <RowTemplate Context="packet">
 
                         @if (packet.Parent is null)
@@ -357,7 +355,6 @@ else
                                 <MListItemTitle>@packet.Title </MListItemTitle>
 
                                 <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
-
 
                             </MListItemContent>
                         </MListItem>

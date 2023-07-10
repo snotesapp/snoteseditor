@@ -14,17 +14,27 @@ namespace BlazorApp1.Services
         }
 
 
-        public IEnumerable<Packet> GetPackets()
+
+       
+        public async Task<List<Packet>> GetPackets(bool Pinned)
         {
             using (var packetContext = _dbContextFactory.CreateDbContext())
             {
-
-                return packetContext.Packets.ToList();
+                if (Pinned)
+                {
+                    return await packetContext.Packets.Where(s => s.Selected == true).ToListAsync();
+                }
+                else
+                {
+                    return await packetContext.Packets.ToListAsync();
+                }
+               
 
             }
 
         }
 
+       
         public async Task<List<Packet>> GetPackets(string filterText)
         {
             using (var packetContext = _dbContextFactory.CreateDbContext())
@@ -33,6 +43,8 @@ namespace BlazorApp1.Services
                 return await packetContext.Packets.Where(sl => sl.Title.ToLower().Contains(filterText.Trim().ToLower())).Include(pr => pr.Parent).ToListAsync();
             }
         }
+
+
         public async Task<Packet> GetSelectedPacket(Packet packet)
         {
             

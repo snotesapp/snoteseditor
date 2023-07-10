@@ -3,11 +3,12 @@ using BlazorApp1.Helpers;
 using BlazorApp1.Services;
 using DynamicData;
 using System.Data;
+using ReactiveUI;
 
 namespace BlazorApp1.ViewModels
 {
 
-    public class PacketViewModel
+    public class PacketViewModel : ReactiveObject
     {
         private PacketService PacketService_service;
         private SharedDataService SharedDataService_service;
@@ -59,6 +60,12 @@ namespace BlazorApp1.ViewModels
             return await PacketService_service.GetPackets(filterText);
         }
 
+        public async Task<List<Packet>> GetPackets(bool Pinned)
+        {
+            return await PacketService_service.GetPackets(Pinned);
+        }
+
+
         public async Task<List<Packet>> GetSelectionPackets(Packet packet)
         {
             return await PacketService_service.GetSelectionPackets(packet);
@@ -100,6 +107,14 @@ namespace BlazorApp1.ViewModels
            SharedDataService_service.MainProject = await ProjectVM.GetProject();
            SharedDataService_service.ContextMenuCard = null;
 
+        }
+
+
+        private List<Packet> _notesToPackeList = new List<Packet>();
+        public List<Packet> NotesToPackeList
+        {
+            get => _notesToPackeList;
+            set => this.RaiseAndSetIfChanged(ref _notesToPackeList, value);
         }
 
     }
