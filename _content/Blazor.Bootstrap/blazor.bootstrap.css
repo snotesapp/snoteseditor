@@ -189,14 +189,18 @@
     width: var(--bb-offcanvas-horizontal-width-lg);
 }
 
-/* grid */
-table button.dropdown-toggle::after {
-    content: none;
+/* grid - filters */
+table button.dropdown-toggle.bb-grid-filter::after {
+    content: none !important;
 }
 
 .filter-symbol {
     width: 2.25rem;
     display: inline-block;
+}
+
+.bb-grid-pagination-text {
+    padding: .375rem;
 }
 
 /* scrollbar */

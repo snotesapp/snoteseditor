@@ -1,31 +1,31 @@
-/* _content/Blazor.Bootstrap/Components/AutoComplete/AutoComplete.razor.rz.scp.css */
-.autocomplete[b-xo0q4byc6a] {
+/* _content/Blazor.Bootstrap/Components/Form/AutoComplete/AutoComplete.razor.rz.scp.css */
+.autocomplete[b-zkhsnlgtvk] {
 }
 
-    .autocomplete > .input-group > input[b-xo0q4byc6a] {
+    .autocomplete > .input-group > input[b-zkhsnlgtvk] {
         border-top-right-radius: 0.25rem !important;
         border-bottom-right-radius: 0.25rem !important;
         padding-right: 2.75rem !important;
     }
 
-.autocomplete-list[b-xo0q4byc6a] {
+.autocomplete-list[b-zkhsnlgtvk] {
     max-height: 200px;
     overflow-y: auto;
     width: 100%;
 }
 
-.autocomplete-item:focus[b-xo0q4byc6a], .autocomplete-item:hover[b-xo0q4byc6a] {
+.autocomplete-item:focus[b-zkhsnlgtvk], .autocomplete-item:hover[b-zkhsnlgtvk] {
     color: #1e2125;
     background-color: #e9ecef;
     cursor: pointer;
 }
 
 
-.dropdown-item:focus[b-xo0q4byc6a], .dropdown-item:hover[b-xo0q4byc6a] {
+.dropdown-item:focus[b-zkhsnlgtvk], .dropdown-item:hover[b-zkhsnlgtvk] {
     cursor: pointer;
 }
 
-.dropdown-item-highlight[b-xo0q4byc6a] {
+.dropdown-item-highlight[b-zkhsnlgtvk] {
     color: #1e2125;
     background-color: #e9ecef;
     cursor: pointer;

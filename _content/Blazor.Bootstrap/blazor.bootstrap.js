@@ -201,85 +201,6 @@ window.blazorBootstrap = {
                 bodyEl[0].style['overflow'] = 'auto';
         }
     },
-    modal: {
-        initialize: (elementId, useStaticBackdrop, closeOnEscape, dotNetHelper) => {
-            let modalEl = document.getElementById(elementId);
-
-            modalEl.addEventListener('show.bs.modal', function () {
-                dotNetHelper.invokeMethodAsync('bsShowModal');
-            });
-            modalEl.addEventListener('shown.bs.modal', function () {
-                dotNetHelper.invokeMethodAsync('bsShownModal');
-            });
-            modalEl.addEventListener('hide.bs.modal', function () {
-                dotNetHelper.invokeMethodAsync('bsHideModal');
-            });
-            modalEl.addEventListener('hidden.bs.modal', function () {
-                dotNetHelper.invokeMethodAsync('bsHiddenModal');
-            });
-            modalEl.addEventListener('hidePrevented.bs.modal', function () {
-                dotNetHelper.invokeMethodAsync('bsHidePreventedModal');
-            });
-
-            let options = { backdrop: useStaticBackdrop ? 'static' : true, keyboard: closeOnEscape };
-            bootstrap?.Modal?.getOrCreateInstance(modalEl, options);
-        },
-        show: (elementId) => {
-            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.show();
-        },
-        hide: (elementId) => {
-            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.hide();
-        },
-        dispose: (elementId) => {
-            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.dispose();
-        }
-    },
-    numberInput: {
-        initialize: (elementId, isFloat, allowNegativeNumbers) => {
-            let numberEl = document.getElementById(elementId);
-
-            numberEl?.addEventListener('keydown', function (event) {
-                let invalidChars = ["e", "E", "+"];
-                if (!isFloat)
-                    invalidChars.push("."); // restrict '.' for integer types
-
-                if (!allowNegativeNumbers) {
-                    invalidChars.push("-"); // restrict '-'
-                }
-
-                if (invalidChars.includes(event.key))
-                    event.preventDefault();
-            });
-
-            numberEl?.addEventListener('beforeinput', function (event) {
-                if (event.inputType === 'insertFromPaste' || event.inputType === 'insertFromDrop') {
-
-                    if (!allowNegativeNumbers) {
-                        // restrict 'e', 'E', '+', '-'
-                        if (isFloat && /[\e\E\+\-]/gi.test(event.data)) {
-                            event.preventDefault();
-                        }
-                        // restrict 'e', 'E', '.', '+', '-'
-                        else if (!isFloat && /[\e\E\.\+\-]/gi.test(event.data)) {
-                            event.preventDefault();
-                        }
-                    }
-                    // restrict 'e', 'E', '+'
-                    else if (isFloat && /[\e\E\+]/gi.test(event.data)) {
-                        event.preventDefault();
-                    }
-                    // restrict 'e', 'E', '.', '+'
-                    else if (!isFloat && /[\e\E\.\+]/gi.test(event.data)) {
-                        event.preventDefault();
-                    }
-
-                }
-            });
-        },
-        setValue: (elementId, value) => {
-            document.getElementById(elementId).value = value;
-        }
-    },
     currencyInput: {
         initialize: (elementId, isFloat, allowNegativeNumbers) => {
             let currencyEl = document.getElementById(elementId);
@@ -376,8 +297,115 @@ window.blazorBootstrap = {
             document.getElementById(elementId).value = value;
         }
     },
+    grid: {
+        setSelectAllCheckboxState: (elementId, state) => {
+            let checkboxEl = document.getElementById(elementId);
+            if (checkboxEl) {
+                if (state === 1) { // checked 
+                    checkboxEl.checked = true;
+                    checkboxEl.indeterminate = false;
+                }
+                else if (state === 2) { // unchecked
+                    checkboxEl.checked = false;
+                    checkboxEl.indeterminate = false;
+                }
+                else if (state === 3) { // indeterminate 
+                    checkboxEl.checked = false;
+                    checkboxEl.indeterminate = true;
+                }
+            }
+        },
+        checkOrUnCheckAll: (cssSelector, isChecked) => {
+            let chkEls = document.querySelectorAll(cssSelector);
+            if (chkEls.length === 0)
+                return;
+
+            chkEls.forEach((ele, index) => {
+                ele.checked = isChecked;
+            });
+        }
+    },
+    modal: {
+        initialize: (elementId, useStaticBackdrop, closeOnEscape, dotNetHelper) => {
+            let modalEl = document.getElementById(elementId);
+
+            modalEl.addEventListener('show.bs.modal', function () {
+                dotNetHelper.invokeMethodAsync('bsShowModal');
+            });
+            modalEl.addEventListener('shown.bs.modal', function () {
+                dotNetHelper.invokeMethodAsync('bsShownModal');
+            });
+            modalEl.addEventListener('hide.bs.modal', function () {
+                dotNetHelper.invokeMethodAsync('bsHideModal');
+            });
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                dotNetHelper.invokeMethodAsync('bsHiddenModal');
+            });
+            modalEl.addEventListener('hidePrevented.bs.modal', function () {
+                dotNetHelper.invokeMethodAsync('bsHidePreventedModal');
+            });
+
+            let options = { backdrop: useStaticBackdrop ? 'static' : true, keyboard: closeOnEscape };
+            bootstrap?.Modal?.getOrCreateInstance(modalEl, options);
+        },
+        show: (elementId) => {
+            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.show();
+        },
+        hide: (elementId) => {
+            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.hide();
+        },
+        dispose: (elementId) => {
+            bootstrap?.Modal?.getOrCreateInstance(document.getElementById(elementId))?.dispose();
+        }
+    },
+    numberInput: {
+        initialize: (elementId, isFloat, allowNegativeNumbers) => {
+            let numberEl = document.getElementById(elementId);
+
+            numberEl?.addEventListener('keydown', function (event) {
+                let invalidChars = ["e", "E", "+"];
+                if (!isFloat)
+                    invalidChars.push("."); // restrict '.' for integer types
+
+                if (!allowNegativeNumbers) {
+                    invalidChars.push("-"); // restrict '-'
+                }
+
+                if (invalidChars.includes(event.key))
+                    event.preventDefault();
+            });
+
+            numberEl?.addEventListener('beforeinput', function (event) {
+                if (event.inputType === 'insertFromPaste' || event.inputType === 'insertFromDrop') {
+
+                    if (!allowNegativeNumbers) {
+                        // restrict 'e', 'E', '+', '-'
+                        if (isFloat && /[\e\E\+\-]/gi.test(event.data)) {
+                            event.preventDefault();
+                        }
+                        // restrict 'e', 'E', '.', '+', '-'
+                        else if (!isFloat && /[\e\E\.\+\-]/gi.test(event.data)) {
+                            event.preventDefault();
+                        }
+                    }
+                    // restrict 'e', 'E', '+'
+                    else if (isFloat && /[\e\E\+]/gi.test(event.data)) {
+                        event.preventDefault();
+                    }
+                    // restrict 'e', 'E', '.', '+'
+                    else if (!isFloat && /[\e\E\.\+]/gi.test(event.data)) {
+                        event.preventDefault();
+                    }
+
+                }
+            });
+        },
+        setValue: (elementId, value) => {
+            document.getElementById(elementId).value = value;
+        }
+    },
     offcanvas: {
-        initialize: (elementId, useBackdrop, closeOnEscape, isScrollable, dotNetHelper) => {
+        initialize: (elementId, useStaticBackdrop, closeOnEscape, isScrollable, dotNetHelper) => {
             let offcanvasEl = document.getElementById(elementId);
 
             offcanvasEl.addEventListener('show.bs.offcanvas', function () {
@@ -393,7 +421,7 @@ window.blazorBootstrap = {
                 dotNetHelper.invokeMethodAsync('bsHiddenOffcanvas');
             });
 
-            let options = { backdrop: useBackdrop, keyboard: closeOnEscape, scroll: isScrollable };
+            let options = { backdrop: useStaticBackdrop ? 'static' : true, keyboard: closeOnEscape, scroll: isScrollable };
             bootstrap?.Offcanvas?.getOrCreateInstance(offcanvasEl, options);
         },
         show: (elementId) => {
@@ -474,16 +502,14 @@ window.blazorBootstrap = {
         }
     },
     tooltip: {
-        initialize: (elementId) => {
-            let tooltipEl = document.getElementById(elementId);
-            bootstrap?.Tooltip?.getOrCreateInstance(tooltipEl);
+        initialize: (elementRef) => {
+            bootstrap?.Tooltip?.getOrCreateInstance(elementRef);
         },
-        update: (elementId) => {
-            let tooltipEl = document.getElementById(elementId);
-            bootstrap?.Tooltip?.getOrCreateInstance(tooltipEl)?.update();
+        update: (elementRef) => {
+            bootstrap?.Tooltip?.getOrCreateInstance(elementRef)?.update();
         },
-        dispose: (elementId) => {
-            bootstrap?.Tooltip?.getOrCreateInstance(document.getElementById(elementId))?.dispose();
+        dispose: (elementRef) => {
+            bootstrap?.Tooltip?.getOrCreateInstance(elementRef)?.dispose();
         }
     },
     // global function
@@ -675,7 +701,7 @@ window.blazorChart.line = {
             const tooltipLine = {
                 id: 'tooltipLine',
                 beforeDraw: chart => {
-                    if (chart.tooltip._active && chart.tooltip._active.length) {
+                    if (chart.tooltip?._active && chart.tooltip?._active.length) {
                         const ctx = chart.ctx;
                         ctx.save();
                         const activePoint = chart.tooltip._active[0];
