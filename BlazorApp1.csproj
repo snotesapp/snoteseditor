@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <WasmBuildNative>true</WasmBuildNative>
@@ -14,24 +14,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.Bootstrap" Version="1.7.0" />
+    <PackageReference Include="Blazor.Bootstrap" Version="1.9.5" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="Masa.Blazor" Version="0.6.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.13" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6">
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.9" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="ReactiveUI.Blazor" Version="18.4.1" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.3" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.5" />
+    <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
  
   </ItemGroup>
 
