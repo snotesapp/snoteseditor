@@ -122,7 +122,7 @@ else if (dataSvs.menustatus == "cards")
                 <MDivider></MDivider>
 
                 <MCardActions>
-                    <MCheckbox OnClick='()=> {moveto_filterPackets = !moveto_filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+                    <MCheckbox TValue="bool" OnClick='()=> {moveto_filterPackets = !moveto_filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
 
                     </MCheckbox>
                     <MSpacer></MSpacer>
@@ -374,7 +374,7 @@ else
 
                 <MCardActions>
 
-                    <MCheckbox OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
+                    <MCheckbox TValue="bool" OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
 
                     </MCheckbox>
                     <MSpacer></MSpacer>

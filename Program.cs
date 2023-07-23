@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+using System.Runtime.Versioning;
+
+[assembly: SupportedOSPlatform("browser")]
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

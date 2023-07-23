@@ -17,12 +17,9 @@
 
     @if (dataSvs.MainProject.ProjectID != 0)
     {
-        <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini "
+        <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini"
                        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
                        Fixed class="overflow-hidden" Permanent>
-
-
-
 
             <MListItem Class="px-2 mb-1 " Style="height:70px" @ondblclick="EnableRenameProject">
                 <MListItemAvatar Rounded="true">
