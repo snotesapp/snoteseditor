@@ -181,8 +181,8 @@ else
                    @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                            <MCardText Class="lh-sm text-body"
-                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
+                            <MCardText Class="lh-sm text-body" 
+                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:100px; ">
                                 @note.Text
                             </MCardText>
 
@@ -202,7 +202,7 @@ else
 
                         <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
                             <MCardText Class="lh-sm text-body"
-                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;">
+                                   Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:100px;">
                                 @note.Text
                             </MCardText>
 
@@ -561,8 +561,9 @@ else
     {
         if (!string.IsNullOrWhiteSpace(cardTitle))
         {
-
-            await PacketVM.AddPacket(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+            Packet newPacket = new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+            await PacketVM.AddPacket(newPacket);
+            PacketVM.NotesToPackeList.Add(newPacket);
             cardTitle = "";
         }
 
@@ -576,7 +577,9 @@ else
             if (!string.IsNullOrWhiteSpace(cardTitle))
             {
 
-                await PacketVM.AddPacket(new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID });
+                Packet newPacket = new Packet { Title = cardTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+                await PacketVM.AddPacket(newPacket);
+                PacketVM.NotesToPackeList.Add(newPacket);
                 cardTitle = "";
 
 
