@@ -33,8 +33,19 @@ namespace BlazorApp1.Services
             }
 
         }
+        public async Task<List<Packet>> GetPackets(int? ParentID)
+        {
+            using (var packetContext = _dbContextFactory.CreateDbContext())
+            {
+                
+                    return await packetContext.Packets.Where(p => p.ParentID == ParentID).ToListAsync();
+               
 
-       
+
+            }
+
+        }
+
         public async Task<List<Packet>> GetPackets(string filterText)
         {
             using (var packetContext = _dbContextFactory.CreateDbContext())

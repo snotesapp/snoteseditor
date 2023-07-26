@@ -138,7 +138,14 @@ namespace BlazorApp1.Helpers
 
         public List<Packet> AllCards;
         public List<Packet> SelectionCards = new();
-        public List<Packet> ChildCards = new();
+
+        private List<Packet> _currentPacketsSet;
+        public List<Packet> CurrentPacketsSet 
+        {
+            get { return _currentPacketsSet; }
+            set { this.RaiseAndSetIfChanged(ref _currentPacketsSet, value); NotifyStateChanged();  }
+        }
+
 
         public WindowDimension Wdimension = new();
 

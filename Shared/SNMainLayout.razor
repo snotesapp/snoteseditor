@@ -17,7 +17,7 @@
 
     @if (dataSvs.MainProject.ProjectID != 0)
     {
-        <MNavigationDrawer App @bind-Value="_drawer" @bind-MiniVariant="_mini"
+        <MNavigationDrawer App @bind-Value="ProjectVM.Drawer" @bind-MiniVariant="ProjectVM.Mini"
                        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
                        Fixed class="overflow-hidden" Permanent>
 
@@ -42,14 +42,14 @@
                 }
 
 
-                <MButton Icon OnClick="() => _mini = !_mini ">
+                <MButton Icon OnClick="() => ProjectVM.Mini = !ProjectVM.Mini ">
                     <MIcon>mdi-chevron-left</MIcon>
                 </MButton>
 
             </MListItem>
 
 
-            @if (!_mini)
+            @if (!ProjectVM.Mini)
             {
                 <MRow>
                     <MNavDrawerHeader GoToMenu="@(dataSvs.SwitchMenus)" />
@@ -99,7 +99,7 @@
     else
     {
 
-        <MNavigationDrawer App @bind-Value="_drawer" MiniVariant="true"
+        <MNavigationDrawer App @bind-Value="ProjectVM.Drawer" MiniVariant="true"
                        Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
                        Fixed class="overflow-hidden" Permanent>
 
@@ -142,8 +142,8 @@
 
 @code {
 
-    private bool _drawer = true;
-    private bool _mini = true;
+    //private bool _drawer = true;
+    //private bool _mini = true;
 
     private bool renameproject;
 
@@ -216,8 +216,8 @@
 
     private void MessageHandler()
     {
-        _mini = true;
-        _mini = false;
+        ProjectVM.Mini = true;
+        ProjectVM.Mini = false;
 
         StateHasChanged();
     }

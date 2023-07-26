@@ -88,7 +88,7 @@
                    @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
-                    <MCardText Class="lh-sm text-body" Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;height:70px; ">
+                    <MCardText Class="lh-sm text-body" Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:70px; ">
                                 @notecard.Note.Text
                             </MCardText>
 
@@ -152,11 +152,11 @@
 
         <MList>
 
-            @if (dataSvs.ChildCards.Count > 0)
+            @if (dataSvs.CurrentPacketsSet.Count > 0)
             {
                 <div class="p-0 ms-2 me-1 ">
 
-                    <ListTemplate Items="dataSvs.ChildCards">
+                    <ListTemplate Items="dataSvs.CurrentPacketsSet">
                         <RowTemplate Context="card">
                             <MListItem Link style="background-color:#1565c0; margin-bottom:2px"
                                Color="white" Class="elevation-4  rounded-3"
@@ -293,7 +293,7 @@
 
     IJSObjectReference _module;
 
-    private bool NotesMenuSelected = true;
+    private bool NotesMenuSelected = false;
 
     private Packet? ContextMenuCard = null;
     private NotePacket? ContextMenuNoteCard = null;
@@ -418,8 +418,11 @@
     {
         try
         {
+            PacketVM.GetPrevOrNextPackets(chCard,false);
+
             await PacketVM.GetPacket(chCard);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
+           
             MessageService.SendMessage();
         }
         catch (Exception ex)

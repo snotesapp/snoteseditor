@@ -20,6 +20,16 @@ namespace BlazorApp1.ViewModels
             ProjectVM = projectVM;
         }
 
+        public Packet? PrevPacket { get; set; }
+
+
+        private Packet? _nexPacket;
+        public Packet? NextPacket
+        {        
+            get { return _nexPacket; }
+            set { this.RaiseAndSetIfChanged(ref _nexPacket, value);  }
+        }
+
 
         public async Task AddPacket(Packet newPacket)
         {
@@ -42,18 +52,48 @@ namespace BlazorApp1.ViewModels
             SharedDataService_service.SelectedCard = newPacket;
 
             SharedDataService_service.SelectedNoteCard = SharedDataService_service.SelectedCard?.NotePackets.Count == 0 ? null : SharedDataService_service.SelectedNoteCard;
+            
 
             List<Packet>? childPackets = await PacketService_service.GetChildPackets(packet); 
             if(childPackets is not null)
             {
-                SharedDataService_service.ChildCards = childPackets;
+                SharedDataService_service.CurrentPacketsSet = childPackets;
             }
-            
+
+
+          
                // NotifyStateChanged();
                 return newPacket;
 
 
         }
+
+        public async Task GetPrevOrNextPackets(Packet? CurrentPacket,bool IsRootPackets)
+        {
+
+            if (CurrentPacket is not null)
+            {
+                List<Packet> NeighborPackets = await PacketService_service.GetPackets(ParentID: CurrentPacket.ParentID);
+              
+                    int targetIndex = NeighborPackets.IndexOf((NeighborPackets.FirstOrDefault(id => id.PacketID == CurrentPacket.PacketID)));
+                    if (targetIndex != -1)
+                    {
+                        PrevPacket = NeighborPackets.ElementAtOrDefault(targetIndex - 1);
+                        NextPacket = NeighborPackets.ElementAtOrDefault(targetIndex + 1);
+
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Element not found in the collection.");
+                    }
+                
+                
+            }
+
+        }
+
+       
 
         public async Task<List<Packet>> GetPackets(string filterText)
         {

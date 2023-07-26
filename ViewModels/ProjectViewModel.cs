@@ -10,10 +10,11 @@ using System;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ReactiveUI;
 
 namespace BlazorApp1.ViewModels
 {
-    public class ProjectViewModel
+    public class ProjectViewModel : ReactiveObject
     {
         private readonly ProjectService Project_service;
         private readonly SharedDataService SharedDataService_service;
@@ -27,6 +28,19 @@ namespace BlazorApp1.ViewModels
             this.jSRuntime_JS = jsRuntime;
         }
 
+        private bool _drawer =true;
+        public bool Drawer
+        {
+            get { return _drawer; }
+            set { this.RaiseAndSetIfChanged(ref _drawer, value); }
+        }
+
+        private bool _mini = true;
+        public bool Mini
+        {
+            get { return _mini; }
+            set { this.RaiseAndSetIfChanged(ref _mini, value); }
+        }
 
         public async Task<Project> GetProject()
         {

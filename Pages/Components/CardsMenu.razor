@@ -353,6 +353,7 @@
 
     private async Task SelectPacket(Packet selectedPacket)
     {
+        PacketVM.GetPrevOrNextPackets(selectedPacket, true);
         await PacketVM.GetPacket(selectedPacket);
         //await dataSvs.GetCard(selectedCard);
         if (dataSvs.SelectedCard.NotePackets.Count > 0)
@@ -361,7 +362,7 @@
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
-
+       
 
         await BackToMain.InvokeAsync("notecards");
     }
