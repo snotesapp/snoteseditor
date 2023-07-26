@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <WasmBuildNative>true</WasmBuildNative>
     <EmccTotalMemory>16777216</EmccTotalMemory>
-   
+   <WasmEnableThreads>false</WasmEnableThreads>
   </PropertyGroup>
 
 
@@ -31,7 +31,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.WebAssembly.Threading" Version="7.0.0" />
-    <PackageReference Include="ReactiveUI.Blazor" Version="18.4.1" />
+    <PackageReference Include="ReactiveUI.Blazor" Version="19.4.1" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.3" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.5" />
