@@ -326,7 +326,7 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     /* Tooltip text */
     .sn-tooltip .sn-tooltiptext[b-3hcsrndfyc] {
         visibility: hidden;
-        width: 200px;
+        min-width: 200px;
         background-color: #1565c0;
         color: #f5f5f5;
         text-align: center;
