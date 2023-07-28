@@ -287,11 +287,7 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     display: flex;
 }
 
-.nullnotecardpg[b-3hcsrndfyc] {
-    width: 100vw;
-    height: 100vh;
-   
-}
+
 
 .npnavbutton[b-3hcsrndfyc] {
     width:32px;
@@ -374,6 +370,18 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
         bottom: 10px;
         background-color: greenyellow
     }
+}
+
+.sn-container[b-3hcsrndfyc] {
+    position: relative;
+    height: 100vh; /* Set a height to the container so it takes the full viewport height */
+}
+
+.sn-addnotebutton[b-3hcsrndfyc] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 /* /Shared/SNMainLayout.razor.rz.scp.css */
 
