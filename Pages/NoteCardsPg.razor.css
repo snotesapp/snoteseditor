@@ -28,11 +28,7 @@ ul.nclist-style, li
     display: flex;
 }
 
-.nullnotecardpg {
-    width: 100vw;
-    height: 100vh;
-   
-}
+
 
 .npnavbutton {
     width:32px;
@@ -115,4 +111,16 @@ ul.nclist-style, li
         bottom: 10px;
         background-color: greenyellow
     }
+}
+
+.sn-container {
+    position: relative;
+    height: 100vh; /* Set a height to the container so it takes the full viewport height */
+}
+
+.sn-addnotebutton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
