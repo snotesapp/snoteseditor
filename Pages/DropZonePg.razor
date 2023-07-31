@@ -15,6 +15,7 @@
 @inject SkiaServices skiaSvs
 @inject NoteViewModel NoteVM
 @inject SharedDataService dataSvs
+@inject ProjectViewModel ProjectVM
 
 <MCol>
     <MRow>
@@ -308,6 +309,7 @@
     {
 
         filesAndDirectories = new FilesAndDirectories(dataSvs);
+        ProjectVM.ConfirmLeave = true;
         dataSvs.OnChange += StateHasChanged;
 
     }

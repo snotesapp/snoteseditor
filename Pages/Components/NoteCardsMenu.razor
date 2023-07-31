@@ -8,7 +8,7 @@
 @using BlazorApp1.Helpers
 @inject SharedDataService dataSvs
 @inject PacketViewModel PacketVM
-
+@inject ProjectViewModel ProjectVM
 @inject IMessageService MessageService
 
 <MContainer Style="height:calc(100vh - 170px); overflow:auto">
@@ -305,7 +305,7 @@
     private void ShowCardContextMenu(MouseEventArgs args, Packet chCard)
     {
         ContextMenuCard = null;
-       
+
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuCard = chCard;
@@ -315,7 +315,7 @@
     {
         ShowNoteCardContext = false;
         ContextMenuNoteCard = null;
-       
+
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuNoteCard = noteCard;
@@ -422,7 +422,7 @@
 
             await PacketVM.GetPacket(chCard);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
-           
+
             MessageService.SendMessage();
         }
         catch (Exception ex)
@@ -468,6 +468,7 @@
         }
         else
         {
+            ProjectVM.ConfirmLeave = true;
             dataSvs.ncDragingMode = true;
         }
         StateHasChanged();

@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using ReactiveUI;
 
+
+
 namespace BlazorApp1.ViewModels
 {
     public class ProjectViewModel : ReactiveObject
@@ -42,6 +44,7 @@ namespace BlazorApp1.ViewModels
             set { this.RaiseAndSetIfChanged(ref _mini, value); }
         }
 
+        public bool ConfirmLeave { get; set; } = false;
         public async Task<Project> GetProject()
         {
             return await Project_service.GetProject();
@@ -180,6 +183,7 @@ namespace BlazorApp1.ViewModels
 
         public async Task SaveProject()
         {
+            ConfirmLeave = false;
             Loader = true;
             fileArray = await BuildProjectPackage();
 
@@ -225,7 +229,7 @@ namespace BlazorApp1.ViewModels
         {
             try
             {
-
+                ConfirmLeave = false;
                 Loader = true;
 
                 byte[] ProjectArray = await BuildProjectPackage();
