@@ -24,7 +24,6 @@ namespace BlazorApp1.Data
         public int ProjectID { get; set; }
         public string Name { get; set; }
         public List<Packet> Packets { get; set; }
-
         public List<NotesCollection> NotesCollection { get; set; }
 
     }

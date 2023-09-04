@@ -2,7 +2,6 @@
 @using BlazorApp1.Data
 @using BlazorApp1.Pages.Components
 @using System.Collections.ObjectModel
-@using BlazorBootstrap
 @inject Project newprjct;
 
 @using BlazorApp1.Helpers
@@ -14,7 +13,6 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Text.Json
 @using System.ComponentModel
-
 
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
@@ -401,8 +399,6 @@ else
 
     </AlertDialog>
 
-
-
 }
 
 
@@ -415,6 +411,8 @@ else
 
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
+
+   
 
     private ElementReference _mainPg;
     private bool _hasMore;
@@ -473,11 +471,6 @@ else
         dataSvs.OnChange += StateHasChanged;
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-
-
-    }
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -492,17 +485,14 @@ else
             if (dataSvs.MainProject.ProjectID == 0)
             {
                 //await ProjectVM.newProjectModal?.ShowAsync();
-                dataSvs.newProjectDialog = true;
+                 dataSvs.newProjectDialog = true;
+                 
+         
             }
-
-
 
         }
 
-
     }
-
-
 
 
     public void Dispose()
@@ -591,8 +581,7 @@ else
 
     }
 
-
-    private async Task OpenCloseDialog(bool dialogState)
+    private void OpenCloseDialog(bool dialogState)
     {
         // await ProjectVM.newProjectModal?.HideAsync();
         dataSvs.newProjectDialog = dialogState;

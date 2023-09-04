@@ -34,7 +34,7 @@ namespace BlazorApp1.ViewModels
                 {
                     if (archive.Entries.Count == 0)
                     {
-                        Console.WriteLine("The contents of the base64 string is not a valid zip file.");
+                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
                         return;
                     }
 

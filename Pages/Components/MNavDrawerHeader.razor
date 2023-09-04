@@ -46,16 +46,14 @@
                     </ChildContent>
                 </MButton>
             }
-            else if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile")))
+            else if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile")) && ProjectVM.NewProject == false)
             {
 
-
-
                 <MButton Class="primary" title="Save"
-             OnClick="() =>  ProjectVM.SaveProject()"
-             Loading="ProjectVM.Loader"
-             Disabled="ProjectVM.Loader"
-             Height="45">
+                    OnClick="() =>  ProjectVM.SaveProject()"
+                    Loading="ProjectVM.Loader"
+                    Disabled="ProjectVM.Loader"
+                    Height="45">
 
                     <LoaderContent>
                         <span class="spinner-border spinner-border-sm"></span>
@@ -70,15 +68,14 @@
 
                 </MButton>
 
-
             }
             else
             {
 
                 <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
-             Loading="ProjectVM.Loader"
-             Disabled="ProjectVM.Loader"
-             Height="45">
+                    Loading="ProjectVM.Loader"
+                    Disabled="ProjectVM.Loader"
+                    Height="45">
                     <LoaderContent>
                         <span class="spinner-border spinner-border-sm"></span>
                     </LoaderContent>

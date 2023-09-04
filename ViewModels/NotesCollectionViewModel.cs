@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Data;
 using BlazorApp1.Helpers;
 using BlazorApp1.Services;
+using BlazorBootstrap;
 using DynamicData;
 using System.Collections;
 using System.Data;
@@ -13,6 +14,9 @@ namespace BlazorApp1.ViewModels
         private readonly SharedDataService _dataSvs;
         private readonly NoteViewModel NoteVM;
         private readonly ProjectViewModel ProjectVM;
+
+       
+
         public NotesCollectionViewModel() { }
 
         public NotesCollectionViewModel(NotesCollectionService service, SharedDataService dataSvs, NoteViewModel noteVM, ProjectViewModel projectVM)

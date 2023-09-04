@@ -12,6 +12,7 @@ namespace BlazorApp1.Services
             _dbContextFactory = dbContextFactory;
             using var db = _dbContextFactory.CreateDbContext();
             db.Database.EnsureCreatedAsync();
+           
         }
 
         public async Task<Project> GetProject()
@@ -26,18 +27,26 @@ namespace BlazorApp1.Services
 
         }
 
+       
         public async Task<Project> GetFullProject()
         {
-            using (var projectsContext = _dbContextFactory.CreateDbContext())
+           
+            Project? fProject ;
+            
+            using (SNotesDBContext projectsContext = await _dbContextFactory.CreateDbContextAsync())
             {
-
-                return await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images)
-                   .Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(pth => pth.NotePaths)
-                   .Include(cr => cr.Packets).FirstOrDefaultAsync();
-               
-
+                
+                fProject = await projectsContext.Projects.Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(nci => nci.Images)
+                .Include(nc => nc.NotesCollection).ThenInclude(ncn => ncn.Note).ThenInclude(pth => pth.NotePaths)
+                .Include(cr => cr.Packets).FirstOrDefaultAsync();
+                
             }
+            
+            return fProject;
+
         }
+
+    
 
 
 

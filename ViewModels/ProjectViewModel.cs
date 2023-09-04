@@ -11,8 +11,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ReactiveUI;
-
-
+using BlazorComponent;
 
 namespace BlazorApp1.ViewModels
 {
@@ -22,7 +21,7 @@ namespace BlazorApp1.ViewModels
         private readonly SharedDataService SharedDataService_service;
         private readonly IJSRuntime jSRuntime_JS;
 
-        public Modal? newProjectModal;
+        
         public ProjectViewModel(SharedDataService sharedDataService,ProjectService projectService,IJSRuntime jsRuntime)
         {
             this.SharedDataService_service = sharedDataService;
@@ -45,6 +44,9 @@ namespace BlazorApp1.ViewModels
         }
 
         public bool ConfirmLeave { get; set; } = false;
+
+        public bool NewProject { get; set; } = false;
+
         public async Task<Project> GetProject()
         {
             return await Project_service.GetProject();
@@ -114,19 +116,21 @@ namespace BlazorApp1.ViewModels
         private static readonly JsonSerializerOptions ProjectOptions = new()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            WriteIndented = true,
+            WriteIndented = false,
             IgnoreReadOnlyProperties = true,
         };
 
         private static readonly JsonSerializerOptions NoteCardsOptions = new()
         {
-            WriteIndented = true,
+            WriteIndented = false,
         };
         
         public byte[] fileArray;
-        private async Task<byte[]> BuildProjectPackage()
+
+        private async Task<string> CreatePkgFile()
         {
-            var packageFilePath = AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory + "/" + FilePaths.PackageFilePath;
+            await Task.Delay(500);
+            string packageFilePath = AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory + "/" + FilePaths.PackageFilePath;
 
             if (File.Exists(packageFilePath))
             {
@@ -136,22 +140,33 @@ namespace BlazorApp1.ViewModels
 
             // Create the package directory
             Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory);
-           
+
+            return packageFilePath;
+
+        }
+
+        private async Task<byte[]> BuildProjectPackage()
+        {
+            
+          
+            string packageFilePath = await CreatePkgFile();
 
             // Create the meta object and serialize it to a byte array
             var metaObject = new MetaObject
             {
                 Version = "1.0"
             };
-            byte[] metaJsonBytes = SerializeMetaObject(metaObject);
+            await SerializeMetaObject(metaObject);
           
 
             // Write the serialized meta object to a file
-            File.WriteAllBytes(SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.MetaFilePath, metaJsonBytes);
+            //File.WriteAllBytes(SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.MetaFilePath, metaJsonBytes);
 
 
             // Serialize the full project object to a file
+            
             Project fullPrjct = await GetFullProject();
+            //Project fullPrjct = SharedDataService_service.MainProject;
             if (fullPrjct != null)
             {
                 await SerializeProjectAsync(fullPrjct);
@@ -164,10 +179,20 @@ namespace BlazorApp1.ViewModels
                 await SerializeNoteCardsAsync(allNoteCards);
             }
 
-            // Create the package file
-           
 
-            ZipFile.CreateFromDirectory(SharedDataService_service.ProjectPath.Parent.FullName, packageFilePath);
+            string projectRootPath = SharedDataService_service.ProjectPath.Parent.FullName;
+            /*
+            List<string> dbfiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Where( ob => ob.Contains("snotesonline")).ToList();
+           foreach(string dbfile in dbfiles)
+            {
+                File.Copy(dbfile, projectRootPath + $"{dbfile}", true);
+            }
+            
+            var folderfils = Directory.GetFiles(projectRootPath);
+           */
+
+            // Create the package file
+            ZipFile.CreateFromDirectory(projectRootPath, packageFilePath);
 
             // Read the package file into a byte array
             using (var packageFile = new FileStream(packageFilePath, FileMode.Open))
@@ -183,19 +208,17 @@ namespace BlazorApp1.ViewModels
 
         public async Task SaveProject()
         {
+            
             ConfirmLeave = false;
             Loader = true;
             fileArray = await BuildProjectPackage();
-
-
+            Loader = false;
+            
             // await SetProgres(50);
             try
             {
                
                 await jSRuntime_JS.InvokeVoidAsync("interop.getNewFileHandle", SharedDataService_service.MainProject.Name);
-
-               
-               
 
                 await jSRuntime_JS.InvokeVoidAsync("interop.blazorSaveFile", "application/zip", fileArray);
 
@@ -222,7 +245,7 @@ namespace BlazorApp1.ViewModels
             }
            
 
-           
+
         }
 
         public async Task DownloadProjectFile()
@@ -262,9 +285,19 @@ namespace BlazorApp1.ViewModels
            
         }
 
-        private byte[] SerializeMetaObject(MetaObject metaObject)
+        private async Task SerializeMetaObject(MetaObject metaObject)
         {
-            return JsonSerializer.SerializeToUtf8Bytes(metaObject);
+
+
+            string fileName = SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.MetaFilePath;
+            
+            await using (FileStream createStream = File.Create(fileName))
+            {
+                await JsonSerializer.SerializeAsync(createStream, metaObject);
+            }
+            
+           
+           
         }
 
         private async Task SerializeProjectAsync(Project project)

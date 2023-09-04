@@ -7,6 +7,7 @@
         public const string ProjectFilePath = "jsonFile.json";
         public const string NoteCardsFilePath = "notecards.json";
         public const string PackageFilePath = "package.zip";
+       
     }
 
     public static class DialogTypes

@@ -81,7 +81,7 @@
        Absolute
        OffsetY
        CloseOnContentClick>
-        <MList Dense Width="200">
+       <MList Dense Width="200">
 
             <MListItem OnClick="() => AddNCNotes(ContextMenuNotesCollection)">
                 <MListItemIcon>
@@ -167,8 +167,6 @@
 
 
 
-
-
 @code {
 
     IJSObjectReference module;
@@ -183,23 +181,17 @@
     double X = 0;
     double Y = 0;
 
-
-
     private Task GoToMainMenu()
     {
 
         return GoToMenu.InvokeAsync("mainmenu");
     }
 
-
-
-
     protected override void OnInitialized()
     {
         dataSvs.OnChange += StateHasChanged;
         NotesCollectionVM.OnChange += StateHasChanged;
     }
-
 
     private void ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
     {
@@ -212,9 +204,6 @@
         ContextMenuNotesCollection = notesCollection;
         ShowNCContext = true;
     }
-
-
-
 
     private async Task SetCollection(NotesCollection nc)
     {
@@ -232,7 +221,6 @@
 
         await NoteVM.GetNotes();
     }
-
 
     private Task AddNCNotes(NotesCollection notesCollection)
     {
@@ -279,8 +267,6 @@
 
     }
     #endregion
-
-
 
 
     public void Dispose()
