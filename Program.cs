@@ -11,8 +11,10 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.JSInterop;
 using System.Runtime.Versioning;
+using SqliteWasmHelper;
 
 [assembly: SupportedOSPlatform("browser")]
 
@@ -21,14 +23,15 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-
-
 // Disable logging for Entity Framework Core
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None));
 
 
 
+
 builder.Services.AddScoped<Project>();
+builder.Services.AddSingleton<CacheStorageAccessor, CacheStorageAccessor>();
+
 builder.Services.AddSingleton<SharedDataService, SharedDataService>();
 
 builder.Services.AddSingleton<NotesCollectionViewModel, NotesCollectionViewModel>();
@@ -61,7 +64,14 @@ builder.Services.AddBlazorBootstrap();
 //builder.Services.AddDbContext<DataContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddSqlite<SNotesDBContext>("Data Source=snotesonline.db");
 //builder.Services.AddDbContextFactory<DataContext>();
-builder.Services.AddDbContextFactory<SNotesDBContext>(x => x.UseSqlite("Data Source=snotesonline.db"));
+
+//builder.Services.AddDbContextFactory<SNotesDBContext>(x => x.UseSqlite("Data Source=snotesonline.db"));
+
+builder.Services.AddSqliteWasmDbContextFactory<SNotesDBContext>(
+  opts => opts.UseSqlite("Data Source=snotesonline.sqlite3"));
+
+
+//builder.Services.AddSingleton<DbContextService>();
 
 
 //builder.Services.AddScoped<DatabaseService>();

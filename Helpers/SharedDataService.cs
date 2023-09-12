@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using ReactiveUI;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
+using SqliteWasmHelper;
 using System.Data;
 using System.IO.Compression;
 using System.Reactive.Linq;
@@ -158,14 +159,17 @@ namespace BlazorApp1.Helpers
         }
 
 
-        private IDbContextFactory<SNotesDBContext> _dbContextFactory { get; set; }
+
+        private ISqliteWasmDbContextFactory<SNotesDBContext> _dbContextFactory { get; set; }
         
-        public SharedDataService(IDbContextFactory<SNotesDBContext> dbContextFactory)
+        public SharedDataService(ISqliteWasmDbContextFactory<SNotesDBContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
-               using var db =  _dbContextFactory.CreateDbContext();
-               db.Database.EnsureCreatedAsync();
-
+           
+            //using var db =  _dbContextFactory.CreateDbContext();
+            //db.Database.EnsureCreatedAsync();
+          
+            
         }
 
         public void SwitchMenus(string selectedMenu)
@@ -237,7 +241,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<NotePacket> GetNoteCard(NotePacket noteCard)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 NotifyStateChanged();
                 return await notecardsContext.NotePackets.Where(ncd => ncd.NoteID == noteCard.NoteID && ncd.PacketID == noteCard.PacketID).Include(nt => nt.Note).ThenInclude(im => im.Images).FirstOrDefaultAsync();
@@ -246,7 +250,7 @@ namespace BlazorApp1.Helpers
 
         public async Task <List<NotePacket>> GetAllNoteCards()
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 return await notecardsContext.NotePackets.ToListAsync();
 
@@ -255,7 +259,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<bool> NewNoteCard(Packet addCard, Note addNote)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 //cardsContext.Note.Add(NewNote);
                 //await cardsContext.SaveChangesAsync();
@@ -284,7 +288,7 @@ namespace BlazorApp1.Helpers
         }
         public async Task<bool> NewNoteCard(int cardID, int noteID)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 //cardsContext.Note.Add(NewNote);
                 //await cardsContext.SaveChangesAsync();
@@ -315,7 +319,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<bool> AddRangNoteCard(Packet addCard, List<Note> addNotes)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 foreach (Note addNote in addNotes)
                 {
@@ -348,7 +352,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<bool> NewRangNoteCards(List<NotePacket> noteCards)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 await notecardsContext.AddRangeAsync(noteCards);
@@ -361,7 +365,7 @@ namespace BlazorApp1.Helpers
 
         public async Task<bool> RemoveNoteCard(NotePacket noteCards)
         {
-            using (var notecardsContext = _dbContextFactory.CreateDbContext())
+            using (var notecardsContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 notecardsContext.NotePackets.Remove(noteCards);

@@ -21,10 +21,12 @@ namespace BlazorApp1.ViewModels
 
         public NotesCollectionViewModel(NotesCollectionService service, SharedDataService dataSvs, NoteViewModel noteVM, ProjectViewModel projectVM)
         {
+            
             _service = service;
             _dataSvs = dataSvs;
             NoteVM = noteVM;
             ProjectVM = projectVM;
+           
         }
 
 

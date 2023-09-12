@@ -13,7 +13,14 @@
   
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
+    <Content Remove="wwwroot\myjs\CacheStorageAccessor.js" />
     <NativeFileReference Include="$(SkiaSharpStaticLibraryPath)\2.0.23\*.a" />
+  </ItemGroup>
+
+
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\myjs\CacheStorageAccessor.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +42,7 @@
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.Blazor" Version="2.88.3" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.5" />
+    <PackageReference Include="SqliteWasmHelper" Version="1.1.1-beta-gd0df7e5d62" />
     <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
  
   </ItemGroup>
@@ -44,6 +52,7 @@
     <None Include="wwwroot\myjs\BootstrapModalInterop.js">
 	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\myjs\CacheStorageAccessor.js" />
     <None Include="wwwroot\myjs\dropZone.js">
 	<CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

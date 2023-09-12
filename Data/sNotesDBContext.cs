@@ -12,12 +12,20 @@ namespace BlazorApp1.Data
         public DbSet<NotePacket> NotePackets { get; set; }
         public DbSet<NoteImage> NoteImage { get; set; }
         public DbSet<NotePath> NotePath { get; set; }
-        public const string DatabaseName = "sNotes.db3";
-        string databasPath;
+        private readonly string _databasePath;
 
+       
 
-        public SNotesDBContext(DbContextOptions<SNotesDBContext> options):base(options)
+        /*
+        public SNotesDBContext(string databasePath)
         {
+            _databasePath = databasePath;
+        }
+        */
+
+        public SNotesDBContext(DbContextOptions<SNotesDBContext> options) : base(options)
+        {
+            
             //SQLitePCL.Batteries_V2.Init();
             //this.Database.EnsureCreated();
 
@@ -25,6 +33,13 @@ namespace BlazorApp1.Data
 
 
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //var connectionString = $"Data Source={_databasePath}";
+            //optionsBuilder.UseSqlite(connectionString);
+        }
+
 
         /*
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

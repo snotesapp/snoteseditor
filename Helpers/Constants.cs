@@ -7,7 +7,9 @@
         public const string ProjectFilePath = "jsonFile.json";
         public const string NoteCardsFilePath = "notecards.json";
         public const string PackageFilePath = "package.zip";
-       
+        public const string SQlliteFile = "snotesonline.sqlite3";
+
+
     }
 
     public static class DialogTypes

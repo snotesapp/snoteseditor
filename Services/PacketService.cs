@@ -1,16 +1,17 @@
 ﻿using BlazorApp1.Data;
 using Microsoft.EntityFrameworkCore;
+using SqliteWasmHelper;
 
 namespace BlazorApp1.Services
 {
     public class PacketService
     {
-        private readonly IDbContextFactory<SNotesDBContext> _dbContextFactory;
-        public PacketService(IDbContextFactory<SNotesDBContext> dbContextFactory)
+        private readonly ISqliteWasmDbContextFactory<SNotesDBContext> _dbContextFactory;
+        public PacketService(ISqliteWasmDbContextFactory<SNotesDBContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
-            using var db = _dbContextFactory.CreateDbContext();
-            db.Database.EnsureCreatedAsync();
+            //using var db = _dbContextFactory.CreateDbContext();
+            //db.Database.EnsureCreatedAsync();
         }
 
 
@@ -18,7 +19,7 @@ namespace BlazorApp1.Services
        
         public async Task<List<Packet>> GetPackets(bool Pinned)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 if (Pinned)
                 {
@@ -35,7 +36,7 @@ namespace BlazorApp1.Services
         }
         public async Task<List<Packet>> GetPackets(int? ParentID)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 
                     return await packetContext.Packets.Where(p => p.ParentID == ParentID).ToListAsync();
@@ -48,7 +49,7 @@ namespace BlazorApp1.Services
 
         public async Task<List<Packet>> GetPackets(string filterText)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 
                 return await packetContext.Packets.Where(sl => sl.Title.ToLower().Contains(filterText.Trim().ToLower())).Include(pr => pr.Parent).ToListAsync();
@@ -59,7 +60,7 @@ namespace BlazorApp1.Services
         public async Task<Packet> GetSelectedPacket(Packet packet)
         {
             
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 Packet? SelectedPacket = await packetContext.Packets.Where(c => c.PacketID == packet.PacketID)
@@ -82,7 +83,7 @@ namespace BlazorApp1.Services
         {
             try
             {
-                using (var packetsContext = _dbContextFactory.CreateDbContext())
+                using (var packetsContext = await _dbContextFactory.CreateDbContextAsync())
                 {
                     return await packetsContext.Packets.Where(c => c.ParentID == packet.PacketID).ToListAsync();
                 }
@@ -97,7 +98,7 @@ namespace BlazorApp1.Services
 
         public async Task<List<Packet>> GetSelectionPackets(Packet packet)
         {
-            using (var packetsContext = _dbContextFactory.CreateDbContext())
+            using (var packetsContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 List<Packet> chpackets = new List<Packet> { packet };
@@ -123,7 +124,7 @@ namespace BlazorApp1.Services
 
         public async Task AddPacket(Packet packet)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 await packetContext.Packets.AddAsync(packet);
@@ -135,7 +136,7 @@ namespace BlazorApp1.Services
 
         public async Task UpdatePacket(Packet packet)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 packetContext.Packets.Update(packet);
@@ -147,7 +148,7 @@ namespace BlazorApp1.Services
 
         public async Task DeletePacket(int id)
         {
-            using (var packetContext = _dbContextFactory.CreateDbContext())
+            using (var packetContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 var Packet = await packetContext.Packets.FindAsync(id);

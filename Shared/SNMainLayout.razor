@@ -157,6 +157,12 @@
 
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await ProjectVM.SqliteEnsureDeletedAsync();
+        await ProjectVM.RemoveSqliteCacheAsync();
+    }
+
     private string tempName;
     private void EnableRenameProject()
     {

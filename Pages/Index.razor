@@ -13,6 +13,8 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Text.Json
 @using System.ComponentModel
+@using ReactiveUI
+@using System.Reactive.Linq
 
 @inject SharedDataService dataSvs
 @inject NotesCollectionViewModel NotesCollectionVM
@@ -22,9 +24,10 @@
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
 
+
 @inject IJSRuntime JSRuntime
-@using ReactiveUI
-@using System.Reactive.Linq
+
+
 
 
 <PageTitle>@dataSvs.MainProject.Name</PageTitle>
@@ -412,7 +415,7 @@ else
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
-   
+
 
     private ElementReference _mainPg;
     private bool _hasMore;
@@ -435,6 +438,7 @@ else
 
     protected override void OnInitialized()
     {
+
         dataSvs.WhenAnyValue(x => x.SearchTerm)
        .Throttle(TimeSpan.FromSeconds(1.5))
        .Subscribe(async searchTerm =>
@@ -467,6 +471,7 @@ else
            StateHasChanged();
        });
 
+
         ProjectVM.OnChange += StateHasChanged;
         dataSvs.OnChange += StateHasChanged;
     }
@@ -477,6 +482,8 @@ else
     {
         if (firstRender)
         {
+
+
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
@@ -485,9 +492,9 @@ else
             if (dataSvs.MainProject.ProjectID == 0)
             {
                 //await ProjectVM.newProjectModal?.ShowAsync();
-                 dataSvs.newProjectDialog = true;
-                 
-         
+                dataSvs.newProjectDialog = true;
+
+
             }
 
         }
@@ -540,7 +547,8 @@ else
 
     private async Task EditNote(Note note)
     {
-
+       
+        
         dataSvs.editNote = await NoteVM.GetNote(note);
 
         dataSvs.BitmapDrawed = false;

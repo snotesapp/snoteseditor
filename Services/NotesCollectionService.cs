@@ -13,9 +13,9 @@ namespace BlazorApp1.Services
             _repository = repository;
         }
 
-        public IEnumerable<NotesCollection> GetNotesCollections()
+        public async Task<IEnumerable<NotesCollection>> GetNotesCollections()
         {
-            return _repository.GetNotesCollections();
+            return await _repository.GetNotesCollections();
         }
 
         public async Task AddNotesCollection(NotesCollection notesCollection)

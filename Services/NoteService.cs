@@ -1,5 +1,6 @@
 ﻿using BlazorApp1.Data;
 using Microsoft.EntityFrameworkCore;
+using SqliteWasmHelper;
 
 namespace BlazorApp1.Services
 {
@@ -7,17 +8,17 @@ namespace BlazorApp1.Services
     {
 
 
-        private readonly IDbContextFactory<SNotesDBContext> _dbContextFactory;
-        public NoteService(IDbContextFactory<SNotesDBContext> dbContextFactory)
+        private readonly ISqliteWasmDbContextFactory<SNotesDBContext> _dbContextFactory;
+        public NoteService(ISqliteWasmDbContextFactory<SNotesDBContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
-            using var db = _dbContextFactory.CreateDbContext();
-            db.Database.EnsureCreatedAsync();
+            //using var db =  _dbContextFactory.CreateDbContextAsync();
+            //db.Database.EnsureCreatedAsync();
         }
 
         public async Task<List<Note>> GetNotes()
         {
-            using (var noteContext = _dbContextFactory.CreateDbContext())
+            using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
             {
                var selectedNotes = noteContext.Note
                     .Where(nc => nc.NotesCollection.Selected)
@@ -43,7 +44,7 @@ namespace BlazorApp1.Services
 
             try
             {
-                using (var notesContext = _dbContextFactory.CreateDbContext())
+                using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
                 {
                     var selectedNotes =  notesContext.Note
                         .Where(nc => nc.NotesCollection.Selected == true)
@@ -66,7 +67,7 @@ namespace BlazorApp1.Services
         public async Task<List<Note>> GetNotes(string NotesTextFilter)
         {
 
-            using (var notesContext = _dbContextFactory.CreateDbContext())
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                var selectedNotes =  notesContext.Note
                     .Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower()))
@@ -80,7 +81,7 @@ namespace BlazorApp1.Services
 
         public async Task<Note> GetNote(Note note)
         {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 Note newnote   = await notesContext.Note.Where(nt => nt.NoteID == note.NoteID).Include(im => im.Images).Include(np => np.NotePaths).FirstOrDefaultAsync();    
                 return newnote;
@@ -91,7 +92,7 @@ namespace BlazorApp1.Services
 
         public async Task AddNote(Note note)
         {
-            using (var noteContext = _dbContextFactory.CreateDbContext())
+            using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 await noteContext.Note.AddAsync(note);
@@ -103,7 +104,7 @@ namespace BlazorApp1.Services
 
         public async Task UpdateNote(Note note)
         {
-            using (var noteContext = _dbContextFactory.CreateDbContext())
+            using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 noteContext.Note.Update(note);
@@ -115,7 +116,7 @@ namespace BlazorApp1.Services
 
         public async Task DeleteNote(int id)
         {
-            using (var noteContext = _dbContextFactory.CreateDbContext())
+            using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
             {
 
                 var Note = await noteContext.Note.FindAsync(id);
@@ -133,7 +134,7 @@ namespace BlazorApp1.Services
 
         public async Task DeleteNotePaths(Note note)
         {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 notesContext.RemoveRange(note.NotePaths);
                 await notesContext.SaveChangesAsync();
@@ -144,7 +145,7 @@ namespace BlazorApp1.Services
 
         public async Task DeleteNoteImg(NoteImage noteImage)
         {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 notesContext.Remove(noteImage);
                 await notesContext.SaveChangesAsync();
@@ -154,7 +155,7 @@ namespace BlazorApp1.Services
 
         public async Task DeleteNotePath(NotePath notePath)
         {
-            using (var notesContext = _dbContextFactory.CreateDbContext())
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                 notesContext.Remove(notePath);
                 await notesContext.SaveChangesAsync();
