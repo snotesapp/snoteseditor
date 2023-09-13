@@ -159,7 +159,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await ProjectVM.SqliteEnsureDeletedAsync();
+        //await ProjectVM.SqliteEnsureDeletedAsync();
         await ProjectVM.RemoveSqliteCacheAsync();
     }
 

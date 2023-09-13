@@ -19,14 +19,14 @@ namespace BlazorApp1.ViewModels
 
 
         [JSInvokable]
-        public async Task UpdateFileArray(string base64)
+        public async Task UpdateFileArray(byte[] base64)
         {
 
             // _dataSvs.CurrentStep = "Progress";
 
            
 
-            byte[] fileArray = Convert.FromBase64String(base64);
+            byte[] fileArray = base64;
             
             using (var memoryStream = new MemoryStream(fileArray))
             {

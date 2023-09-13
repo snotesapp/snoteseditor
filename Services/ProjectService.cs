@@ -116,8 +116,14 @@ namespace BlazorApp1.Services
        
         public async Task RemoveSqliteCacheAsync()
         {
-            
-             await _cacheStorageAccessor.RemoveAsync(CreateMessage());
+            //using (var projectsContext = await _dbContextFactory.CreateDbContextAsync())
+            //{
+            //    await projectsContext.Database.EnsureDeletedAsync();
+            //    await _cacheStorageAccessor.RemoveAsync(CreateMessage());
+            //    await projectsContext.Database.EnsureCreatedAsync();
+
+            //}
+            await _cacheStorageAccessor.RemoveAsync(CreateMessage());
         }
 
         public async Task<byte[]> GetSqliteCacheValueAsync()
@@ -152,7 +158,14 @@ namespace BlazorApp1.Services
 
         public async Task StoreSqliteCacheValueAsync(byte[] sqliteBytes)
         {
-          
+            using (var projectsContext = await _dbContextFactory.CreateDbContextAsync())
+            {
+
+
+                await projectsContext.Database.EnsureCreatedAsync();
+                await projectsContext.SaveChangesAsync();
+            }
+
             await _cacheStorageAccessor.StoreSqliteAsync(CreateMessage(), sqliteBytes);
                            
         }

@@ -85,6 +85,10 @@ namespace BlazorApp1.ViewModels
         {
             await Project_service.SqliteEnsureDeletedAsync();
         }
+        public async Task SqliteEnsureCreatedAsync()
+        {
+            await Project_service.SqliteEnsureCreatedAsync();
+        }
 
         public async Task<byte[]> GetSqliteCacheValueAsync()
         {
@@ -121,39 +125,42 @@ namespace BlazorApp1.ViewModels
             */
 
 
-            var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
+            //var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
 
-            using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-            {
-                Project? newProject =
-                  await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-               // SharedDataService_service.MainProject = newProject;
-            }
+            //using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
+            //{
+            //    Project? newProject =
+            //      await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+            //   SharedDataService_service.MainProject = newProject;
+            //}
 
 
             //await InsertProject(SharedDataService_service.MainProject);
 
-            var jsonNoteCardsFile = SharedDataService_service.ProjectPath.Parent.FullName + "/notecards.json";
+            //var jsonNoteCardsFile = SharedDataService_service.ProjectPath.Parent.FullName + "/notecards.json";
 
-            using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-            {
-                List<NotePacket>? noteCardsList =
-                  await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
-               // await SharedDataService_service.NewRangNoteCards(noteCardsList);
-            }
+            //using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
+            //{
+            //    List<NotePacket>? noteCardsList =
+            //      await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
+            //    await SharedDataService_service.NewRangNoteCards(noteCardsList);
+            //}
 
 
-            await Task.Delay(500);
+           
             await RemoveSqliteCacheAsync();
-            await Task.Delay(500);
+           
             byte[] sqlitebytes= await File.ReadAllBytesAsync(SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3");
-            await Task.Delay(1000);
+            var sourse = SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3";
+            var dest = AppDomain.CurrentDomain.BaseDirectory + "snotesonline.sqlite3";
+            File.Copy(sourse, dest, true);
 
-            //var resp = await _browserCache.SyncDbWithCacheAsync("snotesonline.sqlite3"); 
-            await Project_service.SqliteEnsureCreatedAsync();
             await StoreSqliteCacheValueAsync(sqlitebytes);
-            await Task.Delay(500);
-            SharedDataService_service.MainProject = await GetFullProject();
+
+            //var resp = await _browserCache.SyncDbWithCacheAsync("snotesonline.sqlite3");
+          
+
+            SharedDataService_service.MainProject = await GetProject();
             SharedDataService_service.newProjectDialog = false;
 
         }

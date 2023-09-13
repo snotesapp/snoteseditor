@@ -232,7 +232,7 @@ export async function OpenSnotesFile() {
         const arrayBuffer = await file.arrayBuffer();
 
         if (arrayBuffer.byteLength > 0) {
-            const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+            const base64 = new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
             updateFileArray(base64);
         } else {
             console.error("arrayBuffer is empty");
