@@ -16,7 +16,7 @@ namespace BlazorApp1.Helpers
         {
             if (_accessorJsRef.IsValueCreated is false)
             {
-                _accessorJsRef = new(await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "/myjs/CacheStorageAccessor.js"));
+                _accessorJsRef = new(await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/CacheStorageAccessor.js"));
             }
         }
 
