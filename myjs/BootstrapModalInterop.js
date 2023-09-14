@@ -178,6 +178,38 @@ window.interop = {
 
     },
 
+    OpenSnotesFile: async function() {
+    const options = {
+        types: [
+            {
+                description: 'sNotes File',
+                accept: {
+                    'application/snotes': ['.snotes']
+                }
+            },
+        ],
+        excludeAcceptAllOption: true,
+        multiple: false
+    };
+
+
+    try {
+        [fileHandle] = await window.showOpenFilePicker(options);
+        const writable = await fileHandle.createWritable();
+        window.GetProjectFileJSInstance.invokeMethod('SetLoaderValue', true);
+
+        const file = await fileHandle.getFile();
+        const arrayBuffer = await file.arrayBuffer();
+
+        return new Uint8Array(arrayBuffer);
+
+
+
+    } catch (e) {
+
+        console.error('File picker was cancelled by the user');
+    }
+},
 
 };
 
@@ -208,7 +240,7 @@ export function registeGetProjectFileJSInstance(dotnetInstance) {
 
 
 
-export async function OpenSnotesFile() {
+export async function OpenSnotesFile2() {
     const options = {
         types: [
             {
@@ -232,7 +264,7 @@ export async function OpenSnotesFile() {
         const arrayBuffer = await file.arrayBuffer();
 
         if (arrayBuffer.byteLength > 0) {
-            const base64 = btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+            const base64 = new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
             updateFileArray(base64);
         } else {
             console.error("arrayBuffer is empty");
