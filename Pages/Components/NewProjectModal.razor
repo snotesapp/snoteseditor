@@ -243,8 +243,8 @@
     private async Task OpenZipFile()
     {
 
-        await _module.InvokeVoidAsync("OpenSnotesFile");
-
+        //await _module.InvokeVoidAsync("OpenSnotesFile");
+        await ProjectVM.OpenProject();
         ProjectVM.Loader = false;
         dataSvs.SwitchMenus("cards");
         StateHasChanged();

@@ -124,43 +124,56 @@ namespace BlazorApp1.ViewModels
             SharedDataService_service.MainProject = await GetProject();
             */
 
-
-            //var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
-
-            //using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-            //{
-            //    Project? newProject =
-            //      await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-            //   SharedDataService_service.MainProject = newProject;
-            //}
-
-
-            //await InsertProject(SharedDataService_service.MainProject);
-
-            //var jsonNoteCardsFile = SharedDataService_service.ProjectPath.Parent.FullName + "/notecards.json";
-
-            //using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-            //{
-            //    List<NotePacket>? noteCardsList =
-            //      await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
-            //    await SharedDataService_service.NewRangNoteCards(noteCardsList);
-            //}
-
-
-           
-            await RemoveSqliteCacheAsync();
-           
-            byte[] sqlitebytes= await File.ReadAllBytesAsync(SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3");
-            var sourse = SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3";
-            var dest = AppDomain.CurrentDomain.BaseDirectory + "snotesonline.sqlite3";
-            File.Copy(sourse, dest, true);
-
-            await StoreSqliteCacheValueAsync(sqlitebytes);
-
-            //var resp = await _browserCache.SyncDbWithCacheAsync("snotesonline.sqlite3");
           
+            var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
 
-            SharedDataService_service.MainProject = await GetProject();
+            if (File.Exists(jsonProjectFile))
+            {
+                await RemoveSqliteCacheAsync();
+                await SqliteEnsureDeletedAsync();
+                await SqliteEnsureCreatedAsync();
+                using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
+                {
+                    Project? newProject =
+                      await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
+                    SharedDataService_service.MainProject = newProject;
+                }
+
+
+                await InsertProject(SharedDataService_service.MainProject);
+
+                var jsonNoteCardsFile = SharedDataService_service.ProjectPath.Parent.FullName + "/notecards.json";
+
+                using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
+                {
+                    List<NotePacket>? noteCardsList =
+                      await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
+                    await SharedDataService_service.NewRangNoteCards(noteCardsList);
+                }
+
+                SharedDataService_service.MainProject = await GetFullProject();
+
+                File.Delete(jsonProjectFile);
+                File.Delete(jsonNoteCardsFile);
+                File.Delete(SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.db");
+
+            }
+            else
+            {
+                await RemoveSqliteCacheAsync();
+
+                byte[] sqlitebytes = await File.ReadAllBytesAsync(SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3");
+                var sourse = SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.sqlite3";
+                var dest = AppDomain.CurrentDomain.BaseDirectory + "snotesonline.sqlite3";
+                File.Copy(sourse, dest, true);
+
+                await StoreSqliteCacheValueAsync(sqlitebytes);
+
+                //var resp = await _browserCache.SyncDbWithCacheAsync("snotesonline.sqlite3");
+
+                SharedDataService_service.MainProject = await GetProject();
+            }
+
             SharedDataService_service.newProjectDialog = false;
 
         }
@@ -184,7 +197,7 @@ namespace BlazorApp1.ViewModels
 
         private async Task<string> CreatePkgFile()
         {
-            await Task.Delay(500);
+            
             string packageFilePath = AppDomain.CurrentDomain.BaseDirectory + FilePaths.PackageDirectory + "/" + FilePaths.PackageFilePath;
 
             if (File.Exists(packageFilePath))
@@ -210,15 +223,15 @@ namespace BlazorApp1.ViewModels
             byte[] sqliteFile = await GetSqliteCacheValueAsync();
             File.WriteAllBytes(sqliteFilePath, sqliteFile);
 
-
+            
             // Create the meta object and serialize it to a byte array
             var metaObject = new MetaObject
             {
                 Version = "1.0"
             };
             await SerializeMetaObject(metaObject);
-          
 
+            /*
             // Write the serialized meta object to a file
             //File.WriteAllBytes(SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.MetaFilePath, metaJsonBytes);
 
@@ -239,29 +252,10 @@ namespace BlazorApp1.ViewModels
                 await SerializeNoteCardsAsync(allNoteCards);
             }
 
+            */
+
 
             string projectRootPath = SharedDataService_service.ProjectPath.Parent.FullName;
-
-            //string mydbfile = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).
-            //    Where(file => Path.GetFileName(file).Equals("snotesonline.db", StringComparison.OrdinalIgnoreCase)).
-            //    First();
-           
-            //File.Copy(mydbfile, projectRootPath + $"{mydbfile}", true);
-
-          
-
-            /*
-                        List<string> dbfiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Where( ob => ob.Contains("snotesonline")).ToList();
-
-                       foreach (string dbfile in dbfiles)
-                        {
-                            File.Copy(dbfile, projectRootPath + $"{dbfile}", true);
-                        }
-
-                        var folderfils = Directory.GetFiles(projectRootPath);
-              */
-
-
             // Create the package file
             ZipFile.CreateFromDirectory(projectRootPath, packageFilePath);
 
@@ -276,6 +270,28 @@ namespace BlazorApp1.ViewModels
             return fileArray;
         }
 
+        public async Task OpenProject()
+        {
+
+            byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
+            using (var memoryStream = new MemoryStream(snotesfileArray))
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
+                {
+                    if (archive.Entries.Count == 0)
+                    {
+                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
+                        return;
+                    }
+
+                    var extractPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project");
+                    archive.ExtractToDirectory(extractPath);
+                }
+            }
+
+            await BuildProject();
+
+        }
 
         public async Task SaveProject()
         {
