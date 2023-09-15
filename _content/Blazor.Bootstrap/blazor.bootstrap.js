@@ -297,6 +297,41 @@ window.blazorBootstrap = {
             document.getElementById(elementId).value = value;
         }
     },
+    dropdown: {
+        dispose: (elementId) => {
+            bootstrap?.Dropdown?.getOrCreateInstance(document.getElementById(elementId))?.dispose();
+        },
+        hide: (elementId) => {
+            bootstrap?.Dropdown?.getOrCreateInstance(document.getElementById(elementId))?.hide();
+        },
+        initialize: (elementId, dotNetHelper) => {
+            let dropdownEl = document.getElementById(elementId);
+
+            dropdownEl.addEventListener('hide.bs.dropdown', function () {
+                dotNetHelper.invokeMethodAsync('bsHideDropdown');
+            });
+            dropdownEl.addEventListener('hidden.bs.dropdown', function () {
+                dotNetHelper.invokeMethodAsync('bsHiddenDropdown');
+            });
+            dropdownEl.addEventListener('show.bs.dropdown', function () {
+                dotNetHelper.invokeMethodAsync('bsShowDropdown');
+            });
+            dropdownEl.addEventListener('shown.bs.dropdown', function () {
+                dotNetHelper.invokeMethodAsync('bsShownDropdown');
+            });
+
+            bootstrap?.Dropdown?.getOrCreateInstance(dropdownEl);
+        },
+        show: (elementId) => {
+            bootstrap?.Dropdown?.getOrCreateInstance(document.getElementById(elementId))?.show();
+        },
+        toggle: (elementId) => {
+            bootstrap?.Dropdown?.getOrCreateInstance(document.getElementById(elementId))?.toggle();
+        },
+        update: (elementId) => {
+            bootstrap?.Dropdown?.getOrCreateInstance(document.getElementById(elementId))?.update();
+        }
+    },
     grid: {
         setSelectAllCheckboxState: (elementId, state) => {
             let checkboxEl = document.getElementById(elementId);
@@ -534,11 +569,6 @@ window.blazorChart = {
     create: (elementId, type, data, options) => {
         let chartEl = document.getElementById(elementId);
 
-        //console.log(elementId);
-        //console.log(type);
-        //console.log(data);
-        //console.log(options); // NOTE: this gives more details in the chrome dev tools
-
         const config = {
             type: type,
             data: data,
@@ -587,6 +617,51 @@ window.blazorChart = {
 }
 
 window.blazorChart.bar = {
+    addDatasetData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            const chartData = chart.data;
+            const chartDatasetData = data;
+
+            if (!chartData.labels.includes(dataLabel))
+                chartData.labels.push(dataLabel);
+
+            const chartDatasets = chartData.datasets;
+
+            if (chartDatasets.length > 0) {
+                let datasetIndex = chartDatasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                if (datasetIndex > -1) {
+                    chartDatasets[datasetIndex].data.push(chartDatasetData.data);
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDatasetsData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart && data) {
+            const chartData = chart.data;
+
+            if (!chartData.labels.includes(dataLabel)) {
+                chartData.labels.push(dataLabel);
+
+                if (chartData.datasets.length > 0 && chartData.datasets.length === data.length) {
+                    data.forEach(chartDatasetData => {
+                        let datasetIndex = chartData.datasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                        chartData.datasets[datasetIndex].data.push(chartDatasetData.data);
+                    });
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDataset: (elementId, newDataset) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            chart.data.datasets.push(newDataset);
+            chart.update();
+        }
+    },
     create: (elementId, type, data, options) => {
         let chartEl = document.getElementById(elementId);
 
@@ -630,13 +705,60 @@ window.blazorChart.bar = {
             chart.data = data;
             chart.options = options;
             chart.update();
-        } else {
+        }
+        else {
             window.blazorChart.bar.create(elementId, type, data, options);
         }
     },
 }
 
 window.blazorChart.doughnut = {
+    addDatasetData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            const chartData = chart.data;
+            const chartDatasetData = data;
+
+            if (!chartData.labels.includes(dataLabel))
+                chartData.labels.push(dataLabel);
+
+            const chartDatasets = chartData.datasets;
+
+            if (chartDatasets.length > 0) {
+                let datasetIndex = chartDatasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                if (datasetIndex > -1) {
+                    chartDatasets[datasetIndex].data.push(chartDatasetData.data);
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDatasetsData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart && data) {
+            const chartData = chart.data;
+
+            if (!chartData.labels.includes(dataLabel)) {
+                chartData.labels.push(dataLabel);
+
+                if (chartData.datasets.length > 0 && chartData.datasets.length === data.length) {
+                    data.forEach(chartDatasetData => {
+                        let datasetIndex = chartData.datasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                        chartData.datasets[datasetIndex].data.push(chartDatasetData.data);
+                        chartData.datasets[datasetIndex].backgroundColor.push(chartDatasetData.backgroundColor);
+                    });
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDataset: (elementId, newDataset) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            chart.data.datasets.push(newDataset);
+            chart.update();
+        }
+    },
     create: (elementId, type, data, options) => {
         let chartEl = document.getElementById(elementId);
 
@@ -680,13 +802,59 @@ window.blazorChart.doughnut = {
             chart.data = data;
             chart.options = options;
             chart.update();
-        } else {
+        }
+        else {
             window.blazorChart.doughnut.create(elementId, type, data, options);
         }
     },
 }
 
 window.blazorChart.line = {
+    addDatasetData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            const chartData = chart.data;
+            const chartDatasetData = data;
+
+            if (!chartData.labels.includes(dataLabel))
+                chartData.labels.push(dataLabel);
+
+            const chartDatasets = chartData.datasets;
+
+            if (chartDatasets.length > 0) {
+                let datasetIndex = chartDatasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                if (datasetIndex > -1) {
+                    chartDatasets[datasetIndex].data.push(chartDatasetData.data);
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDatasetsData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart && data) {
+            const chartData = chart.data;
+
+            if (!chartData.labels.includes(dataLabel)) {
+                chartData.labels.push(dataLabel);
+
+                if (chartData.datasets.length > 0 && chartData.datasets.length === data.length) {
+                    data.forEach(chartDatasetData => {
+                        let datasetIndex = chartData.datasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                        chartData.datasets[datasetIndex].data.push(chartDatasetData.data);
+                    });
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDataset: (elementId, newDataset) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            chart.data.datasets.push(newDataset);
+            chart.update();
+        }
+    },
     create: (elementId, type, data, options) => {
         let chartEl = document.getElementById(elementId);
 
@@ -747,7 +915,8 @@ window.blazorChart.line = {
     },
     initialize: (elementId, type, data, options) => {
         let chart = window.blazorChart.line.get(elementId);
-        if (chart) return;
+        if (chart)
+            return;
         else
             window.blazorChart.line.create(elementId, type, data, options);
     },
@@ -764,13 +933,60 @@ window.blazorChart.line = {
             chart.data = data;
             chart.options = options;
             chart.update();
-        } else {
+        }
+        else {
             window.blazorChart.line.create(elementId, type, data, options);
         }
     },
 }
 
 window.blazorChart.pie = {
+    addDatasetData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            const chartData = chart.data;
+            const chartDatasetData = data;
+
+            if (!chartData.labels.includes(dataLabel))
+                chartData.labels.push(dataLabel);
+
+            const chartDatasets = chartData.datasets;
+
+            if (chartDatasets.length > 0) {
+                let datasetIndex = chartDatasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                if (datasetIndex > -1) {
+                    chartDatasets[datasetIndex].data.push(chartDatasetData.data);
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDatasetsData: (elementId, dataLabel, data) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart && data) {
+            const chartData = chart.data;
+
+            if (!chartData.labels.includes(dataLabel)) {
+                chartData.labels.push(dataLabel);
+
+                if (chartData.datasets.length > 0 && chartData.datasets.length === data.length) {
+                    data.forEach(chartDatasetData => {
+                        let datasetIndex = chartData.datasets.findIndex(dataset => dataset.label === chartDatasetData.datasetLabel);
+                        chartData.datasets[datasetIndex].data.push(chartDatasetData.data);
+                        chartData.datasets[datasetIndex].backgroundColor.push(chartDatasetData.backgroundColor);
+                    });
+                    chart.update();
+                }
+            }
+        }
+    },
+    addDataset: (elementId, newDataset) => {
+        let chart = window.blazorChart.get(elementId);
+        if (chart) {
+            chart.data.datasets.push(newDataset);
+            chart.update();
+        }
+    },
     create: (elementId, type, data, options) => {
         let chartEl = document.getElementById(elementId);
 
@@ -814,7 +1030,8 @@ window.blazorChart.pie = {
             chart.data = data;
             chart.options = options;
             chart.update();
-        } else {
+        }
+        else {
             window.blazorChart.pie.create(elementId, type, data, options);
         }
     },
