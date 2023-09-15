@@ -16,12 +16,7 @@ namespace BlazorApp1.Data
 
        
 
-        /*
-        public SNotesDBContext(string databasePath)
-        {
-            _databasePath = databasePath;
-        }
-        */
+      
 
         public SNotesDBContext(DbContextOptions<SNotesDBContext> options) : base(options)
         {
@@ -36,33 +31,11 @@ namespace BlazorApp1.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //var connectionString = $"Data Source={_databasePath}";
-            //optionsBuilder.UseSqlite(connectionString);
+            
         }
 
 
-        /*
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            #region Multi-Platforms db Path
-
-
-            //  databasPath = DependencyService.Get<IPath>().GetDatabasePath(DatabaseName);
-            //   optionsBuilder.UseSqlite($"Filename={databasPath}");
-
-
-            #endregion
-
-            #region Migrate for Local DataBase
-            //Uncomment this and Comment DependencyService
-
-            optionsBuilder.UseSqlite($"Filename={DatabaseName}");
-
-            #endregion
-
-        }
-        */
+      
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

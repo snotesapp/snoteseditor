@@ -19,14 +19,14 @@ namespace BlazorApp1.ViewModels
 
 
         [JSInvokable]
-        public async Task UpdateFileArray(byte[] base64)
+        public async Task UpdateFileArray(byte[] fileArray)
         {
 
             // _dataSvs.CurrentStep = "Progress";
 
            
 
-            byte[] fileArray = base64;
+          
             
             using (var memoryStream = new MemoryStream(fileArray))
             {
@@ -34,7 +34,7 @@ namespace BlazorApp1.ViewModels
                 {
                     if (archive.Entries.Count == 0)
                     {
-                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
+                        Console.WriteLine("The contents of the fileArray  is not a valid zip file. ");
                         return;
                     }
 

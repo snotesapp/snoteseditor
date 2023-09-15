@@ -61,9 +61,6 @@ builder.Services.AddBlazoredSessionStorage();
 
 builder.Services.AddBlazorBootstrap();
 
-//builder.Services.AddDbContext<DataContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddSqlite<SNotesDBContext>("Data Source=snotesonline.db");
-//builder.Services.AddDbContextFactory<DataContext>();
 
 //builder.Services.AddDbContextFactory<SNotesDBContext>(x => x.UseSqlite("Data Source=snotesonline.db"));
 
@@ -71,10 +68,7 @@ builder.Services.AddSqliteWasmDbContextFactory<SNotesDBContext>(
   opts => opts.UseSqlite("Data Source=snotesonline.sqlite3"));
 
 
-//builder.Services.AddSingleton<DbContextService>();
 
-
-//builder.Services.AddScoped<DatabaseService>();
 SeedData.Initialize();
 await builder.Build().RunAsync();
 

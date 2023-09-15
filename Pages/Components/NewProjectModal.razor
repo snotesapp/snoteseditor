@@ -17,8 +17,6 @@
 @inject ILocalStorageService localstorage1
 @inject ISessionStorageService sessionStorage
 
-
-
 @inject IJSRuntime JSRuntime
 
 
@@ -171,7 +169,7 @@
 
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-            await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
+             await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
 
             dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
         }

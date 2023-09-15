@@ -21,15 +21,15 @@ namespace BlazorApp1.ViewModels
         private readonly ProjectService Project_service;
         private readonly SharedDataService SharedDataService_service;
         private readonly IJSRuntime jSRuntime_JS;
-        private readonly IBrowserCache _browserCache;
+       
 
 
-        public ProjectViewModel(SharedDataService sharedDataService, ProjectService projectService, IJSRuntime jsRuntime, IBrowserCache browserCache)
+        public ProjectViewModel(SharedDataService sharedDataService, ProjectService projectService, IJSRuntime jsRuntime)
         {
             this.SharedDataService_service = sharedDataService;
             this.Project_service = projectService;
             this.jSRuntime_JS = jsRuntime;
-            this._browserCache = browserCache;
+            
         }
 
         private bool _drawer = true;
@@ -94,15 +94,12 @@ namespace BlazorApp1.ViewModels
         {
             return await Project_service.GetSqliteCacheValueAsync();
 
-
-
         }
 
         public async Task StoreSqliteCacheValueAsync(byte[] sqliteBytes)
         {
              await Project_service.StoreSqliteCacheValueAsync(sqliteBytes);
             
-
 
         }
 
@@ -114,16 +111,7 @@ namespace BlazorApp1.ViewModels
                 SharedDataService_service.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
             }
 
-            /*
-            var files = Directory.GetFiles(SharedDataService_service.ProjectPath.Parent.FullName);
-            var files2 = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory);
-            var sourse = SharedDataService_service.ProjectPath.Parent.FullName + "/snotesonline.db";
-            var dest = AppDomain.CurrentDomain.BaseDirectory + "snotesonline2.db";
-            //File.Copy(sourse, dest, true);
-            Project_service.CopyDB(sourse, dest);
-            SharedDataService_service.MainProject = await GetProject();
-            */
-
+            
           
             var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
 
@@ -169,7 +157,7 @@ namespace BlazorApp1.ViewModels
 
                 await StoreSqliteCacheValueAsync(sqlitebytes);
 
-                //var resp = await _browserCache.SyncDbWithCacheAsync("snotesonline.sqlite3");
+               
 
                 SharedDataService_service.MainProject = await GetProject();
             }
@@ -181,17 +169,6 @@ namespace BlazorApp1.ViewModels
 
         #region Download Project
 
-        private static readonly JsonSerializerOptions ProjectOptions = new()
-        {
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            WriteIndented = false,
-            IgnoreReadOnlyProperties = true,
-        };
-
-        private static readonly JsonSerializerOptions NoteCardsOptions = new()
-        {
-            WriteIndented = false,
-        };
         
         public byte[] fileArray;
 
@@ -231,28 +208,7 @@ namespace BlazorApp1.ViewModels
             };
             await SerializeMetaObject(metaObject);
 
-            /*
-            // Write the serialized meta object to a file
-            //File.WriteAllBytes(SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.MetaFilePath, metaJsonBytes);
-
-
-            // Serialize the full project object to a file
-            
-            Project fullPrjct = await GetFullProject();
-            //Project fullPrjct = SharedDataService_service.MainProject;
-            if (fullPrjct != null)
-            {
-                await SerializeProjectAsync(fullPrjct);
-            }
-
-            // Serialize the list of note cards to a file
-            List<NotePacket> allNoteCards = await SharedDataService_service.GetAllNoteCards();
-            if (allNoteCards != null)
-            {
-                await SerializeNoteCardsAsync(allNoteCards);
-            }
-
-            */
+           
 
 
             string projectRootPath = SharedDataService_service.ProjectPath.Parent.FullName;
@@ -387,24 +343,7 @@ namespace BlazorApp1.ViewModels
            
         }
 
-        private async Task SerializeProjectAsync(Project project)
-        {
-            var jsonProjectFilePath = SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.ProjectFilePath;
-            await using (FileStream createProjectStream = File.Create(jsonProjectFilePath))
-            {
-                await JsonSerializer.SerializeAsync<Project>(createProjectStream, project, ProjectOptions);
-            }
-        }
-        private async Task SerializeNoteCardsAsync(List<NotePacket> noteCards)
-        {
-            var jsonNoteCardsFilePath = SharedDataService_service.ProjectPath.Parent.FullName + "/" + FilePaths.NoteCardsFilePath;
-            await using (FileStream createNotecardsStream = File.Create(jsonNoteCardsFilePath))
-            {
-                await JsonSerializer.SerializeAsync<List<NotePacket>>(createNotecardsStream, noteCards, NoteCardsOptions);
-            }
-        }
-
-
+       
 
         #endregion
 

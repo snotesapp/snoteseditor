@@ -21,41 +21,16 @@ namespace BlazorApp1.Services
 
         private ISqliteWasmDbContextFactory<SNotesDBContext> _dbContextFactory;
         private CacheStorageAccessor _cacheStorageAccessor;
-        private IBrowserCache _browserCache;
-        public ProjectService(ISqliteWasmDbContextFactory<SNotesDBContext> dbContextFactory, CacheStorageAccessor cacheStorageAccessor,IBrowserCache browserCache)
+        
+        public ProjectService(ISqliteWasmDbContextFactory<SNotesDBContext> dbContextFactory, CacheStorageAccessor cacheStorageAccessor)
         {
             _dbContextFactory = dbContextFactory;
             _cacheStorageAccessor = cacheStorageAccessor;
-            _browserCache = browserCache;
-            //using var db = _dbContextFactory.CreateDbContext();
-            //db.Database.EnsureCreatedAsync();
+           
 
         }
 
-        public void CopyDB(string source,string destination)
-        {
-
-            
-            //var files1 = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory);
-            //using var db = _dbContextFactory.CreateDbContext();
-            //db.Database.CloseConnection();
-            //File.Copy(source, destination, true);
-            //db.Database.SetConnectionString("Data Source=snotesonline2.db");
-            //db.Database.EnsureCreated();
-            //db.Database.OpenConnection();
-            //var constrng = db.Database.GetConnectionString();
-            //var files2 = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory);
-
-
-
-
-            //Project project = db.Projects.FirstOrDefault();
-
-
-            //var files3 = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory);
-
-        }
-
+      
         public async Task<Project> GetProject()
         {
             using (var projectsContext = await _dbContextFactory.CreateDbContextAsync())
@@ -116,13 +91,7 @@ namespace BlazorApp1.Services
        
         public async Task RemoveSqliteCacheAsync()
         {
-            //using (var projectsContext = await _dbContextFactory.CreateDbContextAsync())
-            //{
-            //    await projectsContext.Database.EnsureDeletedAsync();
-            //    await _cacheStorageAccessor.RemoveAsync(CreateMessage());
-            //    await projectsContext.Database.EnsureCreatedAsync();
-
-            //}
+           
             await _cacheStorageAccessor.RemoveAsync(CreateMessage());
         }
 
@@ -150,7 +119,7 @@ namespace BlazorApp1.Services
 
 
                 await projectsContext.Database.EnsureDeletedAsync();
-               // await projectsContext.SaveChangesAsync();
+               
             }
 
         }
