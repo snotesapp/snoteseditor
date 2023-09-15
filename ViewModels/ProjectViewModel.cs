@@ -48,13 +48,12 @@ namespace BlazorApp1.ViewModels
 
         public bool ConfirmLeave { get; set; } = false;
 
-    
-
         public async Task<Project> GetProject()
         {
             return await Project_service.GetProject();
 
         }
+
         public async Task<Project> GetFullProject()
         {
             return await Project_service.GetFullProject();
