@@ -48,7 +48,7 @@ namespace BlazorApp1.ViewModels
 
         public bool ConfirmLeave { get; set; } = false;
 
-        public bool NewProject { get; set; } = false;
+    
 
         public async Task<Project> GetProject()
         {
