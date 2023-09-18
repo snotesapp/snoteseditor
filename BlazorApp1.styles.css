@@ -379,9 +379,9 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
 
 .sn-addnotebutton[b-3hcsrndfyc] {
     position: absolute;
-    top: 50%;
+    top: 39%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-39%, -50%);
 }
 /* /Shared/SNMainLayout.razor.rz.scp.css */
 
