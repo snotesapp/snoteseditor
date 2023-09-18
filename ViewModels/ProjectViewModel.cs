@@ -78,16 +78,43 @@ namespace BlazorApp1.ViewModels
 
         public async Task RemoveSqliteCacheAsync()
         {
-            await Project_service.RemoveSqliteCacheAsync();
+            try
+            {
+                await Project_service.RemoveSqliteCacheAsync();
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("Can't remove sqlite cache");
+            }
+            
         }
 
         public async Task SqliteEnsureDeletedAsync()
         {
-            await Project_service.SqliteEnsureDeletedAsync();
+            try
+            {
+                await Project_service.SqliteEnsureDeletedAsync();
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("Can't delete sqlite db");
+            }
+            
         }
         public async Task SqliteEnsureCreatedAsync()
         {
-            await Project_service.SqliteEnsureCreatedAsync();
+            try
+            {
+                await Project_service.SqliteEnsureCreatedAsync();
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("Can't create sqlite db");
+            }
+            
         }
 
         public async Task<byte[]> GetSqliteCacheValueAsync()
