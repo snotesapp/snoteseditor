@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using ReactiveUI;
 using BlazorComponent;
 using SqliteWasmHelper;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace BlazorApp1.ViewModels
 {
@@ -101,6 +102,63 @@ namespace BlazorApp1.ViewModels
             
 
         }
+        #region Open Project
+
+        public async Task OpenProject(IBrowserFile browserFile)
+        {
+            await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
+            await browserFile.OpenReadStream(browserFile.Size).CopyToAsync(fileContent);
+
+            try
+            {
+
+                ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+            }
+            catch
+            {
+                Console.WriteLine("Error");
+            }
+
+            await BuildProject();
+
+            Loader = false;
+            if (SharedDataService_service.MainProject.Packets.Count > 0)
+            {
+                SharedDataService_service.SwitchMenus("cards");
+            }
+           
+            SharedDataService_service.newProjectDialog = false;
+        }
+
+        public async Task OpenProject()
+        {
+
+            byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
+            using (var memoryStream = new MemoryStream(snotesfileArray))
+            {
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
+                {
+                    if (archive.Entries.Count == 0)
+                    {
+                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
+                        return;
+                    }
+
+                    var extractPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project");
+                    archive.ExtractToDirectory(extractPath);
+                }
+            }
+
+            await BuildProject();
+
+            Loader = false;
+            if (SharedDataService_service.MainProject.Packets.Count > 0)
+            {
+                SharedDataService_service.SwitchMenus("cards");
+            }
+
+            SharedDataService_service.newProjectDialog = false;
+        }
 
         public async Task BuildProject()
         {
@@ -110,8 +168,8 @@ namespace BlazorApp1.ViewModels
                 SharedDataService_service.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
             }
 
-            
-          
+
+
             var jsonProjectFile = SharedDataService_service.ProjectPath.Parent.FullName + "/jsonFile.json";
 
             if (File.Exists(jsonProjectFile))
@@ -156,7 +214,7 @@ namespace BlazorApp1.ViewModels
 
                 await StoreSqliteCacheValueAsync(sqlitebytes);
 
-               
+
 
                 SharedDataService_service.MainProject = await GetProject();
             }
@@ -166,9 +224,12 @@ namespace BlazorApp1.ViewModels
         }
 
 
-        #region Download Project
 
-        
+        #endregion
+
+        #region Download/Save Project
+
+
         public byte[] fileArray;
 
         private async Task<string> CreatePkgFile()
@@ -223,29 +284,6 @@ namespace BlazorApp1.ViewModels
 
 
             return fileArray;
-        }
-
-        public async Task OpenProject()
-        {
-
-            byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
-            using (var memoryStream = new MemoryStream(snotesfileArray))
-            {
-                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
-                {
-                    if (archive.Entries.Count == 0)
-                    {
-                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
-                        return;
-                    }
-
-                    var extractPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project");
-                    archive.ExtractToDirectory(extractPath);
-                }
-            }
-
-            await BuildProject();
-
         }
 
         public async Task SaveProject()

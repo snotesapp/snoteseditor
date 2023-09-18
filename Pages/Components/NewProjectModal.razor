@@ -169,7 +169,7 @@
 
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
-             await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
+            await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
 
             dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
         }
@@ -179,60 +179,13 @@
 
     private async Task HandleOnChange(IBrowserFile file)
     {
+      
 
-        ProjectVM.Loader = true;
-        if (dataSvs.ProjectPath is null || dataSvs.ProjectPath.Exists == false)
-        {
-            dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
-        }
+        await ProjectVM.OpenProject(file);
+      
 
-
-        //IBrowserFile uploadedfile = file;
-
-        await using FileStream fileContent = new(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", FileMode.Create);
-        await file.OpenReadStream(file.Size).CopyToAsync(fileContent);
-
-
-
-        try
-        {
-
-            ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
-        }
-        catch
-        {
-            Console.WriteLine("Error");
-        }
-
-
-
-        var jsonProjectFile = dataSvs.ProjectPath.Parent.FullName + "/jsonFile.json";
-
-        using (FileStream openStreamPrj = File.OpenRead(jsonProjectFile))
-        {
-            Project? newProject =
-              await JsonSerializer.DeserializeAsync<Project>(openStreamPrj);
-            dataSvs.MainProject = newProject;
-        }
-
-
-        await ProjectVM.InsertProject(dataSvs.MainProject);
-
-        var jsonNoteCardsFile = dataSvs.ProjectPath.Parent.FullName + "/notecards.json";
-
-        using (FileStream openStreamNC = File.OpenRead(jsonNoteCardsFile))
-        {
-            List<NotePacket>? noteCardsList =
-              await JsonSerializer.DeserializeAsync<List<NotePacket>>(openStreamNC);
-            await dataSvs.NewRangNoteCards(noteCardsList);
-        }
-
-
-        //await NoteVM.GetNotes();
-
-        ProjectVM.Loader = false;
-
-        await CloseDialoge.InvokeAsync(false);
+        StateHasChanged();
+        
 
     }
 
@@ -241,13 +194,12 @@
     private async Task OpenZipFile()
     {
 
-        //await _module.InvokeVoidAsync("OpenSnotesFile");
+       
         await ProjectVM.OpenProject();
-        ProjectVM.Loader = false;
-        dataSvs.SwitchMenus("cards");
+        
         StateHasChanged();
 
-        dataSvs.newProjectDialog = false;
+     
 
     }
 
