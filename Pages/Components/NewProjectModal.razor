@@ -58,21 +58,15 @@
         }
         else if (dataSvs.UserAgent.Contains("Mobile"))
         {
-            <div class="input-group elevation-2 rounded-3 shadow">
-                <span class="input-group-text " id="basic-addon1">
-                    <MIcon>
-                        mdi-file-upload-outline
-                    </MIcon>
-                </span>
-
-                <MFileInput TValue="IBrowserFile" OnChange="HandleOnChange"
-                        Disabled="ProjectVM.Loader"
-                        PrependIcon="null"
-                        Accept="application/snotes"
-                        Label="Import SNotes File"></MFileInput>
+             <div class="mb-3 elevation-2 rounded-3 shadow">
+              
+                <InputFile class="form-control" title="Import SNotes File" type="file" accept=".snotes" id="sNotesFilePicker" OnChange="HandleFileSelected" />
 
 
             </div>
+
+
+           
 
         }  
         else if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile")))
