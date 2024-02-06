@@ -118,11 +118,16 @@
                     <div class="row " style="width:96px;">
                         <div class="col-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
-                                 @(( dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard)&& (PacketVM.PrevPacket is null)) ? "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")
+                                 @(( dataSvs.SelectedCard.NotePackets.Count >0 &&
+                                    dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard)&& 
+                                    (PacketVM.PrevPacket is null)) ? 
+                                    "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")
                                 " type="button" @onpointerdown="ResetAnimation" @onclick="PrecedingNC">
                                 <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
 
-                                @if (( dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard))&&(PacketVM.PrevPacket is not null))
+                                @if ((dataSvs.SelectedCard.NotePackets.Count > 0 &&
+                                    dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard))&&
+                                    (PacketVM.PrevPacket is not null))
                                 {
                                     <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-right"> @PacketVM.PrevPacket.Title </span>
                                 }
@@ -134,10 +139,15 @@
 
                         <div class="col-4 offset-4 p-0">
                             <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip 
-                                    @(((dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard)) && (PacketVM.NextPacket is null) ) ? "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")"
+                                    @(((dataSvs.SelectedCard.NotePackets.Count >0 &&
+                                        dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard)) && 
+                                        (PacketVM.NextPacket is null) ) ? 
+                                        "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")"
                                     type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
                                 <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
-                                @if ((dataSvs.SelectedCard.NotePackets.Last() == dataSvs.SelectedNoteCard) && (PacketVM.NextPacket is not null))
+                                @if ((dataSvs.SelectedCard.NotePackets.Count > 0 && 
+                                    dataSvs.SelectedCard.NotePackets.Last() == dataSvs.SelectedNoteCard) && 
+                                    (PacketVM.NextPacket is not null))
                                 {
                                     <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-right"> @PacketVM.NextPacket.Title </span>
                                 }
