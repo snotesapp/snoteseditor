@@ -1,19 +1,13 @@
 ﻿using BlazorApp1.Data;
 using BlazorApp1.Helpers;
 using BlazorApp1.Services;
-using BlazorBootstrap;
-using DynamicData;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.JSInterop;
-using System;
 using System.IO.Compression;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using ReactiveUI;
-using BlazorComponent;
-using SqliteWasmHelper;
 using Microsoft.AspNetCore.Components.Forms;
+
+
 
 namespace BlazorApp1.ViewModels
 {
@@ -21,12 +15,12 @@ namespace BlazorApp1.ViewModels
     {
         private readonly ProjectService Project_service;
         private readonly SharedDataService SharedDataService_service;
+
         private readonly IJSRuntime jSRuntime_JS;
        
-
-
-        public ProjectViewModel(SharedDataService sharedDataService, ProjectService projectService, IJSRuntime jsRuntime)
+        public ProjectViewModel(SharedDataService sharedDataService, ProjectService projectService, IJSRuntime jsRuntime )
         {
+          
             this.SharedDataService_service = sharedDataService;
             this.Project_service = projectService;
             this.jSRuntime_JS = jsRuntime;
@@ -138,8 +132,9 @@ namespace BlazorApp1.ViewModels
 
             try
             {
+                ExtractsNotesFile(fileContent);
 
-                ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
+                //  ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
             }
             catch
             {
@@ -159,22 +154,15 @@ namespace BlazorApp1.ViewModels
 
         public async Task OpenProject()
         {
-
+           
             byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
+
             using (var memoryStream = new MemoryStream(snotesfileArray))
             {
-                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Read))
-                {
-                    if (archive.Entries.Count == 0)
-                    {
-                        Console.WriteLine("The contents of the base64 string is not a valid zip file. ");
-                        return;
-                    }
 
-                    var extractPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "project");
-                    archive.ExtractToDirectory(extractPath);
-                }
+                ExtractsNotesFile(memoryStream);
             }
+            
 
             await BuildProject();
 
@@ -185,6 +173,8 @@ namespace BlazorApp1.ViewModels
             }
 
             SharedDataService_service.newProjectDialog = false;
+
+           
         }
 
         public async Task BuildProject()
@@ -249,8 +239,53 @@ namespace BlazorApp1.ViewModels
             SharedDataService_service.newProjectDialog = false;
 
         }
+        public void ExtractsNotesFile(Stream snFileStream)
+        {
+            var extractPath = "/project";
+
+            using (ZipArchive archive = new ZipArchive(snFileStream, ZipArchiveMode.Read))
+                {
+                    // Ensure the extraction directory exists
+                    Directory.CreateDirectory(extractPath);
+                    Directory.SetCurrentDirectory(extractPath);
+
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+
+                        // Create directory for the entry if it doesn't exist
+                        string entryDirectory = Path.GetDirectoryName(entry.FullName);
+                        // create directory
+                        if (!string.IsNullOrEmpty(entryDirectory) && !Directory.Exists(entryDirectory))
+                        {
+                            Directory.CreateDirectory(entryDirectory);
+                        }
+
+                        // Extract only if it's not a directory
+                        if (!string.IsNullOrEmpty(entry.Name))
+                        {
+                            // Full path for the entry
+                            string entryFilePath = Path.Combine(entryDirectory, entry.Name);
+
+                            // Open a FileStream for the entry
+                            using (FileStream fileStream = File.Create(entryFilePath))
+                            {
+                                // Copy the contents of the entry to the FileStream
+                                using (Stream entryStream = entry.Open())
+                                {
+                                    entryStream.CopyTo(fileStream);
+                                }
+                            }
 
 
+                        }
+
+                    }
+                }
+
+
+
+            Directory.SetCurrentDirectory("/");
+        }
 
         #endregion
 
@@ -295,12 +330,9 @@ namespace BlazorApp1.ViewModels
             };
             await SerializeMetaObject(metaObject);
 
-           
-
-
             string projectRootPath = SharedDataService_service.ProjectPath.Parent.FullName;
             // Create the package file
-            ZipFile.CreateFromDirectory(projectRootPath, packageFilePath);
+            System.IO.Compression.ZipFile.CreateFromDirectory(projectRootPath, packageFilePath);
 
             // Read the package file into a byte array
             using (var packageFile = new FileStream(packageFilePath, FileMode.Open))
@@ -315,43 +347,45 @@ namespace BlazorApp1.ViewModels
 
         public async Task SaveProject()
         {
-            
-            ConfirmLeave = false;
-            Loader = true;
-            fileArray = await BuildProjectPackage();
-            Loader = false;
-            
-            // await SetProgres(50);
-            try
-            {
-               
-                await jSRuntime_JS.InvokeVoidAsync("interop.getNewFileHandle", SharedDataService_service.MainProject.Name);
-
-                await jSRuntime_JS.InvokeVoidAsync("interop.blazorSaveFile", "application/zip", fileArray);
-
-                Loader = false;
-               
-            }
-            catch (JSException ex)
-            {
-                if (ex.Message.Contains("User activation is required to request permissions."))
-                {
-
-                    // Handle the specific error
-                    Console.WriteLine("Error: User activation is required to request permissions.");
-
-                    Loader = false;
-                   
-
-                }
-                else
-                {
-                    // Handle other JSExceptions
-                    Console.WriteLine("JSException: " + ex.Message);
-                }
-            }
            
+         
 
+           ConfirmLeave = false;
+           Loader = true;
+           fileArray = await BuildProjectPackage();
+           Loader = false;
+
+           // await SetProgres(50);
+           try
+           {
+
+               await jSRuntime_JS.InvokeVoidAsync("interop.getNewFileHandle", SharedDataService_service.MainProject.Name);
+
+               await jSRuntime_JS.InvokeVoidAsync("interop.blazorSaveFile", "application/zip", fileArray);
+
+               Loader = false;
+
+           }
+           catch (JSException ex)
+           {
+               if (ex.Message.Contains("User activation is required to request permissions."))
+               {
+
+                   // Handle the specific error
+                   Console.WriteLine("Error: User activation is required to request permissions.");
+
+                   Loader = false;
+
+
+               }
+               else
+               {
+                   // Handle other JSExceptions
+                   Console.WriteLine("JSException: " + ex.Message);
+               }
+           }
+
+          
 
         }
 
