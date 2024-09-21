@@ -62,28 +62,22 @@
 
                         break;
                     case "collection":
-                        <MRow Class="overflow-hidden">
-
+                        
 
                             <CollectionsMenu GoToMenu="@(dataSvs.SwitchMenus)" />
-                        </MRow>
+                       
                         break;
                     case "cards":
 
-                        <MRow Class="overflow-hidden">
+                       
                             <CardsMenu BackToMain="@(dataSvs.SwitchMenus)" />
 
-                        </MRow>
                         break;
                     case "notetools":
                         <NoteTools BackToMain="@(dataSvs.SwitchMenus)" />
                         break;
                     case "notecards":
-
-                        <MRow Class="overflow-hidden">
-                            <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)" />
-
-                        </MRow>
+                        <NoteCardsMenu BackToMain="@(dataSvs.SwitchMenus)" />
 
                         break;
                     default:

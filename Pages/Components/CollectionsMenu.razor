@@ -9,19 +9,19 @@
 @inject NoteViewModel NoteVM
 
 
-<MContainer Style="height:calc(100vh - 140px); overflow:auto">
-    <MRow Class="mx-0 w-100">
+<MContainer Style="height:calc(100vh - 140px); overflow:auto"  class="px-2">
+ 
         <MList>
             <ListTemplate Items="dataSvs.MainProject.NotesCollection">
                 <RowTemplate Context="coll">
 
-                    <div class="mx-1 mb-1">
+                    <div class=" mb-1">
                         @if (coll.Editable == false)
                         {
 
                             @if (coll.Selected == true)
                             {
-                                <MListItem Link style="background-color:#1565c0"
+                                <MListItem Link style="background-color:#1565c0" title="@coll.Title"
                                    @ondblclick="() => SetCollection(coll)"
                                    @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
                                    __internal_preventDefault_oncontextmenu
@@ -36,7 +36,7 @@
                             else
                             {
 
-                                <MListItem Link style="background-color:#ffb07e"
+                                <MListItem Link style="background-color:#ffb07e" title="@coll.Title"
                                    @ondblclick="() => SetCollection(coll)"
                                    @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
                                    __internal_preventDefault_oncontextmenu
@@ -66,7 +66,7 @@
 
         </MList>
 
-    </MRow>
+   
 
 
 

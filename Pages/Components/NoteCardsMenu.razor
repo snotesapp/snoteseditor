@@ -11,7 +11,7 @@
 @inject ProjectViewModel ProjectVM
 @inject IMessageService MessageService
 
-<MContainer Style="height:calc(100vh - 170px); overflow:auto">
+<MContainer Style="height:calc(100vh - 170px); overflow: auto; " class="px-2" >
 
     @if (NotesMenuSelected)
     {
@@ -26,7 +26,7 @@
                         <MDragItem>
 
 
-                            <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
+                            <MCard Class="mb-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                            Dark
                            @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
@@ -58,7 +58,7 @@
            CloseOnContentClick
            Absolute
            OffsetY>
-                    <MList Dense Width="200">
+                    <MList Dense Width="200" >
 
 
                         <MListItem OnClick="() => SetDragMode()">
@@ -86,7 +86,7 @@
             <ListTemplate Items="dataSvs.SelectedCard.NotePackets">
                 <RowTemplate Context="notecard">
 
-                    <MCard Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
+                    <MCard Class="mb-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                    Dark
                    @onclick="()=> SelectNoteCard(notecard)"
                    @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
@@ -158,11 +158,11 @@
 
             @if (dataSvs.CurrentPacketsSet.Count > 0)
             {
-                <div class="p-0 ms-2 me-1 ">
+                
 
                     <ListTemplate Items="dataSvs.CurrentPacketsSet">
                         <RowTemplate Context="card">
-                            <MListItem Link style="background-color:#1565c0; margin-bottom:2px"
+                            <MListItem Link style="background-color:#1565c0; margin-bottom:3px;  "
                                Color="white" Class="elevation-4  rounded-3"
                                OnClick="()=>SelectChildCard(card)"
                                @oncontextmenu="@(args => {ShowCardContextMenu(args,card);})"
@@ -176,7 +176,7 @@
 
                     </ListTemplate>
 
-                </div>
+               
             }
 
         </MList>
@@ -265,7 +265,7 @@
 </MContainer>
 
 
-<div class="d-inline-flex justify-content-evenly border-top border-secondary mb-0 align-items-center" style="height:40px">
+<div class="d-inline-flex justify-content-evenly border-top border-secondary mb-0 align-items-center w-100" style="height:40px">
 
     @if (NotesMenuSelected)
     {

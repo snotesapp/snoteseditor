@@ -15,10 +15,9 @@
 @inject IMessageService MessageService
 
 
-<MContainer Style="height:calc(100vh - 130px); overflow:auto">
+<MContainer Style="height:calc(100vh - 130px); overflow:auto" class="px-2">
 
-    <MRow Class="mx-0 w-100">
-
+   
         <MList Subheader>
 
             @if (!dataSvs.filterPackets)
@@ -30,7 +29,7 @@
                         {
                             @if (packet.Selected)
                             {
-                                <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
+                                <div class="mb-1 " @oncontextmenu:preventDefault="true"
                          @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
 
                                     @if (packet.Parent is null)
@@ -71,10 +70,13 @@
                         }
                         else
                         {
-                            <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                           placeholder="Packet Name" aria-label="Packet Name"
-                           aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
+                            <input  type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3 shadow rounded"
+                                 style="text-indent: 10px;"
+                                placeholder="Packet Name" aria-label="Packet Name"
+                                aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
 
+                            
+                            
                         }
 
 
@@ -91,7 +93,7 @@
                         @if (packet.Editable == false)
                         {
 
-                            <div class="p-0 mx-1  mb-1 " @oncontextmenu:preventDefault="true"
+                            <div class=" mb-1 " @oncontextmenu:preventDefault="true"
                          @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
 
                                 @if (packet.Parent is null)
@@ -128,7 +130,8 @@
                         }
                         else
                         {
-                            <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
+                            <input type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3  shadow rounded"
+                            style="text-indent: 10px;"
                            placeholder="Packet Name" aria-label="Packet Name"
                            aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
 
@@ -145,7 +148,7 @@
 
         </MList>
 
-    </MRow>
+    
 
 </MContainer>
 
