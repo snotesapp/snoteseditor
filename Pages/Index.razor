@@ -547,11 +547,9 @@ else
 
     private async Task EditNote(Note note)
     {
-       
         
         dataSvs.editNote = await NoteVM.GetNote(note);
 
-        dataSvs.BitmapDrawed = false;
         dataSvs.SwitchMenus("notetools");
 
     }

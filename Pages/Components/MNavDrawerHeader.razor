@@ -504,7 +504,6 @@
                         await NoteVM.UpdateNote();
 
                         await NoteVM.GetNotes();
-                        dataSvs.BitmapDrawed = false;
                         dataSvs.completedPolylines.Clear();
 
                         dataSvs.noteEdited = false;
@@ -514,7 +513,6 @@
                     }
                     else
                     {
-                        dataSvs.BitmapDrawed = false;
                         dataSvs.completedPolylines.Clear();
 
                         dataSvs.noteEdited = false;
@@ -555,7 +553,6 @@
             if (dataSvs.noteEdited)
             {
                 await NoteVM.SaveNote();
-                dataSvs.BitmapDrawed = false;
                 dataSvs.completedPolylines.Clear();
                 dataSvs.skiaView.Invalidate();
                 dataSvs.noteEdited = false;
@@ -603,7 +600,6 @@
         }
 
 
-        dataSvs.BitmapDrawed = false;
 
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;

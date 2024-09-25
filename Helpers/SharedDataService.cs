@@ -393,8 +393,6 @@ namespace BlazorApp1.Helpers
 
        // public bool EditMode = false;
 
-        public bool BitmapDrawed = false;
-
         public float strokeWidth = 8;
         public SKColor selectedColor;
         // public string defaultColor = "rgb(0,0,0)";

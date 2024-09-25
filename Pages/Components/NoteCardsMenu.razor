@@ -9,6 +9,7 @@
 @inject SharedDataService dataSvs
 @inject PacketViewModel PacketVM
 @inject ProjectViewModel ProjectVM
+@inject NoteViewModel NoteVM
 @inject IMessageService MessageService
 
 <MContainer Style="height:calc(100vh - 170px); overflow: auto; " class="px-2" >
@@ -124,6 +125,19 @@
                             <MListItemContent>
                                 <MListItemTitle>
                                     Enable Sorting Mode
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+                        <MListItem OnClick="() => EditNCNote(ContextMenuNoteCard)">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-pencil-outline
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    Edit
                                 </MListItemTitle>
                             </MListItemContent>
                         </MListItem>
@@ -392,6 +406,23 @@
 
     }
 
+
+    private async Task EditNCNote(NotePacket noteCard)
+    {
+       if(noteCard.Note != null){
+        
+        dataSvs.editNote = await NoteVM.GetNote(noteCard.Note);
+
+        dataSvs.SwitchMenus("notetools");
+
+
+        ShowNoteCardContext = false;
+        MessageService.SendMessage();
+        StateHasChanged();
+       }
+        
+
+    }
 
 
     private async Task SelectNoteCard(NotePacket noteCard)
