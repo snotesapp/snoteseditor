@@ -547,7 +547,7 @@ else
 
     private async Task EditNote(Note note)
     {
-        
+        PacketVM.editNotePacketNote = false;
         dataSvs.editNote = await NoteVM.GetNote(note);
 
         dataSvs.SwitchMenus("notetools");

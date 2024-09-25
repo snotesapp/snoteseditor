@@ -21,14 +21,14 @@ namespace BlazorApp1.ViewModels
         }
 
         public Packet? PrevPacket { get; set; }
-
-
         private Packet? _nexPacket;
         public Packet? NextPacket
         {        
             get { return _nexPacket; }
             set { this.RaiseAndSetIfChanged(ref _nexPacket, value);  }
         }
+
+        public bool editNotePacketNote = false;
 
 
         public async Task AddPacket(Packet newPacket)

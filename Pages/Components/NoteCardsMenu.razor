@@ -411,11 +411,12 @@
     {
        if(noteCard.Note != null){
         
+        PacketVM.editNotePacketNote = true;
         dataSvs.editNote = await NoteVM.GetNote(noteCard.Note);
 
         dataSvs.SwitchMenus("notetools");
 
-
+        dataSvs.SelectedNoteCard = noteCard;
         ShowNoteCardContext = false;
         MessageService.SendMessage();
         StateHasChanged();
