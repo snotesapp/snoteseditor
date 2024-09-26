@@ -29,6 +29,8 @@ namespace BlazorApp1.ViewModels
         }
 
         public bool editNotePacketNote = false;
+        public bool NotesMenuSelected = false;
+
 
 
         public async Task AddPacket(Packet newPacket)

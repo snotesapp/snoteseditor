@@ -14,7 +14,7 @@
 
 <MContainer Style="height:calc(100vh - 170px); overflow: auto; " class="px-2" >
 
-    @if (NotesMenuSelected)
+    @if (PacketVM.NotesMenuSelected)
     {
         @if (dataSvs.ncDragingMode)
         {
@@ -281,21 +281,21 @@
 
 <div class="d-inline-flex justify-content-evenly border-top border-secondary mb-0 align-items-center w-100" style="height:40px">
 
-    @if (NotesMenuSelected)
+    @if (PacketVM.NotesMenuSelected)
     {
-        <button class="btn btn-primary p-1 shadow text-white rounded-3" style="background-color:#1565c0;height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = true)">
+        <button class="btn btn-primary p-1 shadow text-white rounded-3" style="background-color:#1565c0;height:30px;width:100px" type="button" @onclick="(() => PacketVM.NotesMenuSelected = true)">
             Notes
         </button>
-        <button class="btn btn-outline-primary shadow  p-1  rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = false)">
+        <button class="btn btn-outline-primary shadow  p-1  rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => PacketVM.NotesMenuSelected = false)">
             Sub-Packets
         </button>
     }
     else
     {
-        <button class="btn btn-outline-primary shadow-sm p-1 rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = true)">
+        <button class="btn btn-outline-primary shadow-sm p-1 rounded-3" style="height:30px;width:100px" type="button" @onclick="(() => PacketVM.NotesMenuSelected = true)">
             Notes
         </button>
-        <button class="btn btn-primary shadow-sm text-white  p-1  rounded-3" style="background-color:#1565c0;height:30px;width:100px" type="button" @onclick="(() => NotesMenuSelected = false)">
+        <button class="btn btn-primary shadow-sm text-white  p-1  rounded-3" style="background-color:#1565c0;height:30px;width:100px" type="button" @onclick="(() => PacketVM.NotesMenuSelected = false)">
             Sub-Packets
         </button>
     }
@@ -310,8 +310,6 @@
     public Error? Error { get; set; }
 
     IJSObjectReference _module;
-
-    private bool NotesMenuSelected = false;
 
     private Packet? ContextMenuCard = null;
     private NotePacket? ContextMenuNoteCard = null;

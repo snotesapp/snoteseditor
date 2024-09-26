@@ -513,8 +513,9 @@
                             menu = "notecards";
                             await PacketVM.GetPacket(dataSvs.SelectedCard);
                             PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard,false);
-                
-                            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.Where(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID).FirstOrDefault();
+
+                            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.Find(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID);
+                            PacketVM.NotesMenuSelected = true;  
                             MessageService.SendMessage();               
                             PacketVM.editNotePacketNote = false;
                         }
