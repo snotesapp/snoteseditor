@@ -509,18 +509,7 @@
 
                         dataSvs.noteEdited = false;
 
-                        if(PacketVM.editNotePacketNote){
-                            menu = "notecards";
-                            await PacketVM.GetPacket(dataSvs.SelectedCard);
-                            PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard,false);
-
-                            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.Find(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID);
-                            PacketVM.NotesMenuSelected = true;  
-                            MessageService.SendMessage();               
-                            PacketVM.editNotePacketNote = false;
-                        }
-
-                        await GoToMenu.InvokeAsync(menu);
+                        
 
                     }
                     else
@@ -529,8 +518,20 @@
 
                         dataSvs.noteEdited = false;
 
-                        await GoToMenu.InvokeAsync(menu);
+                        
                     }
+                    if(PacketVM.editNotePacketNote){
+                        menu = "notecards";
+                        await PacketVM.GetPacket(dataSvs.SelectedCard);
+                        await PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard,false);
+                    
+                        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.Find(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID);
+                        PacketVM.NotesMenuSelected = true;  
+                        MessageService.SendMessage();               
+                        PacketVM.editNotePacketNote = false;
+                    }
+
+                    await GoToMenu.InvokeAsync(menu);
 
                 }
 
