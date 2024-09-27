@@ -142,7 +142,7 @@
                             </MListItemContent>
                         </MListItem>
 
-                        <MListItem OnClick="() => DeleteNoteCard(ContextMenuNoteCard)">
+                        <MListItem OnClick="() => DeleteNP(ContextMenuNoteCard)">
                             <MListItemIcon>
                                 <MIcon>
                                     mdi-close
@@ -155,6 +155,21 @@
                                 </MListItemTitle>
                             </MListItemContent>
                         </MListItem>
+
+                        <MListItem OnClick="() => MoveDownNP(ContextMenuNoteCard) ">
+                            <MListItemIcon>
+                                <MIcon>
+                                    mdi-transfer-down
+                                </MIcon>
+                            </MListItemIcon>
+                            <MListItemContent>
+
+                                <MListItemTitle>
+                                    Move Down To
+                                </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+
 
                     </MList>
                 </MMenu>
@@ -366,37 +381,22 @@
     }
 
 
-    private async Task DeleteNoteCard(NotePacket noteCard)
+    private async Task DeleteNP(NotePacket notePacket)
     {
-        int indx = dataSvs.SelectedCard.NotePackets.IndexOf(noteCard);
-
-        if (indx == 0 && dataSvs.SelectedCard.NotePackets.Count > 1)
-        {
+        await PacketVM.DeleteNotePacket(notePacket);
 
 
-            dataSvs.SelectedCard.NotePackets.Remove(noteCard);
-            await dataSvs.RemoveNoteCard(noteCard);
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.First();
-        }
-        else if (dataSvs.SelectedCard.NotePackets.Count == 1)
-        {
-            dataSvs.SelectedNoteCard = null;
-            await dataSvs.RemoveNoteCard(noteCard);
+        ShowNoteCardContext = false;
+        MessageService.SendMessage();
+        StateHasChanged();
 
-            await PacketVM.GetPacket(dataSvs.SelectedCard);
-            dataSvs.SwitchMenus("cards");
-        }
-        else if (indx < dataSvs.SelectedCard.NotePackets.Count)
-        {
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.ElementAtOrDefault(indx - 1);
-            dataSvs.SelectedCard.NotePackets.Remove(noteCard);
-            await dataSvs.RemoveNoteCard(noteCard);
-        }
-        else
-        {
-            await PacketVM.GetPacket(dataSvs.SelectedCard);
-            dataSvs.SwitchMenus("cards");
-        }
+    }
+    
+    private async Task MoveDownNP(NotePacket notePacket)
+    {
+
+        PacketVM.ShowMoveDownPacketModal = true;
+        PacketVM.NotePacketToDel = notePacket;
 
         ShowNoteCardContext = false;
         MessageService.SendMessage();

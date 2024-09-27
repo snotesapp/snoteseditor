@@ -31,6 +31,9 @@ namespace BlazorApp1.ViewModels
         public bool editNotePacketNote = false;
         public bool NotesMenuSelected = false;
 
+        public bool ShowMoveDownPacketModal = false;
+        public NotePacket NotePacketToDel ;
+
 
 
         public async Task AddPacket(Packet newPacket)
@@ -150,6 +153,41 @@ namespace BlazorApp1.ViewModels
            SharedDataService_service.ContextMenuCard = null;
 
         }
+
+
+        public async Task DeleteNotePacket(NotePacket noteCard)
+    {
+        int indx = SharedDataService_service.SelectedCard.NotePackets.IndexOf(noteCard);
+
+        if (indx == 0 && SharedDataService_service.SelectedCard.NotePackets.Count > 1)
+        {
+
+
+            SharedDataService_service.SelectedCard.NotePackets.Remove(noteCard);
+            await SharedDataService_service.RemoveNoteCard(noteCard);
+            SharedDataService_service.SelectedNoteCard = SharedDataService_service.SelectedCard.NotePackets.First();
+        }
+        else if (SharedDataService_service.SelectedCard.NotePackets.Count == 1)
+        {
+            SharedDataService_service.SelectedNoteCard = null;
+            await SharedDataService_service.RemoveNoteCard(noteCard);
+
+            await GetPacket(SharedDataService_service.SelectedCard);
+            SharedDataService_service.SwitchMenus("cards");
+        }
+        else if (indx < SharedDataService_service.SelectedCard.NotePackets.Count)
+        {
+            SharedDataService_service.SelectedNoteCard = SharedDataService_service.SelectedCard.NotePackets.ElementAtOrDefault(indx - 1);
+            SharedDataService_service.SelectedCard.NotePackets.Remove(noteCard);
+            await SharedDataService_service.RemoveNoteCard(noteCard);
+        }
+        else
+        {
+            await GetPacket(SharedDataService_service.SelectedCard);
+            SharedDataService_service.SwitchMenus("cards");
+        }
+
+    }
 
 
         private List<Packet> _notesToPackeList = new List<Packet>();

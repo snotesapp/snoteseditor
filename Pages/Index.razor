@@ -226,7 +226,7 @@ else
         {
             <MButton class="position-fixed bottom-0 start-50 translate-middle-x my-6 mx-3 "
              OnClick='() => LoadMoreNotes()'
-             title="Add To Packet"
+             title="Load More Notes"
              Fab
              Dark
              Color="#1565c0">
@@ -396,11 +396,14 @@ else
 
     }
 
+    
+
 
     <AlertDialog Show="@dataSvs.showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
              Text="Confirm deleting collection with all notes inside?" YesEvent="() => NotesCollectionVM.DeleteNotesCollection(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
 
     </AlertDialog>
+
 
 }
 
@@ -586,6 +589,7 @@ else
         }
 
     }
+
 
     private void OpenCloseDialog(bool dialogState)
     {

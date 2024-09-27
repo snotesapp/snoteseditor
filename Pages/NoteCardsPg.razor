@@ -309,6 +309,57 @@ else
 
 }
 
+@if(PacketVM.ShowMoveDownPacketModal == true){
+
+
+     <SNmodal Width="500" Height="250" IsOpen="@PacketVM.ShowMoveDownPacketModal">
+            <MCard>
+                <MCardTitle Class="p-2 gradient-blue ">
+                       <div class="input-group shadow">
+                            <input type="text" class="form-control" placeholder="Add Sub Packet" @bind-value="packetTitle" @onkeypress="((eventArg) => AddSubPacket(eventArg)) " aria-describedby="addpktbtnGroup">
+                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddSubPacket">
+                                Add
+                            </button>
+                        </div>
+                    
+                </MCardTitle>
+
+                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
+
+                    <ListTemplate Items="dataSvs.CurrentPacketsSet">
+                        <RowTemplate Context="packet">
+
+                       
+                            <MListItem Link style="background-color:#1565c0"
+                            OnClick="@(() => {MoveDownNotePacketN(packet).GetAwaiter().GetResult(); PacketVM.ShowMoveDownPacketModal =false; })"
+                                   Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
+                            <MListItemContent>
+                                <MListItemTitle>@packet.Title </MListItemTitle>
+                            </MListItemContent>
+                        </MListItem>
+                        
+                        </RowTemplate>
+
+                    </ListTemplate>
+
+                </MList>
+
+                <MDivider Class="my-1"></MDivider>
+
+                <MCardActions>
+
+                    <MSpacer></MSpacer>
+                    <MButton Color="primary"
+                     Text
+                     OnClick="() =>{ PacketVM.ShowMoveDownPacketModal = false; }">
+                        Close
+                    </MButton>
+                </MCardActions>
+            </MCard>
+
+
+        </SNmodal>
+}
 
 
 
@@ -328,6 +379,7 @@ else
 
     Collapse? collapse1 = default!;
 
+     private string packetTitle { get; set; }
 
     protected override void OnInitialized()
     {
@@ -485,8 +537,59 @@ else
 
     }
 
+
     private async Task ToggleContentAsync() => await collapse1.ToggleAsync();
     #endregion
+
+#region MoveDown Note
+ private async Task AddSubPacket()
+    {
+        if (!string.IsNullOrWhiteSpace(packetTitle))
+        {
+            Packet newPacket = new Packet { Title = packetTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+            await PacketVM.AddPacket(newPacket);
+            await PacketVM.SetParentPacket(dataSvs.SelectedCard, newPacket);
+            dataSvs.CurrentPacketsSet.Add(newPacket);
+           
+            packetTitle = "";
+        }
+
+    }
+
+    private async Task AddSubPacket(KeyboardEventArgs keyboardEvent)
+    {
+        if (keyboardEvent.Key == "Enter")
+        {
+            await Task.Delay(100);
+            if (!string.IsNullOrWhiteSpace(packetTitle))
+            {
+
+                Packet newPacket = new Packet { Title = packetTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+                await PacketVM.AddPacket(newPacket);
+                await PacketVM.SetParentPacket(dataSvs.SelectedCard, newPacket);
+                dataSvs.CurrentPacketsSet.Add(newPacket);
+           
+                packetTitle = "";
+
+
+            }
+        }
+
+    }
+
+    public async Task MoveDownNotePacketN (Packet packet)
+    {
+    
+        await dataSvs.NewNoteCard(packet, PacketVM.NotePacketToDel.Note );
+
+        await PacketVM.DeleteNotePacket(PacketVM.NotePacketToDel);
+
+    }
+
+
+
+#endregion
+
 
     private void MessageHandler()
     {
