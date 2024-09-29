@@ -80,6 +80,133 @@ body[b-vle9q6oerg] {
 [b-vle9q6oerg]::-webkit-scrollbar {
     width: 1px;
 }
+/* /Pages/Components/NavButtons.razor.rz.scp.css */
+
+body[b-o60l30yyb9] {
+}
+
+ul.nclist-style[b-o60l30yyb9], li[b-o60l30yyb9] 
+{
+    display: inline-block;
+    
+}
+
+.navbuttons[b-o60l30yyb9] {
+    /* Set the display property to flex to make the element a flex container */
+    display: none;
+    /* Set the flex-direction property to column to stack the child elements vertically */
+    flex-direction: column;
+    /* Optionally, set the align-items property to start to align the child elements horizontally within the container */
+    align-items: start;
+    /* Optionally, set the justify-content property to start to align the child elements vertically within the container */
+    justify-content: start;
+}
+
+
+
+.shownavbtns:hover + .navbuttons[b-o60l30yyb9] {
+    display: flex;
+}
+.navbuttons:hover[b-o60l30yyb9] {
+    display: flex;
+}
+
+
+
+.npnavbutton[b-o60l30yyb9] {
+    width:32px;
+    height:32px;
+    background-color:#1565c0;
+}
+
+.npnavbutton-disabled[b-o60l30yyb9] {
+    width: 32px;
+    height: 32px;
+}
+.npnavbutton:hover[b-o60l30yyb9] {
+    width: 32px;
+    height: 32px;
+    background-color: #5e92f3;
+    
+}
+
+
+.npnavbutton:active[b-o60l30yyb9] {
+    width: 32px;
+    height: 32px;
+    background-color: #003c8f;
+}
+
+/* Tooltip container */
+.sn-tooltip[b-o60l30yyb9] {
+    position: relative;
+    display: inline-block;
+}
+
+    /* Tooltip text */
+    .sn-tooltip .sn-tooltiptext[b-o60l30yyb9] {
+        visibility: hidden;
+        min-width: 200px;
+        background-color: #1565c0;
+        color: #f5f5f5;
+        text-align: center;
+        border-radius: 4px;
+        border:1px solid darkgray;
+        padding: 5px 0;
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        margin-left: -32px;
+    }
+
+        /* Position the first tooltip */
+        .sn-tooltip .sn-tooltiptext.sn-tooltip-up[b-o60l30yyb9] {
+            bottom: 115%;
+            left: 100%;
+        }
+
+        /* Position the second tooltip */
+        .sn-tooltip .sn-tooltiptext.sn-tooltip-right[b-o60l30yyb9] {
+            bottom: 0%;
+            left: 210%;
+        }
+
+/* Show tooltip on hover */
+
+    .sn-tooltip:hover .sn-tooltiptext[b-o60l30yyb9],
+    .sn-tooltip:focus .sn-tooltiptext[b-o60l30yyb9] {
+        visibility: visible;
+    }
+
+
+.expander-style[b-o60l30yyb9] {
+    width: 50%;
+    left: 25%;
+    position: absolute;
+    bottom: 10px;
+    background-color: white
+}
+@media (max-width: 600px) {
+    expander-style[b-o60l30yyb9] {
+        width: 75%;
+        left: 12%;
+        position: absolute;
+        bottom: 10px;
+        background-color: greenyellow
+    }
+}
+
+.sn-container[b-o60l30yyb9] {
+    position: relative;
+    height: 100vh; /* Set a height to the container so it takes the full viewport height */
+}
+
+.sn-addnotebutton[b-o60l30yyb9] {
+    position: absolute;
+    top: 39%;
+    left: 50%;
+    transform: translate(-39%, -50%);
+}
 /* /Pages/Components/NoteCardsMenu.razor.rz.scp.css */
 body[b-z1ve5mkxkt] {
 }
