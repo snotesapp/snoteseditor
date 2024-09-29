@@ -34,6 +34,15 @@ namespace BlazorApp1.ViewModels
         public bool ShowMoveDownPacketModal = false;
         public NotePacket NotePacketToDel ;
 
+        #region NotePacketNavigatior
+        public bool leftAnimation, rightAnimation, upAnimation, downAnimation = false;
+
+        public bool NavUp , NavDown, NavNext, NavPrev;
+        public bool UpToolTipTxt, NextToolTipTxt, PrevToolTipTxt;
+
+
+        #endregion
+
 
 
         public async Task AddPacket(Packet newPacket)

@@ -14,6 +14,7 @@
 
 
 
+
 @if (dataSvs.SelectedNoteCard != null)
 {
 
@@ -28,10 +29,10 @@
                 @if (dataSvs.SelectedNoteCard.Note != null)
                 {
                     <div class="position-absolute @((navbuttonsEnabled) ? "shownavbtns" : "navbuttons")
-                    @(upAnimation ? "slide-animation-up" : "")
-                    @(downAnimation ? "slide-animation-down" : "")
-                    @(leftAnimation ? "slide-animation-left" : "")
-                    @(rightAnimation ? "slide-animation-right" : "")"
+                    @(PacketVM.upAnimation ? "slide-animation-up" : "")
+                    @(PacketVM.downAnimation ? "slide-animation-down" : "")
+                    @(PacketVM.leftAnimation ? "slide-animation-left" : "")
+                    @(PacketVM.rightAnimation ? "slide-animation-right" : "")"
                          style=";
                             width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;
                             height:@(dataSvs.SelectedNoteCard.Note.MainImgHeight)px;
@@ -93,108 +94,16 @@
 
             @if (dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
             {
-                <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
+                
 
+              <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
-                    <div class="row" style="width:96px;">
-                        <div class="col-4 offset-4 p-0">
-
-
-                            <button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
-                            @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
-							"
-                                    type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent,true))">
-                                <i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
-                                @if (dataSvs.SelectedCard.Parent is not null)
-                                {
-                                    <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-up">@dataSvs.SelectedCard.Parent.Title </span>
-                                }
-
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <div class="row " style="width:96px;">
-                        <div class="col-4 p-0">
-                            <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
-                                 @(( dataSvs.SelectedCard.NotePackets.Count >0 &&
-                                    dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard)&& 
-                                    (PacketVM.PrevPacket is null)) ? 
-                                    "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")
-                                " type="button" @onpointerdown="ResetAnimation" @onclick="PrecedingNC">
-                                <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
-
-                                @if ((dataSvs.SelectedCard.NotePackets.Count > 0 &&
-                                    dataSvs.SelectedCard.NotePackets.First().Equals(dataSvs.SelectedNoteCard))&&
-                                    (PacketVM.PrevPacket is not null))
-                                {
-                                    <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-right"> @PacketVM.PrevPacket.Title </span>
-                                }
-                            </button>
-
-                        </div>
-
-
-
-                        <div class="col-4 offset-4 p-0">
-                            <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip 
-                                    @(((dataSvs.SelectedCard.NotePackets.Count >0 &&
-                                        dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard)) && 
-                                        (PacketVM.NextPacket is null) ) ? 
-                                        "btn btn-secondary disabled npnavbutton-disabled" : "npnavbutton")"
-                                    type="button" @onpointerdown="ResetAnimation" @onclick="NextNC">
-                                <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
-                                @if ((dataSvs.SelectedCard.NotePackets.Count > 0 && 
-                                    dataSvs.SelectedCard.NotePackets.Last() == dataSvs.SelectedNoteCard) && 
-                                    (PacketVM.NextPacket is not null))
-                                {
-                                    <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-right"> @PacketVM.NextPacket.Title </span>
-                                }
-                               
-                            </button>
-
-                        </div>
-                    </div>
-
-                    <div class="row " style="width:96px;">
-
-                        <div class="col-4 offset-4 p-0">
-
-                           
-                            <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
-                                 @((dataSvs.CurrentPacketsSet is not null && dataSvs.CurrentPacketsSet.Count > 0) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled") "
-                                    type="button" @onclick="ToggleContentAsync">
-                                <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
-                            </button>
-
-                            <Collapse @ref="collapse1" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
-                                <ListTemplate Items="dataSvs.CurrentPacketsSet">
-                                    <RowTemplate Context="card">
-                                        <MListItem Class="dropdown-item elevation-4 rounded-3" Link title="@card.Title"
-                                                               style="background-color:#1565c0; margin-bottom:2px"
-                                           Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
-                                        <MListItemContent >
-                                        <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
-
-                                        </MListItemContent>
-                                        </MListItem>
-
-                                    </RowTemplate>
-
-                                    </ListTemplate>
-
-                            </Collapse>
-
-
-                            </div>
-
-                        </div>
-
-
-                    </div>
+                 <NavButtons EmptyNCPage = "false" />
+                </div>
 
             }
+
+           
 
         </MRow>
     </MCol>
@@ -209,79 +118,7 @@ else
             <div class="position-absolute ms-3 top-50 start-0 translate-middle-y">
 
 
-                <div class="row" style="width:96px;">
-                    <div class="col-4 offset-4 p-0">
-
-
-                        <button class="d-flex justify-content-center align-items-center  elevation-3 rounded-3 sn-tooltip
-                            @((dataSvs.SelectedCard.Parent is not null) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled")
-							"
-                                type="button" @onpointerdown="ResetAnimation" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent,true))">
-                            <i class="mdi mdi-chevron-up mdi-24px " style="color:#f5f5f5"></i>
-                            @if (dataSvs.SelectedCard.Parent is not null)
-                            {
-                                <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-up">@dataSvs.SelectedCard.Parent.Title </span>
-                            }
-
-                        </button>
-
-                    </div>
-                </div>
-
-                <div class="row " style="width:96px;">
-                    <div class="col-4 p-0">
-                        <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3 btn btn-secondary disabled npnavbutton-disabled " type="button">
-                            <i class="mdi mdi-chevron-left mdi-24px " style="color:#f5f5f5"></i>
-
-
-                        </button>
-
-                    </div>
-
-
-
-                    <div class="col-4 offset-4 p-0">
-                        <button class=" d-flex justify-content-center align-items-center  elevation-3 rounded-3  btn btn-secondary disabled npnavbutton-disabled" type="button">
-                            <i class="mdi mdi-chevron-right mdi-24px " style="color:#f5f5f5"></i>
-
-                        </button>
-
-                    </div>
-                </div>
-
-                <div class="row " style="width:96px;">
-
-                    <div class="col-4 offset-4 p-0">
-
-
-                        <button class=" d-flex justify-content-center align-items-center npnavbutton elevation-3 rounded-3
-                                 @((dataSvs.CurrentPacketsSet is not null && dataSvs.CurrentPacketsSet.Count > 0) ? "npnavbutton" : "btn btn-secondary disabled npnavbutton-disabled") "
-                                type="button" @onclick="ToggleContentAsync">
-                            <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
-                        </button>
-
-                        <Collapse @ref="collapse1" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
-                            <ListTemplate Items="dataSvs.CurrentPacketsSet">
-                                <RowTemplate Context="card">
-                                    <MListItem Class="dropdown-item elevation-4 rounded-3" Link title="@card.Title"
-                                               style="background-color:#1565c0; margin-bottom:2px"
-                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
-                                        <MListItemContent>
-                                            <MListItemTitle Class="truncate-text" >@card.Title </MListItemTitle>
-
-                                        </MListItemContent>
-                                    </MListItem>
-
-                                </RowTemplate>
-
-                            </ListTemplate>
-
-                        </Collapse>
-
-
-                    </div>
-
-                </div>
+                <NavButtons EmptyNCPage = "true" />
 
 
             </div>
@@ -295,11 +132,11 @@ else
             <MButton Class="primary "
                      OnClick='() => dataSvs.SwitchMenus("collection")'>
                 <MIcon Left>mdi-arrow-left</MIcon>
-            Add Notes
-        </MButton>
+                    Add Notes
+            </MButton>
 
 
-    </div>
+        </div>
 
     </div>
 
@@ -364,20 +201,17 @@ else
 
 
 
+
 @code {
 
     IJSObjectReference _module;
 
     string PointerEvent = "none";
     SKCanvasView skiaView = new SKCanvasView();
-
-    private bool leftAnimation, rightAnimation, upAnimation, downAnimation = false;
     private bool navbuttonsEnabled = true;
 
     [CascadingParameter]
     public Error? Error { get; set; }
-
-    Collapse? collapse1 = default!;
 
      private string packetTitle { get; set; }
 
@@ -454,92 +288,6 @@ else
 
     #endregion
 
-    #region navigation buttons
-    private async Task NextNC()
-    {
-        if (!dataSvs.SelectedCard.NotePackets.Any() || !dataSvs.SelectedCard.NotePackets.Last().Equals(dataSvs.SelectedNoteCard)){
-            leftAnimation = true;
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.SkipWhile(x => x != dataSvs.SelectedNoteCard).Skip(1).First();
-
-        }
-        else
-        {
-            if (PacketVM.NextPacket is not null)
-            {
-                await PacketVM.GetPacket(PacketVM.NextPacket);
-                await PacketVM.GetPrevOrNextPackets(PacketVM.NextPacket, false);
-                dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
-
-            }
-
-        }
-
-
-    }
-
-    private async Task PrecedingNC()
-    {
-
-        int index = dataSvs.SelectedCard.NotePackets.IndexOf(dataSvs.SelectedNoteCard);
-        if (index > 0)
-        {
-            rightAnimation = true;
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.ElementAt(index - 1);
-
-        }
-        else
-        {
-            if (PacketVM.PrevPacket is not null)
-            {
-                await PacketVM.GetPacket(PacketVM.PrevPacket);
-                await PacketVM.GetPrevOrNextPackets(PacketVM.PrevPacket, false);
-                dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
-
-            }
-        }
-
-    }
-    private void ResetAnimation()
-    {
-        rightAnimation = false;
-        leftAnimation = false;
-        upAnimation = false;
-        downAnimation = false;
-    }
-
-    private async Task SelectSubPacket(Packet subPacket, bool Up)
-    {
-        try
-        {
-            if (dataSvs.ncDragingMode)
-            {
-                dataSvs.ncDragingMode = false;
-            }
-            
-            await PacketVM.GetPrevOrNextPackets(subPacket, false);
-            await PacketVM.GetPacket(subPacket);
-            dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
-            if (Up)
-            {
-                upAnimation = true;
-            }
-            else
-            {
-                downAnimation = true;
-            }
-
-        }
-        catch (Exception ex)
-        {
-            Error?.ProcessError(ex);
-        }
-
-
-    }
-
-
-    private async Task ToggleContentAsync() => await collapse1.ToggleAsync();
-    #endregion
 
 #region MoveDown Note
  private async Task AddSubPacket()
