@@ -79,16 +79,6 @@
     }
 
 
-    private Task GoToMainMenu()
-    {
-   
-        NoteVM.UpdateNote().GetAwaiter().GetResult();
-        dataSvs.completedPolylines.Clear();
-        NoteVM.GetNotes().GetAwaiter().GetResult();
-        return BackToMain.InvokeAsync("collection");
-    }
-
-
 
     void OnChangestrokeWidth(dynamic value) => dataSvs.strokeWidth = value;
 

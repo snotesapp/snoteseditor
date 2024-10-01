@@ -98,7 +98,7 @@
 
               <div class="position-absolute navbuttons ms-3 top-50 start-0 translate-middle-y">
 
-                 <NavButtons EmptyNCPage = "false" />
+                 <NavButtons EmptyNCPage = "false"   />
                 </div>
 
             }
@@ -168,7 +168,7 @@ else
 
                        
                             <MListItem Link style="background-color:#1565c0"
-                            OnClick="@(() => {MoveDownNotePacketN(packet).GetAwaiter().GetResult(); PacketVM.ShowMoveDownPacketModal =false; })"
+                            OnClick="() => MoveDownNotePacketN(packet)"
                                    Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
                             <MListItemContent>
                                 <MListItemTitle>@packet.Title </MListItemTitle>
@@ -331,6 +331,8 @@ else
         await dataSvs.NewNoteCard(packet, PacketVM.NotePacketToDel.Note );
 
         await PacketVM.DeleteNotePacket(PacketVM.NotePacketToDel);
+
+        PacketVM.ShowMoveDownPacketModal =false;
 
     }
 

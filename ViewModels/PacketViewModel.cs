@@ -44,7 +44,6 @@ namespace BlazorApp1.ViewModels
         #endregion
 
 
-
         public async Task AddPacket(Packet newPacket)
         {
             await PacketService_service.AddPacket(newPacket);
@@ -160,6 +159,7 @@ namespace BlazorApp1.ViewModels
 
            SharedDataService_service.MainProject = await ProjectVM.GetProject();
            SharedDataService_service.ContextMenuCard = null;
+           SharedDataService_service.moveto_dialog = false;
 
         }
 
