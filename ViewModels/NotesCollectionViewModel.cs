@@ -72,8 +72,9 @@ namespace BlazorApp1.ViewModels
                 await _service.DeleteNotesCollection(notesCollection.NotesCollectionID);
 
                 _dataSvs.MainProject = await ProjectVM.GetProject();
-                await NoteVM.GetNotes();
                 _dataSvs.showDeleteNCConfirmation = false;
+                await NoteVM.GetNotesAsync();
+               
             }
             catch (Exception ex)
             {

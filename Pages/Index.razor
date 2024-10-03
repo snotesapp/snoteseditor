@@ -165,7 +165,7 @@ else
                 Clearable
                 OnClearClick="@(() => dataSvs.SearchTerm = "")"
                 AppendOuterIcon="mdi-close"
-                OnAppendOuterClick="@(() => {dataSvs.showFilterNotes = false;dataSvs.SearchTerm = "";NoteVM.GetNotes();})"
+                OnAppendOuterClick="CloseSearch"
                 SingleLine
                 HideDetails=true></MTextField>
 
@@ -222,7 +222,7 @@ else
             </NoteTemplate>
         </NotesTemplate>
 
-        @if ((dataSvs.selectedNCNotes.Count == 20 || _hasMore) && dataSvs.showFilterNotes is false)
+        @if ( NoteVM.LastPageReached == false  && dataSvs.showFilterNotes is false)
         {
             <MButton class="position-fixed bottom-0 start-50 translate-middle-x my-6 mx-3 "
             @onclick = "LoadMoreNotes" 
@@ -422,7 +422,7 @@ else
 
     private ElementReference _mainPg;
     private bool _hasMore;
-
+   
     [CascadingParameter]
     public Error? Error { get; set; }
 
@@ -452,7 +452,7 @@ else
            }
            else
            {
-               dataSvs.selectedNCNotes = await NoteVM.GetNotes(searchTerm);
+                await NoteVM.GetNotesAsync(searchTerm);
 
            }
            StateHasChanged();
@@ -546,8 +546,8 @@ else
 
         await NoteVM.DeleteNoteImgFiles(note, false);
         await NoteVM.DeleteNote(note);
-        await NoteVM.GetNotes();
-
+        dataSvs.selectedNCNotes.Remove(note);
+        
     }
 
     private async Task EditNote(Note note)
@@ -604,16 +604,29 @@ private async Task AddToPacketGetPackets(){
         dataSvs.newProjectDialog = dialogState;
 
     }
-
+void HaseMore(){
+    //_hasMore = false;
+    NoteVM.LastPageReached = true;
+    
+    StateHasChanged();
+}
 
     private async Task LoadMoreNotes()
     {
+        /*
         List<Note> append = await NoteVM.GetNotes(dataSvs.selectedNCNotes.Count, 20);
         dataSvs.selectedNCNotes.AddRange(append) ;
-        
-        _hasMore = append.Count > 0;
+        */
+        await NoteVM.GetNotesAsync(dataSvs.selectedNCNotes.Count, 20,HaseMore);
+        //_hasMore = append.Count > 0;
     }
 
+
+private async Task CloseSearch(){
+    dataSvs.showFilterNotes = false;
+    dataSvs.SearchTerm = "";
+    await NoteVM.GetNotesAsync();
+}
 
 
 }

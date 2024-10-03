@@ -86,12 +86,13 @@
 
     private async Task NavMenuGoToColl()
     {
+        await GoToMenu.InvokeAsync("collection");
         if (dataSvs.selectedNCNotes is null || dataSvs.selectedNCNotes.Count == 0)
         {
-            await NoteVM.GetNotes();
+            await NoteVM.GetNotesAsync();
         }
         
-        await GoToMenu.InvokeAsync("collection");
+       
     }
 
     

@@ -497,6 +497,27 @@
                 }
                 else //Edit Note
                 {
+                    // If note was edited, perform necessary updates
+                    if (dataSvs.noteEdited)
+                    {
+                        await HandleNoteEdit(menu);
+                    }else
+                    {
+                        dataSvs.completedPolylines.Clear();
+                        dataSvs.noteEdited = false;
+                        await GoToMenu.InvokeAsync(menu);
+
+                        
+                    }
+
+                    // Handle packet note editing if needed
+                    if (PacketVM.editNotePacketNote)
+                    {
+                        await HandlePacketNoteEdit("notecards");
+                    }
+
+
+/*
                     if (dataSvs.noteEdited)
                     {
 
@@ -504,12 +525,13 @@
 
                         await NoteVM.UpdateNote();
 
-                        await NoteVM.GetNotes();
+                       
                         dataSvs.completedPolylines.Clear();
 
                         dataSvs.noteEdited = false;
 
-                        
+                        await GoToMenu.InvokeAsync(menu);
+                        await NoteVM.GetNotesAsync();
 
                     }
                     else
@@ -530,8 +552,8 @@
                         MessageService.SendMessage();               
                         PacketVM.editNotePacketNote = false;
                     }
-
-                    await GoToMenu.InvokeAsync(menu);
+*/
+                    
 
                 }
 
@@ -595,8 +617,8 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await NoteVM.GetNotes();
         await GoToMenu.InvokeAsync(menu);
+         await NoteVM.GetNotesAsync() ;
     }
 
     private async Task SaveNTAndBack(string menu)
@@ -617,11 +639,43 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await NoteVM.GetNotes();
         await GoToMenu.InvokeAsync(menu);
+        await NoteVM.GetNotesAsync();
+        
     }
 
 
+// Handles the logic for when a note is edited
+private async Task HandleNoteEdit(string menu)
+{
+        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
+
+        await NoteVM.UpdateNote();
+
+        dataSvs.completedPolylines.Clear();
+        dataSvs.noteEdited = false;
+        await GoToMenu.InvokeAsync(menu);
+        await NoteVM.GetNotesAsync();
+   
+}
+
+// Handles the logic for when a packet note is edited
+private async Task HandlePacketNoteEdit(string menu)
+{
+    
+    await PacketVM.GetPacket(dataSvs.SelectedCard);
+    await PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard, false);
+
+    dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets
+        .Find(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID);
+    
+    PacketVM.NotesMenuSelected = true;
+    MessageService.SendMessage();
+
+    PacketVM.editNotePacketNote = false;
+    await GoToMenu.InvokeAsync(menu);
+
+}
     #endregion
 
 

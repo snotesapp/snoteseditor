@@ -75,31 +75,63 @@ namespace BlazorApp1.ViewModels
 
         }
 
-        public async Task GetNotes()
-        {
-            SharedDataService_service.selectedNCNotes = await NoteService_service.GetNotes();
-            SharedDataService_service.NotifyStateChanged();
 
+#region Asynchronous GetNotes
+
+public bool LastPageReached = true;
+
+    public async Task GetNotesAsync()
+    {
+            //SharedDataService_service.selectedNCNotes = await NoteService_service.GetNotes();
+            //SharedDataService_service.NotifyStateChanged();
+        LastPageReached = true;
+        SharedDataService_service.selectedNCNotes.Clear();
+        await foreach (Note note in  NoteService_service.GetNotesAsync())
+        {
+            SharedDataService_service.selectedNCNotes.Add(note);
+            SharedDataService_service.NotifyStateChanged();
         }
 
-        public async Task<List<Note>> GetNotes(int pageIndex = 0, int pageSize = 20)
-        {
-
-           List<Note> listnotes = await NoteService_service.GetNotes(pageIndex, pageSize);
+        if(SharedDataService_service.selectedNCNotes.Count >= 20){
+            LastPageReached = false;
             SharedDataService_service.NotifyStateChanged();
-            return listnotes;
+        }
         
-        }
+    }
 
-        public async Task<List<Note>> GetNotes(string NotesTextFilter)
+
+
+public async Task GetNotesAsync(int pageIndex = 0, int pageSize = 20, Action onLastPageReached = null )
+{
+   
+    await foreach (Note note in  NoteService_service.GetNotesAsync(pageIndex,pageSize,onLastPageReached))
+    {
+        SharedDataService_service.selectedNCNotes.Add(note);
+        
+        SharedDataService_service.NotifyStateChanged();
+    }
+        
+       
+}
+
+
+ public async Task GetNotesAsync(string NotesTextFilter)
         {
 
-            List<Note> listnotes = await NoteService_service.GetNotes(NotesTextFilter);
-            SharedDataService_service.selectedNCNotes = listnotes;
-            SharedDataService_service.NotifyStateChanged();
-            return listnotes;
+            SharedDataService_service.selectedNCNotes.Clear();
+             await foreach (Note note in  NoteService_service.GetNotesAsync(NotesTextFilter))
+            {
+                SharedDataService_service.selectedNCNotes.Add(note);
+                
+                SharedDataService_service.NotifyStateChanged();
+            }
+
+           
             
         }
+
+
+#endregion
 
         public async Task<Note> GetNote(Note note)
         {

@@ -16,22 +16,28 @@ namespace BlazorApp1.Services
             //db.Database.EnsureCreatedAsync();
         }
 
-        public async Task<List<Note>> GetNotes()
+
+#region Asynchronous GetNotes
+public async IAsyncEnumerable<Note> GetNotesAsync()
+{
+    using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
+    {
+        var selectedNotes = noteContext.Note
+            .Where(nc => nc.NotesCollection.Selected)
+            .OrderByDescending(ord => ord.NoteID)
+            .Take(20)
+            .AsAsyncEnumerable();
+
+        await foreach (var note in selectedNotes)
         {
-            using (var noteContext = await _dbContextFactory.CreateDbContextAsync())
-            {
-               var selectedNotes = noteContext.Note
-                    .Where(nc => nc.NotesCollection.Selected)
-                    .OrderByDescending(ord => ord.NoteID)
-                    .Take(20);
-                List<Note> notes = await selectedNotes.ToListAsync();
-                return notes;
-
-            }
-
+            await Task.Delay(10);
+            yield return note;
         }
+    }
+}
 
-        public async Task<List<Note>> GetNotes(int pageIndex = 0, int pageSize = 20)
+
+public async IAsyncEnumerable<Note> GetNotesAsync(int pageIndex = 0, int pageSize = 20, Action onLastPageReached = null)
         {
             if (pageIndex < 0)
             {
@@ -42,43 +48,60 @@ namespace BlazorApp1.Services
                 throw new ArgumentOutOfRangeException("pageSize must be greater than 0.");
             }
 
-            try
+            
+            using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
-                using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
-                {
-                    var selectedNotes =  notesContext.Note
-                        .Where(nc => nc.NotesCollection.Selected == true)
-                        .OrderByDescending(ord => ord.NoteID)
-                        .Skip(pageIndex)
-                        .Take(pageSize);
-                    List<Note> notes = await selectedNotes.ToListAsync();
-                    return notes;
+                var selectedNotes =  notesContext.Note
+                    .Where(nc => nc.NotesCollection.Selected == true)
+                    .OrderByDescending(ord => ord.NoteID)
+                    .Skip(pageIndex)
+                    .Take(pageSize+1)
+                    .AsAsyncEnumerable();
 
-                    
+                    int Count=0;
+                    await foreach (var note in selectedNotes)
+                    {
+
+                        if (Count < pageSize) // Only yield the first 'pageSize' notes
+                        {
+                            await Task.Delay(10);
+                            yield return note;
+                        }
+                            
+                        
+                        Count++;
+                        
+                    }
+
+                    if(Count <= pageSize && onLastPageReached !=null ){
+                        onLastPageReached();
+                    }
+
+               
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error occurred while fetching notes.", ex);
-            }
+           
         }
 
-
-        public async Task<List<Note>> GetNotes(string NotesTextFilter)
+ public async IAsyncEnumerable<Note> GetNotesAsync(string NotesTextFilter)
         {
 
             using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
             {
                var selectedNotes =  notesContext.Note
                     .Where(nt => nt.NotesCollection.Selected == true && nt.Text.ToLower().Contains(NotesTextFilter.Trim().ToLower()))
-                    .OrderByDescending(ord => ord.NoteID);
-                List<Note> notes = await selectedNotes.ToListAsync();
-                return notes;
+                    .OrderByDescending(ord => ord.NoteID)
+                    .AsAsyncEnumerable();
+
+                    await foreach (var note in selectedNotes)
+                    {
+                        await Task.Delay(10);
+                        yield return note;
+                    }
 
             }
         }
 
-
+#endregion
         public async Task<Note> GetNote(Note note)
         {
             using (var notesContext = await _dbContextFactory.CreateDbContextAsync())

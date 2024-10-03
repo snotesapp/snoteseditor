@@ -148,8 +148,8 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await NoteVM.GetNotes();
         dataSvs.SwitchMenus(menu);
+        await NoteVM.GetNotesAsync();
 
     }
 
@@ -168,8 +168,8 @@
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
         dataSvs.completedPolylines.Clear();
-        await NoteVM.GetNotes();
         dataSvs.SwitchMenus(menu);
+        await NoteVM.GetNotesAsync();
     }
 
     private async Task FocusOnSummaryPannel()

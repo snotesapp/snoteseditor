@@ -115,7 +115,7 @@
             }
             else
             {
-                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
+                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)" >
                     <MListItemIcon>
                         <MIcon>
                             mdi-checkbox-marked-outline
@@ -205,8 +205,14 @@
         ShowNCContext = true;
     }
 
+    private bool GetNoteIsRunning;
     private async Task SetCollection(NotesCollection nc)
     {
+        if(GetNoteIsRunning == false)
+        {
+
+        GetNoteIsRunning = true;
+        
         if (nc.Selected == true)
         {
             nc.Selected = false;
@@ -219,7 +225,9 @@
         }
 
 
-        await NoteVM.GetNotes();
+        await NoteVM.GetNotesAsync();
+        GetNoteIsRunning = false;
+        }
     }
 
     private Task AddNCNotes(NotesCollection notesCollection)
