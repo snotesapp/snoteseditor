@@ -317,7 +317,7 @@
                     <div class="d-flex justify-content-between  align-items-center">
 
 
-                        <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => SwitchMenu("collection"))">
+                        <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
                             <span class="bi bi-arrow-left"></span>
                         </button>
 
@@ -354,7 +354,7 @@
 
                         @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
                         {
-                            <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => SwitchMenu("collection"))">
+                            <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
                                 <span class="bi bi-arrow-left"></span>
                             </button>
                         }
@@ -467,7 +467,15 @@
     #region Save Note
 
 
+    private async Task NoteEditSwitchMenu(){
+        if(PacketVM.editNotePacketNote == true){
 
+            await SwitchMenu("notecards");
+
+        }else{
+           await SwitchMenu("collection"); 
+        }
+    }
     private async Task SwitchMenu(string menu)
     {
         try
@@ -498,10 +506,11 @@
                 else //Edit Note
                 {
                     // If note was edited, perform necessary updates
-                    if (dataSvs.noteEdited)
+                    if (dataSvs.noteEdited && PacketVM.editNotePacketNote == false)
                     {
                         await HandleNoteEdit(menu);
-                    }else
+                    }
+                    else
                     {
                         dataSvs.completedPolylines.Clear();
                         dataSvs.noteEdited = false;
@@ -510,11 +519,7 @@
                         
                     }
 
-                    // Handle packet note editing if needed
-                    if (PacketVM.editNotePacketNote)
-                    {
-                        await HandlePacketNoteEdit("notecards");
-                    }
+                    
 
 
 /*
@@ -555,6 +560,23 @@
 */
                     
 
+                }
+
+            }else if (menu == "notecards"){
+
+                if (dataSvs.noteEdited)
+                {
+                    // Handle packet note editing if needed
+                    
+                    await HandlePacketNoteEdit(menu);
+                }
+                else
+                {
+                    dataSvs.completedPolylines.Clear();
+                    dataSvs.noteEdited = false;
+                    await GoToMenu.InvokeAsync(menu);
+
+                        
                 }
 
             }
@@ -644,16 +666,17 @@
         
     }
 
-
+private async Task RefreshEditedNote(){
+    skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
+    await NoteVM.UpdateNote();
+    dataSvs.completedPolylines.Clear();
+    dataSvs.noteEdited = false;
+        
+}
 // Handles the logic for when a note is edited
 private async Task HandleNoteEdit(string menu)
 {
-        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
-
-        await NoteVM.UpdateNote();
-
-        dataSvs.completedPolylines.Clear();
-        dataSvs.noteEdited = false;
+        await RefreshEditedNote();
         await GoToMenu.InvokeAsync(menu);
         await NoteVM.GetNotesAsync();
    
@@ -663,6 +686,8 @@ private async Task HandleNoteEdit(string menu)
 private async Task HandlePacketNoteEdit(string menu)
 {
     
+
+    await RefreshEditedNote();
     await PacketVM.GetPacket(dataSvs.SelectedCard);
     await PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard, false);
 
