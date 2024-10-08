@@ -30,7 +30,7 @@ public async IAsyncEnumerable<Note> GetNotesAsync()
 
         await foreach (var note in selectedNotes)
         {
-            await Task.Delay(10);
+            await Task.Delay(5);
             yield return note;
         }
     }
@@ -64,7 +64,7 @@ public async IAsyncEnumerable<Note> GetNotesAsync(int pageIndex = 0, int pageSiz
 
                         if (Count < pageSize) // Only yield the first 'pageSize' notes
                         {
-                            await Task.Delay(10);
+                            await Task.Delay(5);
                             yield return note;
                         }
                             
@@ -94,7 +94,7 @@ public async IAsyncEnumerable<Note> GetNotesAsync(int pageIndex = 0, int pageSiz
 
                     await foreach (var note in selectedNotes)
                     {
-                        await Task.Delay(10);
+                        await Task.Delay(5);
                         yield return note;
                     }
 
@@ -102,6 +102,7 @@ public async IAsyncEnumerable<Note> GetNotesAsync(int pageIndex = 0, int pageSiz
         }
 
 #endregion
+
         public async Task<Note> GetNote(Note note)
         {
             using (var notesContext = await _dbContextFactory.CreateDbContextAsync())
