@@ -18,7 +18,7 @@
 <MContainer Style="height:calc(100vh - 130px); overflow:auto" class="px-2">
 
    
-        <MList Subheader>
+        <div class="w-100 h-100 ">
 
             @if (!dataSvs.filterPackets)
             {
@@ -28,43 +28,8 @@
                         @if (packet.Editable == false)
                         {
                             @if (packet.Selected)
-                            {
-                                <div class="mb-1 " @oncontextmenu:preventDefault="true"
-                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
-
-                                    @if (packet.Parent is null)
-                                    {
-                                        <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectPacket(packet)"
-                                   Color="white" Class="elevation-4  rounded-3">
-                                            <MListItemContent>
-                                                <MListItemTitle>@packet.Title </MListItemTitle>
-                                            </MListItemContent>
-                                        </MListItem>
-                                    }
-                                    else
-
-                                    {
-
-
-                                        <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectPacket(packet)"
-                                   Color="white" Class="elevation-4  rounded-3">
-                                            <MListItemContent>
-                                                <MListItemTitle>@packet.Title </MListItemTitle>
-
-                                                <MListItemSubtitle Class="ms-2" Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
-
-
-                                            </MListItemContent>
-                                        </MListItem>
-
-
-                                    }
-
-
-                                </div>
-
+                            { 
+                                    <SNPacketListItem Packet ="@packet" OnClick="() => OpenPacket(packet)"  OnContextMenu="(args) => ShowCardContextMenu(args,packet)" />
                             }
 
                         }
@@ -74,11 +39,8 @@
                                  style="text-indent: 10px;"
                                 placeholder="Packet Name" aria-label="Packet Name"
                                 aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
-
-                            
                             
                         }
-
 
                     </RowTemplate>
 
@@ -92,40 +54,8 @@
 
                         @if (packet.Editable == false)
                         {
-
-                            <div class=" mb-1 " @oncontextmenu:preventDefault="true"
-                         @oncontextmenu="@(args => {dataSvs.SelectionCards = new(); ShowCardContextMenu(args,packet);})">
-
-                                @if (packet.Parent is null)
-                                {
-                                    <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectPacket(packet)"
-                                        Color="white" Class="elevation-4  rounded-3">
-                                        <MListItemContent>
-                                            <MListItemTitle>@packet.Title </MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-                                }
-                                else
-                                {
-
-
-                                    <MListItem Link style="background-color:#1565c0"
-                                   OnClick="() => SelectPacket(packet)"
-                                        Color="white" Class="elevation-4  rounded-3">
-                                        <MListItemContent>
-                                            <MListItemTitle>@packet.Title </MListItemTitle>
-
-                                            <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
-
-
-                                        </MListItemContent>
-                                    </MListItem>
-
-
-                                }
-
-                            </div>
+                            
+                           <SNPacketListItem Packet ="@packet" OnClick="() => OpenPacket(packet)" OnContextMenu="(args) => ShowCardContextMenu(args,packet)" />
 
                         }
                         else
@@ -144,9 +74,9 @@
 
             }
 
+        </div>
 
-
-        </MList>
+       
 
     
 
@@ -350,11 +280,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         dataSvs.MainProject = await ProjectVM.GetProject();
+        
+        
     }
 
 
-    private async Task SelectPacket(Packet selectedPacket)
+    private async Task OpenPacket(Packet selectedPacket)
     {
         PacketVM.GetPrevOrNextPackets(selectedPacket, true);
         await PacketVM.GetPacket(selectedPacket);
@@ -372,6 +305,8 @@
 
     private void ShowCardContextMenu(MouseEventArgs args, Packet card)
     {
+        dataSvs.SelectionCards = new();
+
         ShowCardContext = false;
         ContextMenuCard = null;
         // await Task.Delay(16);
@@ -404,7 +339,7 @@
 
     }
 
-    private async Task SavePacketName(Packet packet)
+    private async Task SavePacketName(Packet packet )
     {
         if (!string.IsNullOrWhiteSpace(packet.Title))
         {
