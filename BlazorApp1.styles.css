@@ -658,4 +658,9 @@ body[b-5iz0rivyh9] {
     transform: scale(0.98); /* Shrinks slightly when clicked */
 }
 
-
+.truncateParent-text[b-kzzefpr4yn] {
+    white-space: nowrap;         /* Prevents text from wrapping to the next line */
+    overflow: hidden;            /* Hides the overflowed text */
+    text-overflow: ellipsis;     /* Adds "..." to the truncated text */
+      
+}
