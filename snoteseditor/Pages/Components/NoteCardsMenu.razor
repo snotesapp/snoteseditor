@@ -325,23 +325,24 @@
     double Y = 0;
 
 
-    private void ShowCardContextMenu(MouseEventArgs args, Packet chCard)
+    private async Task ShowPacketContextMenu(MouseEventArgs args, Packet chPacket)
     {
         ContextMenuCard = null;
-
+        await Task.Delay(1);
+        StateHasChanged();
         X = args.ClientX;
         Y = args.ClientY;
-        ContextMenuCard = chCard;
+        ContextMenuCard = chPacket;
+       
     }
 
-    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket noteCard)
+    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket notePacket)
     {
         ShowNoteCardContext = false;
         ContextMenuNoteCard = null;
-
         X = args.ClientX;
         Y = args.ClientY;
-        ContextMenuNoteCard = noteCard;
+        ContextMenuNoteCard = notePacket;
         ShowNoteCardContext = true;
     }
 
@@ -460,14 +461,8 @@
 
     private async Task PinPacket(Packet packet)
     {
-        if (packet.Selected == true)
-        {
-            packet.Selected = false;
-        }
-        else
-        {
-            packet.Selected = true;
-        }
+
+        packet.Selected = !packet.Selected ;
 
         await PacketVM.UpdatePacket(packet);
 
