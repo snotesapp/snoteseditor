@@ -6,9 +6,9 @@
 
 @if(Packet.Parent is null){
 
-<div class="packetListItem shadow w-100 fw-medium text-white mb-1 py-2" style="height: 48px;" @onclick="OnClickMenuItem">
+<div class="packetListItem shadow w-100  fw-medium text-white mb-1 py-2" style="height: 48px;" @onclick="OnClickMenuItem">
                                         
-    <div class="px-1 " style=" text-align:center ;line-height: 30px;" >
+    <div class="mx-2 truncateParent-text" style=" text-align:center ;line-height: 30px;" >
         @Packet.Title
     </div>
                                            
@@ -16,12 +16,12 @@
 
 
 }else{
-    <div class="packetListItem shadow w-100 fw-medium text-white mb-1 py-2" style="height:55px;" @onclick="OnClickMenuItem">
+    <div class="packetListItem shadow w-100 truncateParent-text fw-medium text-white mb-1 py-2" style="height:60px;" @onclick="OnClickMenuItem">
 
-    <div class="ps-1 " style=" text-align:left ;line-height: 5px; font-size:small;">
+    <div class="mx-1 ps-1 w-50 truncateParent-text" title="@Packet.Parent.Title" style=" text-align:left ;line-height: 15px; font-size:small; border-color: white; border-style: groove; border-radius: 5px; border-width: 1px;">
         @Packet.Parent.Title
     </div>                                        
-    <div class="px-1 " style=" text-align:center ;line-height: 40px;">
+    <div class="mx-2 truncateParent-text " style=" text-align:center ;line-height: 30px;">
          @Packet.Title
     </div>
                                            

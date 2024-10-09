@@ -190,17 +190,9 @@
                 
 
                     <ListTemplate Items="dataSvs.CurrentPacketsSet">
-                        <RowTemplate Context="card">
-                            <MListItem Link style="background-color:#1565c0; margin-bottom:3px;  "
-                               Color="white" Class="elevation-4  rounded-3"
-                               OnClick="()=>SelectChildCard(card)"
-                               @oncontextmenu="@(args => {ShowCardContextMenu(args,card);})"
-                               __internal_preventDefault_oncontextmenu>
-                                <MListItemContent>
-                                    <MListItemTitle>@card.Title </MListItemTitle>
-                                </MListItemContent>
-                            </MListItem>
-
+                        <RowTemplate Context="packet">
+                            <SNPacketListItem Packet = "@packet" OnClick="() => SelectChildPacket(packet)" OnContextMenu="(args) => ShowPacketContextMenu(args,packet)" />
+                            
                         </RowTemplate>
 
                     </ListTemplate>
@@ -448,13 +440,13 @@
 
     }
 
-    private async Task SelectChildCard(Packet chCard)
+    private async Task SelectChildPacket(Packet chPacket)
     {
         try
         {
-            PacketVM.GetPrevOrNextPackets(chCard,false);
+            PacketVM.GetPrevOrNextPackets(chPacket,false);
 
-            await PacketVM.GetPacket(chCard);
+            await PacketVM.GetPacket(chPacket);
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
 
             MessageService.SendMessage();
