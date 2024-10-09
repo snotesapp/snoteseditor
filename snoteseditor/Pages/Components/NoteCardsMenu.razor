@@ -29,7 +29,7 @@
 
                             <MCard Class="mb-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                            Dark
-                           @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
+                           @oncontextmenu="@(args => { ShowNotePacketContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
                                 <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
                             <MCardText Class="lh-sm text-body" Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;height:70px; ">
@@ -90,7 +90,7 @@
                     <MCard Class="mb-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
                    Dark
                    @onclick="()=> SelectNoteCard(notecard)"
-                   @oncontextmenu="@(args => { ShowNoteCardContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
+                   @oncontextmenu="@(args => { ShowNotePacketContextMenu(args,notecard);})" __internal_preventDefault_oncontextmenu>
 
                         <MImage Width="250" Height="141" Class="align-end" Src="@notecard.Note.Thumbnail">
                     <MCardText Class="lh-sm text-body" Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:70px; ">
@@ -336,14 +336,16 @@
        
     }
 
-    private void ShowNoteCardContextMenu(MouseEventArgs args, NotePacket notePacket)
+    private async Task ShowNotePacketContextMenu(MouseEventArgs args, NotePacket notePacket)
     {
         ShowNoteCardContext = false;
         ContextMenuNoteCard = null;
+        await Task.Delay(1);
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuNoteCard = notePacket;
         ShowNoteCardContext = true;
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

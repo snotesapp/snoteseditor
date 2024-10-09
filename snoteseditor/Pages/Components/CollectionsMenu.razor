@@ -193,16 +193,17 @@
         NotesCollectionVM.OnChange += StateHasChanged;
     }
 
-    private void ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
+    private async Task ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
     {
         ContextMenuNotesCollection = null;
         ShowNCContext = false;
-        // await Task.Delay(16);
+        await Task.Delay(1);
 
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuNotesCollection = notesCollection;
         ShowNCContext = true;
+        StateHasChanged();
     }
 
     private bool GetNoteIsRunning;

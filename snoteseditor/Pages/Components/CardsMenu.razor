@@ -303,18 +303,19 @@
         await BackToMain.InvokeAsync("notecards");
     }
 
-    private void ShowCardContextMenu(MouseEventArgs args, Packet card)
+    private async Task ShowCardContextMenu(MouseEventArgs args, Packet card)
     {
         dataSvs.SelectionCards = new();
 
         ShowCardContext = false;
         ContextMenuCard = null;
-        // await Task.Delay(16);
+        await Task.Delay(1);
 
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuCard = card;
         ShowCardContext = true;
+        StateHasChanged();
     }
 
     private async Task GetSelectionPackets(Packet chPacket)
@@ -358,14 +359,7 @@
 
     private async Task PinPacket(Packet packet)
     {
-        if (packet.Selected == true)
-        {
-            packet.Selected = false;
-        }
-        else
-        {
-            packet.Selected = true;
-        }
+        packet.Selected = !packet.Selected ; 
 
         await PacketVM.UpdatePacket(packet);
 

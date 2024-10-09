@@ -511,16 +511,17 @@ else
         dataSvs.OnChange -= StateHasChanged;
     }
 
-    private void ShowNoteContextMenu(MouseEventArgs args, Note note)
+    private async Task ShowNoteContextMenu(MouseEventArgs args, Note note)
     {
         ShowNoteContext = false;
         ContextMenuNote = null;
-        // await Task.Delay(16);
+        await Task.Delay(1);
 
         X = args.ClientX;
         Y = args.ClientY;
         ContextMenuNote = note;
         ShowNoteContext = true;
+        StateHasChanged();
     }
 
 
