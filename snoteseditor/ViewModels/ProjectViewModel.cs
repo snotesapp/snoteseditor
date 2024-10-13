@@ -132,6 +132,7 @@ namespace BlazorApp1.ViewModels
 
             try
             {
+                Loader = true;
                 ExtractsNotesFile(fileContent);
 
                 //  ZipFile.ExtractToDirectory(AppDomain.CurrentDomain.BaseDirectory + "Project.zip", AppDomain.CurrentDomain.BaseDirectory + "project");
@@ -147,33 +148,43 @@ namespace BlazorApp1.ViewModels
             if (SharedDataService_service.MainProject.Packets.Count > 0)
             {
                 SharedDataService_service.SwitchMenus("cards");
+            }else{
+                SharedDataService_service.SwitchMenus("collection");
             }
            
-            SharedDataService_service.newProjectDialog = false;
+            
         }
 
         public async Task OpenProject()
         {
-           
-            byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
+            await Task.Run(async () => {
+                byte[] snotesfileArray = await jSRuntime_JS.InvokeAsync<byte[]>("interop.OpenSnotesFile");
 
-            using (var memoryStream = new MemoryStream(snotesfileArray))
-            {
+                using (var memoryStream = new MemoryStream(snotesfileArray))
+                {
 
-                ExtractsNotesFile(memoryStream);
-            }
+                    ExtractsNotesFile(memoryStream);
+                }
             
 
-            await BuildProject();
-
-            Loader = false;
+            }).ContinueWith(async t =>{
+                   await BuildProject();
+                    Loader = false;
             if (SharedDataService_service.MainProject.Packets.Count > 0)
             {
                 SharedDataService_service.SwitchMenus("cards");
+            }else{
+                SharedDataService_service.SwitchMenus("collection");
             }
 
-            SharedDataService_service.newProjectDialog = false;
+           
 
+            });
+           
+            
+            //await BuildProject();
+
+            
            
         }
 
@@ -236,7 +247,7 @@ namespace BlazorApp1.ViewModels
                 SharedDataService_service.MainProject = await GetProject();
             }
 
-            SharedDataService_service.newProjectDialog = false;
+           
 
         }
         public void ExtractsNotesFile(Stream snFileStream)

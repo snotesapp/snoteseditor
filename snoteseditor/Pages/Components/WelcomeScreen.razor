@@ -1,0 +1,209 @@
+﻿@using BlazorApp1.Data
+@using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels
+@using SkiaSharp
+
+@inject IJSRuntime JSRuntime
+@inject SharedDataService dataSvs
+@inject NotesCollectionViewModel NotesCollectionVM
+@inject NoteViewModel NoteVM
+@inject ProjectViewModel ProjectVM
+
+
+<div class="w-100 h-100" >
+
+    
+    <div id="center-container" class="w-100  position-absolute top-50 start-50 " style="text-align: center; transform: translate(-50%,-75%); ">
+        <div id="welcomeimage" class=" position-relative">
+            <img src="images/sNotes_brand.png" alt="Students Notes" />
+        
+          <div id="buttonsrows" class="position-absolute top-100 start-50  translate-middle-x" style=" margin-bottom: 20px; margin-top: 45px;">
+               
+                <div class="row gx-2 justify-content-center" >
+                    @if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile"))){
+                                    <div class="col-12 col-sm-auto mx-auto ">
+                            <SNButton  BtnIcon ="mdi mdi-folder-open-outline" Width="200" Height="45" OnClick="() => OpenZipFile()" Spinner="@ProjectVM.Loader" />
+                        </div>
+                    }else{
+
+                        <div class="input-group col-12 col-sm-auto mx-auto ">
+                            <label class=" snLabelBtn shadow fw-medium text-white mb-1 py-2 mx-3" for="sNotesFilePicker" style="width: 200px; height: 45px; text-align:center;line-height: 30px;">
+                              @if(ProjectVM.Loader == false){
+                                 <i class=" mdi mdi-folder-open-outline me-2" />
+                             
+                              }else{
+                                <i class="spinner-border spinner-border-sm me-2" />
+                          
+                              }
+                                 </label>
+                         </div> 
+
+                    
+                       
+
+                    }
+
+                   
+
+                    
+                    <div class="col-12 col-sm-auto mx-auto">
+                        <SNButton BtnIcon = "mdi mdi-plus" Width="200" Height="45" OnClick="CreateProject" />
+                    </div>
+                </div>
+
+                <div class="row" style="display:none;" >
+                     <InputFile class="form-control " title="Import SNotes File" type="file" accept=".snotes" id="sNotesFilePicker"  OnChange="HandleFileSelected" />
+
+                </div>
+            </div>
+
+
+ 
+
+
+        </div>
+
+         
+    </div>
+
+<div>
+    
+</div>
+
+<span class="w-100 py-2 text-dark fixed-bottom" style="font-size:15px; text-align: center; transform: translateX(25px);">
+    By using this app, you are accepting the
+   
+    <span class="d-block d-md-inline">
+         <a class="text-dark" href="TermsAndConditions">Terms and Conditions</a>
+        and the <a class="text-dark" href="PrivacyPolicy">Privacy Policy</a>.
+    </span>
+</span>
+
+ 
+</div>
+
+@code {
+
+IJSObjectReference _module;
+ private GetProjectFileJS _getProjectFileJS;
+
+private string projectname { get; set; } = $"Project {DateTime.Now.ToString("dd'_'MM'_'yyyy'_'HH'_'mm")}";
+private string collectionname { get; set; } = "Default Collection";
+
+
+protected override async Task OnInitializedAsync()
+    {
+           
+        _getProjectFileJS = new GetProjectFileJS(dataSvs, ProjectVM);
+       
+    }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            //for load JS File
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
+            await _module.InvokeVoidAsync("registeGetProjectFileJSInstance", DotNetObjectReference.Create(_getProjectFileJS));
+             
+        }
+
+            
+    }
+
+
+private async Task OpenZipFile()
+    {
+
+       
+        await ProjectVM.OpenProject();
+        
+        StateHasChanged();
+
+     
+
+    }
+
+private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        // Handle the file after selection
+        ProjectVM.Loader = true;
+        StateHasChanged();
+        await ProjectVM.OpenProject(e.File);
+       
+    }
+
+
+
+    private async Task CreateProject()
+    {
+
+
+        dataSvs.MainProject.Name = projectname;
+
+        dataSvs.ProjectPath = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections");
+
+        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/bitmaps");
+        DirectoryInfo imagespth = Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "project/collections/0/images");
+
+        using (var bitmap = new SkiaSharp.SKBitmap(600, 400))
+        {
+            bitmap.Erase(SKColor.Parse("#FF7F50"));
+            using (var canvas = new SkiaSharp.SKCanvas(bitmap))
+            {
+                var paint = new SkiaSharp.SKPaint()
+                    {
+                        Color = SKColors.Black,
+                        TextSize = 20,
+                        IsAntialias = true,
+                        Typeface = SKTypeface.FromFamilyName("Arial")
+                    };
+                canvas.DrawText("Copyright © 2023 sNotes. All rights reserved.", 20, 100, paint);
+
+            }
+            using (var image = SkiaSharp.SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, 100))
+            {
+                using (var stream = File.OpenWrite(imagespth.FullName + "/blanc.jpeg"))
+                {
+                    data.SaveTo(stream);
+                }
+            }
+        }
+
+       
+        await ProjectVM.SqliteEnsureDeletedAsync();
+        await ProjectVM.RemoveSqliteCacheAsync();      
+        await ProjectVM.SqliteEnsureCreatedAsync();
+
+        await ProjectVM.InsertProject(dataSvs.MainProject);
+      
+        NotesCollection defaultNC = new NotesCollection()
+            {
+                ProjectFK = dataSvs.MainProject.ProjectID,
+                Title = collectionname,
+                Selected = true,
+                Note = new List<Note>()
+            };
+
+        await NotesCollectionVM.AddNotesCollection(defaultNC);
+        NoteVM.AddNCNotes(defaultNC);
+        
+        //await ProjectVM.newProjectModal.HideAsync();
+    }
+
+
+protected override void OnInitialized(){
+     ProjectVM.OnChange += StateHasChanged;
+}
+
+ public void Dispose()
+{
+        ProjectVM.OnChange -= StateHasChanged;
+      
+}
+
+}

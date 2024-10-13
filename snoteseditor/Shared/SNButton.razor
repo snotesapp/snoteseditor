@@ -1,0 +1,64 @@
+﻿@using BlazorApp1.ViewModels;
+@inject ProjectViewModel ProjectVM
+
+
+
+<div class="snButton shadow fw-medium text-white mb-1 py-2 mx-3 " 
+    style="height: @(Height)px; width: @(Width)px;" 
+    @onclick="@(Spinner == false  ? OnSNButtonClick : null)">
+                                        
+    <div class="mx-2 truncateParent-text " style=" text-align:center ;line-height: 30px;" >
+      @if(BtnIcon is not null && Spinner == false){
+            <i class="@BtnIcon mdi-24px me-2" /> <!-- MDI icon -->
+        }else{
+
+            <i class="spinner-border spinner-border-sm me-2" />
+        }
+
+        @Title
+
+    </div>
+      
+                                                 
+</div>
+            
+
+
+@code{
+
+[Parameter] 
+public int Height { get; set; }
+
+[Parameter] 
+public int Width { get; set; }
+
+[Parameter] 
+public string Title { get; set; } = String.Empty;
+
+[Parameter] 
+public string? BtnIcon { get; set; }
+
+[Parameter] 
+public bool? Spinner { get; set; } = false;
+
+
+[Parameter]
+public EventCallback OnClick { get; set; }
+private async Task OnSNButtonClick (){
+
+     await   OnClick.InvokeAsync();
+     
+}   
+
+
+protected override void OnInitialized(){
+     ProjectVM.OnChange += StateHasChanged;
+}
+
+ public void Dispose()
+{
+        ProjectVM.OnChange -= StateHasChanged;
+      
+}
+
+}

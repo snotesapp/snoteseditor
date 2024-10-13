@@ -240,14 +240,12 @@ else
    
   
 
-    @if (dataSvs.MainProject.ProjectID == 0)
+    @if (dataSvs.MainProject.ProjectID == 0 && dataSvs.UserAgent is not null)
     {
-        <SNmodal Width="700" Height="300" IsOpen="@dataSvs.newProjectDialog">
-            <NewProjectModal CloseDialoge="OpenCloseDialog">
 
-            </NewProjectModal>
-        </SNmodal>
-
+        <WelcomeScreen />
+        
+       
     }
 
  
@@ -491,12 +489,14 @@ else
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-
+            
+             
             if (dataSvs.MainProject.ProjectID == 0)
             {
+                dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
+           
                 //await ProjectVM.newProjectModal?.ShowAsync();
-                dataSvs.newProjectDialog = true;
-
+                
 
             }
 
@@ -599,12 +599,8 @@ private async Task AddToPacketGetPackets(){
     dataSvs.FilterPacketsTxt="";
     PacketVM.NotesToPackeList= await PacketVM.GetPackets(Pinned:true);
 }
-    private void OpenCloseDialog(bool dialogState)
-    {
-        // await ProjectVM.newProjectModal?.HideAsync();
-        dataSvs.newProjectDialog = dialogState;
+    
 
-    }
 void HaseMore(){
     //_hasMore = false;
     NoteVM.LastPageReached = true;

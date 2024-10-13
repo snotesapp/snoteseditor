@@ -1,0 +1,12 @@
+.snLabelBtn {
+    height:50px;
+    background-color:#1565c0; 
+    cursor: pointer; 
+    border-radius: 6px;
+    transition: background-color 0.8s ease;
+}
+
+.snLabelBtn:active {
+    background-color: rgb(212, 215, 255);
+    transform: scale(0.98); /* Shrinks slightly when clicked */
+}
