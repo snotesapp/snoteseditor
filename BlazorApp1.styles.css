@@ -360,6 +360,19 @@ span[b-rfu6aujc7u] {
     background-color: #5e92f3;
     border-radius: 3px;
 }
+/* /Pages/Components/WelcomeScreen.razor.rz.scp.css */
+.snLabelBtn[b-74r5z3go28] {
+    height:50px;
+    background-color:#1565c0; 
+    cursor: pointer; 
+    border-radius: 6px;
+    transition: background-color 0.8s ease;
+}
+
+.snLabelBtn:active[b-74r5z3go28] {
+    background-color: rgb(212, 215, 255);
+    transform: scale(0.98); /* Shrinks slightly when clicked */
+}
 /* /Pages/DropZonePg.razor.rz.scp.css */
 body[b-skfs493v7z] {
 }
@@ -507,6 +520,20 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     top: 39%;
     left: 50%;
     transform: translate(-39%, -50%);
+}
+/* /Shared/SNButton.razor.rz.scp.css */
+
+.snButton[b-4oqcjmk7y8] {
+    height:50px;
+    background-color:#1565c0; 
+    cursor: pointer; 
+    border-radius: 6px;
+    transition: background-color 0.8s ease;
+}
+
+.snButton:active[b-4oqcjmk7y8] {
+    background-color: rgb(212, 215, 255);
+    transform: scale(0.98); /* Shrinks slightly when clicked */
 }
 /* /Shared/SNMainLayout.razor.rz.scp.css */
 
