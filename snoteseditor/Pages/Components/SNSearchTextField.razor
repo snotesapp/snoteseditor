@@ -1,0 +1,61 @@
+﻿@using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels
+@using ReactiveUI
+@using System.Reactive.Linq
+
+@inject SharedDataService dataSvs
+@inject NoteViewModel NoteVM
+
+<div class="search-wrapper mt-1">
+    <div class="search-container">
+        <input type="text" @bind-value:event=oninput @bind-value="@dataSvs.SearchTerm" placeholder="Search..." class="search-input" />
+        
+        @if(!string.IsNullOrEmpty(dataSvs.SearchTerm)){
+            
+            <CircleIcon BackgroundColor="transparent" CircleRadius="20" Icon="mdi mdi-close" IconColor="#727272" IconSize="15" OnClick="ClearText" />
+        }
+        
+    </div>
+    
+    <CircleIcon  BackgroundColor="#f3f3f3" CircleRadius="30" Icon="mdi mdi-close" IconColor="#727272" IconSize="16" OnClick="CloseSearch" />
+   
+   
+</div>
+
+
+
+
+
+@code {
+    [Parameter] public EventCallback OnClearClick { get; set; }
+    [Parameter] public EventCallback OnCloseClick { get; set; }
+
+    protected override void OnInitialized(){
+        dataSvs.WhenAnyValue(x => x.SearchTerm)
+       .Throttle(TimeSpan.FromSeconds(1.5))
+       .Subscribe(async searchTerm =>
+       {
+           if (string.IsNullOrEmpty(searchTerm))
+           {
+               dataSvs.selectedNCNotes = dataSvs.selectedNCNotes;
+           }
+           else
+           {
+                await NoteVM.GetNotesAsync(searchTerm);
+
+           }
+           StateHasChanged();
+       });
+    }
+
+    private void ClearText()
+    {
+        dataSvs.SearchTerm = string.Empty;
+        OnClearClick.InvokeAsync();
+    }
+
+    private void CloseSearch()
+    {
+        OnCloseClick.InvokeAsync();
+    }
+}

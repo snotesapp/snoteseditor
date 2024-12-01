@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
-using BlazorComponent;
 using BlazorApp1.Helpers;
 
 namespace BlazorApp1.Data

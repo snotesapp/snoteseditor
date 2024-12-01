@@ -48,19 +48,21 @@
     <link href="_content/Blazor.Bootstrap/Blazor.Bootstrap.bundle.scp.css" rel="stylesheet" />
 
     <!-- #endregion-->
-    <!-- #region masa.Blazor-->
+
+    <!-- #region masa.Blazor
     <link href="_content/Masa.Blazor/css/masa-blazor.min.css" rel="stylesheet" />
 
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css" rel="stylesheet">
+   
+   <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
 
-    <!-- #endregion-->
+   -->
+
     <!-- #region fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Readex Pro">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css" rel="stylesheet">
+ 
 
     <!-- #endregion-->
 
@@ -116,15 +118,15 @@
 
     <!-- #endregion-->
 
-
-    <script src="https://cdn.masastack.com/npm/sortable/Sortable.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="myjs/BootstrapModalInterop.js"></script>
     <script src="myjs/CacheStorageAccessor.js"></script>
 
     <!--
      commented to test improve performance
      <script src="lib/panzoom/panzoom/dist/panzoom.min.js"></script>
-    <script src="myjs/BootstrapModalInterop.js"></script>
+    
     <script src="myjs/dropZone.js"></script>
             <script>
 
@@ -144,7 +146,31 @@
 
 
 
+     <script>
+        window.addOutsideClickListener = (menuElement, dotNetHelper) => {
+            const outsideClickListener = (event) => {
+                if (!menuElement.contains(event.target)) {
+                    dotNetHelper.invokeMethodAsync('OutsideClick');
+                }
+            };
+            document.addEventListener('click', outsideClickListener);
+            menuElement.__outsideClickListener = outsideClickListener;
+        };
+    
+        window.removeOutsideClickListener = (menuElement) => {
+            if (menuElement && menuElement.__outsideClickListener) {
+                document.removeEventListener('click', menuElement.__outsideClickListener);
+                delete menuElement.__outsideClickListener;
+            }
+        };
+        
+        window.getBoundClientRect = (element) => {
+            const rect = element.getBoundingClientRect();
+            return { top: rect.top, left: rect.left };
+        };
 
+    </script>
+    
 
 
 </body>

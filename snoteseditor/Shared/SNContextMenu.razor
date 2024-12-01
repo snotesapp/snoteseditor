@@ -1,0 +1,59 @@
+﻿@using BlazorApp1.Services
+
+@inject IJSRuntime JSRuntime
+@inject ContextMenuService ContextMenuService
+
+
+<div @ref="contextMenuRef" class="context-menu pb-0 px-1 pt-1" 
+        style="display: @(IsVisible ? "block" : "none"); position:absolute; left:@PositionX; top:@PositionY; height: auto ; width: @(Width)px;  
+        
+        ">
+    <ul class="p-0 m-0 " style="list-style: none; ">
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnOutsideClick { get; set; }
+    [Parameter] 
+    public int Width { get; set; }
+    [Parameter] 
+    public int Height { get; set; }
+
+
+
+    private ElementReference contextMenuRef;
+    private bool IsVisible { get; set; }
+    private string PositionX { get; set; }
+    private string PositionY { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ContextMenuService.Register(this);
+    }
+    public async Task ShowAsync(double x, double y)
+    {
+        PositionX = $"{x}px";
+        PositionY = $"{y}px";
+        IsVisible = true;
+        await JSRuntime.InvokeVoidAsync("addOutsideClickListener", contextMenuRef, DotNetObjectReference.Create(this));
+    }
+
+    public async Task HideAsync()
+    {
+        IsVisible = false;
+        await JSRuntime.InvokeVoidAsync("removeOutsideClickListener");
+        ContextMenuService.Unregister(this);
+    }
+
+    [JSInvokable]
+    public async Task OutsideClick()
+    {
+        if (IsVisible)
+        {
+            await OnOutsideClick.InvokeAsync();
+        }
+    }
+}

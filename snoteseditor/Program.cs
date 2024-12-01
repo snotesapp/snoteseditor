@@ -51,10 +51,11 @@ builder.Services.AddSingleton<ProjectViewModel, ProjectViewModel>();
 builder.Services.AddSingleton<SkiaServices, SkiaServices>();
 builder.Services.AddSingleton<GetProjectFileJS, GetProjectFileJS>();
 
+builder.Services.AddSingleton<ContextMenuService>();
 
 
 builder.Services.AddSingleton<IMessageService, MessageService>();
-builder.Services.AddMasaBlazor();
+
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();

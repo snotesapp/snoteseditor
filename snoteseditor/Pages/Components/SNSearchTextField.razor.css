@@ -1,0 +1,32 @@
+/* Wrapper to ensure both elements are inline */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds spacing between the search container and the close button */
+    
+}
+
+/* search-container class */
+.search-container {
+    background-color: #f3f3f3;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    height: 40px;
+    width: 45vw ;
+    
+   
+}
+
+/* search input field */
+.search-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+}
+
+
+

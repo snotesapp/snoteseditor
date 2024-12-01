@@ -1,0 +1,135 @@
+﻿@using BlazorApp1.Helpers
+@using BlazorApp1.ViewModels
+
+@inject SharedDataService dataSvs
+@inject SkiaServices skiaSvs
+
+@inject NoteViewModel NoteVM
+
+@if(NoteVM.showNoteSummary){
+
+        @if(ReadOnly == false){
+
+
+        <div id="summarypannel" class=" mt-1 pb-2 h-100" style="position: absolute;
+        right: 0; transform: translateX(90px); transform-origin: right top;" >
+        
+                
+                <div class="position-relative p-0 " style="height: inherit;">
+                        <div class="font-class gradient-blue px-1" style="display: grid; grid-template-columns: auto 1fr auto; 
+                        align-items: center; min-width: 300px; height: 40px;
+                        border-top-left-radius: 5px; border-top-right-radius: 5px;" >
+
+                        <div >Summary</div>
+                        <div></div> <!-- Empty column -->
+                        @if(!string.IsNullOrEmpty(dataSvs.editNote.Text)  ){
+                        
+                        <div class="text-muted  " >
+                                @dataSvs.editNote.Text.Length / 1500
+                        
+                        </div>
+                        }   
+        
+
+                </div>
+                <textarea  @bind="dataSvs.editNote.Text" @bind:event="oninput"  @onfocusout ="() =>{ skiaSvs.UpdateBitmap();}" rows="5" maxlength="1500" 
+                        style="height: calc(100% - 40px); min-width: 300px; border-radius: 0px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; " 
+                        class="form-control font-class"                     
+                        placeholder="Write something" aria-label="Summary">
+                        
+                </textarea>
+                </div>
+                
+
+        <div class="p-0 position-absolute top-50 start-0">
+        <CircleIcon CircleRadius="40" BackgroundColor ="transparent" IconColor ="black" Icon="mdi mdi-chevron-right" IconSize="22" OnClick="CircleIconClick"  />
+        </div>
+
+        </div>
+
+        }else{
+
+         <div id="summarypannel" class="py-2 pb-3  h-100" style="position: absolute;
+        right: 20px; top: 0; " >
+        
+                
+                <div class="position-relative p-0 " style="height: inherit;">
+                        <div class="font-class gradient-blue px-1" style="display: grid; grid-template-columns: auto 1fr auto; 
+                        align-items: center; min-width: 300px; height: 40px;
+                        border-top-left-radius: 5px; border-top-right-radius: 5px;" >
+
+                        <div >Summary</div>
+                        <div></div> <!-- Empty column -->
+                        @if(!string.IsNullOrEmpty(dataSvs.editNote.Text)  ){
+                        
+                        <div class="text-muted  " >
+                                @dataSvs.editNote.Text.Length / 1500
+                        
+                        </div>
+                        }   
+        
+
+                </div>
+                <textarea  id="npsummarypannel" readonly   rows="5" 
+                       style="height: calc(100% - 40px); min-width: 300px; border-radius: 0px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; " 
+                        class="form-control font-class"     
+                        aria-label="Summary">
+                        @dataSvs.SelectedNoteCard.Note.Text
+                </textarea>
+                </div>
+                
+
+        <div class="p-0 position-absolute top-50 start-0">
+        <CircleIcon CircleRadius="40" BackgroundColor ="transparent" IconColor ="black" Icon="mdi mdi-chevron-right" IconSize="22" OnClick="CircleIconClick"  />
+        </div>
+
+        </div>   
+
+
+         
+
+  }
+
+
+}else{
+
+<div id="summarypannel"  class="p-0">
+
+@if(ReadOnly){
+     <SNButton BtnIcon="mdi mdi-chevron-down"   Height="35" Width="140" OnClick="CircleIconClick" Spinner="false" Title="Summary" 
+        TextLineHight ="15"
+        
+       Style="position: absolute; right: 5px; top: 50%; rotate :90deg; transform-origin: right top;  " />
+}else{
+         <SNButton BtnIcon="mdi mdi-chevron-down"   Height="35" Width="140" OnClick="CircleIconClick" Spinner="false" Title="Summary" 
+        TextLineHight ="15"
+        
+       Style="position: absolute; right: 0; top: 50%; transform:rotate(90deg) translateY(-100px); transform-origin: right top;  " />
+
+}
+
+</div>
+       
+}
+
+
+
+@code{
+
+
+[Parameter]
+public EventCallback ShowOrHide { get; set; }
+
+[Parameter]
+public bool ReadOnly { get; set; } 
+
+
+private async Task CircleIconClick (){
+    
+     await ShowOrHide.InvokeAsync();
+     StateHasChanged();
+
+} 
+
+}   
+

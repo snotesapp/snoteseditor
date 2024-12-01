@@ -12,15 +12,5 @@
 
     }
 
-    public static class DialogTypes
-    {
-        public enum DialogType
-        {
-            GeneralSave,
-            SaveNote
-
-        }
-    }
-   
  
 }

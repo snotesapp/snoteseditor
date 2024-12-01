@@ -1,8 +1,7 @@
 ﻿@using BlazorApp1.Data
 @using BlazorApp1.Helpers
 @using BlazorApp1.Pages.Components
-@using BlazorApp1.ViewModels;
-@using BlazorComponent
+@using BlazorApp1.ViewModels; 
 @using Blazored.LocalStorage
 @inject IMessageService MessageService
 
@@ -12,25 +11,19 @@
 
 @inject ILocalStorageService localstorage
 
-
-<MApp  Style="background-image: linear-gradient(to right bottom, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)">
-
+<div class="layout-container" >
+    <!-- Side Section -->
     @if (dataSvs.MainProject.ProjectID != 0)
     {
-        <MNavigationDrawer App @bind-Value="ProjectVM.Drawer" @bind-MiniVariant="ProjectVM.Mini"
-                       Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
-                       Fixed class="overflow-hidden" Permanent>
-
-            <MListItem Class="px-2 mb-1 " Style="height:70px" @ondblclick="EnableRenameProject">
-                <MListItemAvatar Rounded="true">
-                    <MImage tabindex="0" Class="me-2" Src="./images/sNotes_icon.png"></MImage>
-                </MListItemAvatar>
-
-                @if (@renameproject == false)
+    <div class="side-section font-class font-n1" style="width:@(SNSideSectionWidth)px;">
+        <div class="brand-section">
+            @* Brand Section *@
+            <div style="display: grid; grid-template-columns: auto 1fr auto; align-items: center;">
+                <img @onclick="ExpandCollapse" src="./images/sNotes_icon.png" />
+                @if(!ProjectVM.Mini){
+                @if (renameproject == false)
                 {
-                    <MListItemTitle class="text-h7 text-white">
-                        @(dataSvs.MainProject.Name)
-                    </MListItemTitle>
+                   <p  @ondblclick="EnableRenameProject" title="@dataSvs.MainProject.Name" class="text-center my-1 text-truncate text-white pe-1" >@(dataSvs.MainProject.Name)</p>
 
                 }
                 else
@@ -40,22 +33,25 @@
                    placeholder="Project Name" aria-label="Project Name"
                    aria-describedby="basic-addon2" @bind-value="dataSvs.MainProject.Name" @onkeypress="@((eventArg) => RenameProject(eventArg) )" @onfocusout="RenameProject">
                 }
+                <CircleIcon BackgroundColor="transparent" CircleRadius="30" Icon="mdi mdi-chevron-left" IconColor="black" IconSize="25" OnClick="ExpandCollapse" />
+                }
+            </div>
+        </div>
 
+    @if(!ProjectVM.Mini){
 
-                <MButton Icon OnClick="() => ProjectVM.Mini = !ProjectVM.Mini ">
-                    <MIcon>mdi-chevron-left</MIcon>
-                </MButton>
+        <div class="navigation-section">
+            @* Navigation Section *@
 
-            </MListItem>
+               <MNavDrawerHeader GoToMenu="@(dataSvs.SwitchMenus)" />
 
+              
+            
+        </div>
 
-            @if (!ProjectVM.Mini)
-            {
-                <MRow>
-                    <MNavDrawerHeader GoToMenu="@(dataSvs.SwitchMenus)" />
-
-                </MRow>
-                @switch (dataSvs.menustatus)
+        <div class="menu-section" style="width: inherit;" >
+            @* Menu Section *@
+             @switch (dataSvs.menustatus)
                 {
                     case "mainmenu":
                         <SNNavMenu GoToMenu="@(dataSvs.SwitchMenus)" />
@@ -86,53 +82,16 @@
                         break;
                 }
 
-            }
-
-        </MNavigationDrawer>
+        </div>
+    }    
+    </div>
     }
-    else
-    {
-
-        <MNavigationDrawer App @bind-Value="ProjectVM.Drawer" MiniVariant="true"
-                       Style="height:100vh ;background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) "
-                       Fixed class="overflow-hidden" Permanent>
-
-
-
-
-            <MListItem Class="px-2 mb-1 " Style="height:70px">
-                <MListItemAvatar Rounded="true">
-                    <MImage tabindex="0" Class="me-2" Src="./images/sNotes_icon.png"></MImage>
-                </MListItemAvatar>
-
-            </MListItem>
-
-        </MNavigationDrawer>
-
-    }
-
-        <!-- Sizes your content based upon application components -->
-        <MMain Class="h-100 " >
-            <!-- Provides the application the proper gutter -->
-            <MContainer class="mainpg-style " Fluid>
-
-                @Body
-
-
-                <!--
-                     <div class="card" style="overflow:auto;white-space:nowrap;height:100vh;width:100vw;">
-
-                @Body
-                </div>
-                -->
-
-            </MContainer>
-        </MMain>
-    
-
-
-</MApp>
-
+    <!-- Main Section -->
+    <div class="main-section p-1  container-fluid" style='width: 100%; '>
+        
+        @Body
+    </div>
+</div>
 
 @code {
 
@@ -140,7 +99,7 @@
     //private bool _mini = true;
 
     private bool renameproject;
-
+    private int SNSideSectionWidth = 56;
 
     protected override void OnInitialized()
     {
@@ -148,6 +107,7 @@
         dataSvs.OnChange += StateHasChanged;
 
         MessageService.OnMessage += MessageHandler;
+        ProjectVM.Mini = true;
 
     }
 
@@ -200,6 +160,26 @@
             renameproject = false;
         }
     }
+
+private async Task ExpandCollapse()
+    {
+
+        if (!ProjectVM.Mini)
+        {
+            SNSideSectionWidth = 56;
+
+        }
+        else
+        {
+            SNSideSectionWidth = 270;
+            
+
+        }
+        ProjectVM.Mini = !ProjectVM.Mini;
+        StateHasChanged();
+        
+    }
+
 
 
     public void CloseDialog(dynamic result)

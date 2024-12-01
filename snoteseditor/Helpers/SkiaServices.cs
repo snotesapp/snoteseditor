@@ -98,7 +98,7 @@ namespace BlazorApp1.Helpers
 
         };
 
-        public void UpdateBitmap()
+        public async void UpdateBitmap()
         {
 
             using (SKCanvas saveBitmapCanvas = new SKCanvas(dataSvs.saveBitmap))
@@ -135,6 +135,8 @@ namespace BlazorApp1.Helpers
 
 
             dataSvs.skiaView.Invalidate();
+            dataSvs.NotifyStateChanged();
+
         }
 
 

@@ -15,19 +15,21 @@ namespace BlazorApp1.ViewModels
         private readonly NoteViewModel NoteVM;
         private readonly ProjectViewModel ProjectVM;
 
-       
+
 
         public NotesCollectionViewModel() { }
 
         public NotesCollectionViewModel(NotesCollectionService service, SharedDataService dataSvs, NoteViewModel noteVM, ProjectViewModel projectVM)
         {
-            
+
             _service = service;
             _dataSvs = dataSvs;
             NoteVM = noteVM;
             ProjectVM = projectVM;
-           
+
         }
+
+        public ConfirmDialog deleteNCDialog = default!;
 
 
         public async Task AddNotesCollection(string textValue)
@@ -38,10 +40,11 @@ namespace BlazorApp1.ViewModels
             await _service.AddNotesCollection(notesCollection);
 
             _dataSvs.MainProject.NotesCollection.Add(notesCollection);
+            NotifyStateChanged();
         }
         public async Task AddNotesCollection(NotesCollection notesCollection)
         {
-           
+
             await _service.AddNotesCollection(notesCollection);
 
             _dataSvs.MainProject.NotesCollection.Add(notesCollection);
@@ -49,12 +52,12 @@ namespace BlazorApp1.ViewModels
 
         public async Task UpdateNotesCollection(NotesCollection notesCollection)
         {
-           await _service.UpdateNotesCollection(notesCollection);
+            await _service.UpdateNotesCollection(notesCollection);
         }
 
         public async Task DeleteNotesCollection(int id)
         {
-           await _service.DeleteNotesCollection(id);
+            await _service.DeleteNotesCollection(id);
         }
 
         public async Task DeleteNotesCollection(NotesCollection notesCollection)
@@ -68,13 +71,12 @@ namespace BlazorApp1.ViewModels
                     Directory.Delete(filePath, true);
 
                 }
-                
+
                 await _service.DeleteNotesCollection(notesCollection.NotesCollectionID);
 
                 _dataSvs.MainProject = await ProjectVM.GetProject();
-                _dataSvs.showDeleteNCConfirmation = false;
                 await NoteVM.GetNotesAsync();
-               
+
             }
             catch (Exception ex)
             {

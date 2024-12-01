@@ -1,0 +1,30 @@
+﻿@using BlazorApp1.Data
+
+ 
+
+<div class="selectedNCtListItem shadow w-100  fw-medium text-white mb-1 py-2" style="@(NotesCollection.Selected ? "background-color:#1565c0; ":"background-color:#ffb07e; ") height: 48px;" @ondblclick ="OndblClickMenuItem">
+                                        
+    <div class="mx-2 truncate_text" style=" text-align:center ;line-height: 30px; @(NotesCollection.Selected ? "color:white;":"color:black;")" >
+        @NotesCollection.Title
+    </div>
+                                           
+</div>
+
+@code {
+   
+   [Parameter]
+   public  NotesCollection NotesCollection  { get; set; }
+
+   [Parameter]
+   public EventCallback OndblClick { get; set; }
+    
+
+   private async Task OndblClickMenuItem (){
+
+     await OndblClick.InvokeAsync();
+     
+   }
+
+
+
+}

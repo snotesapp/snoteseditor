@@ -6,7 +6,6 @@
 @inject PacketViewModel PacketVM
 @inject ProjectViewModel ProjectVM
 @using BlazorApp1.ViewModels;
-@using BlazorComponent
 @using Microsoft.JSInterop
 @using ReactiveUI;
 @using System.Reactive.Linq;
@@ -14,201 +13,102 @@
 
 @inject IMessageService MessageService
 
+<div class=" w-100 px-2 my-2 " style="height:inherit; " >
 
-<MContainer Style="height:calc(100vh - 130px); overflow:auto" class="px-2">
+    @if (!dataSvs.filterPackets)
+    {
+        <ListTemplate Items="dataSvs.MainProject.Packets">
+            <RowTemplate Context="packet">
 
-   
-        <div class="w-100 h-100 ">
-
-            @if (!dataSvs.filterPackets)
-            {
-                <ListTemplate Items="dataSvs.MainProject.Packets">
-                    <RowTemplate Context="packet">
-
-                        @if (packet.Editable == false)
-                        {
-                            @if (packet.Selected)
-                            { 
-                                    <SNPacketListItem Packet ="@packet" OnClick="() => OpenPacket(packet)"  OnContextMenu="(args) => ShowCardContextMenu(args,packet)" />
-                            }
-
-                        }
-                        else
-                        {
-                            <input  type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3 shadow rounded"
-                                 style="text-indent: 10px;"
-                                placeholder="Packet Name" aria-label="Packet Name"
-                                aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
-                            
-                        }
-
-                    </RowTemplate>
-
-                </ListTemplate>
-
-            }
-            else
-            {
-                <ListTemplate Items="dataSvs.FiltredPackets">
-                    <RowTemplate Context="packet">
-
-                        @if (packet.Editable == false)
-                        {
-                            
-                           <SNPacketListItem Packet ="@packet" OnClick="() => OpenPacket(packet)" OnContextMenu="(args) => ShowCardContextMenu(args,packet)" />
-
-                        }
-                        else
-                        {
-                            <input type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3  shadow rounded"
-                            style="text-indent: 10px;"
-                           placeholder="Packet Name" aria-label="Packet Name"
-                           aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
-
-                        }
-
-
-                    </RowTemplate>
-
-                </ListTemplate>
-
-            }
-
-        </div>
-
-       
-
-    
-
-</MContainer>
-
-@if (ContextMenuCard != null)
-{
-    <MMenu @bind-Value="ShowCardContext"
-       PositionX="X"
-       PositionY="Y"
-       Absolute
-       OffsetY
-       CloseOnContentClick>
-        <MList Dense Width="200">
-
-            <MListItem OnClick="() => RenameCard(ContextMenuCard)">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-form-textbox
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
-
-                    <MListItemTitle>
-                        Rename
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-
-            <MListItem OnClick="() =>{dataSvs.showDeletePacketConfirmation = true; dataSvs.ContextMenuCard = ContextMenuCard;}">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-delete-outline
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
-                    <MListItemTitle>
-                        Delete
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-
-            <MListItem OnClick="() => GetSelectionPackets(ContextMenuCard)">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-subdirectory-arrow-right
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
-
-                    <MListItemTitle>
-                        Move To
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-
-            @if (ContextMenuCard.Parent is not null)
-            {
-
-                @if (ContextMenuCard.Selected == true)
+                @if (packet.Editable == false)
                 {
-                    <MListItem OnClick="() => PinPacket(ContextMenuCard)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-pin-off
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
+                    @if (packet.Selected)
+                    {
+                        <div class=" mb-1 " @oncontextmenu:preventDefault="true"
+                            @oncontextmenu="@(args => ShowCardContextMenu(args, packet))">
 
-                            <MListItemTitle>
-                                UnPin Packet
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
+                            <SNPacketListItem Packet="@packet" OnClick="() => OpenPacket(packet)" />
 
-                    <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-arrow-split-horizontal
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-                            <MListItemTitle>
-                                Detach
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-
+                        </div>
+                    }
 
                 }
                 else
                 {
-
-                    <MListItem OnClick="() => PinPacket(ContextMenuCard)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-pin
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-
-                            <MListItemTitle>
-                                Pin Packet
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-                    <MListItem OnClick="() => DetachSubPacket(ContextMenuCard)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-arrow-split-horizontal
-
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-                            <MListItemTitle>
-                                Detach
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
+                    <input type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3 shadow rounded"
+                        style="text-indent: 10px;" placeholder="Packet Name" aria-label="Packet Name"
+                        aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
 
                 }
 
+            </RowTemplate>
+
+        </ListTemplate>
+
+    }
+    else
+    {
+        <ListTemplate Items="dataSvs.FiltredPackets">
+            <RowTemplate Context="packet">
+
+                @if (packet.Editable == false)
+                {
+
+                    <div class=" mb-1 " @oncontextmenu:preventDefault="true"
+                        @oncontextmenu="@(args => ShowCardContextMenu(args, packet))">
+
+                        <SNPacketListItem Packet="@packet" OnClick="() => OpenPacket(packet)" />
+                    </div>
+                }
+                else
+                {
+                    <input type="text" class="fs-6 lh-lg list-group-item list-group-item-action my-3  shadow rounded"
+                        style="text-indent: 10px;" placeholder="Packet Name" aria-label="Packet Name"
+                        aria-describedby="basic-addon2" @bind-value="packet.Title" @onfocusout="() => SavePacketName(packet)">
+
+                }
+
+
+            </RowTemplate>
+
+        </ListTemplate>
+
+    }
+
+</div>
+
+
+
+
+@if (ContextMenuCard != null)
+{
+
+    <SNContextMenu @ref="sncontextMenu" OnOutsideClick="HideContextMenu" Width="240">
+        <SNListItem BtnIcon="mdi mdi-form-textbox" Height="42" Title="Rename" OnClick="() => RenameCard(ContextMenuCard)" Style="color:#2b2b2b;" Class="mb-1"/>
+        <SNListItem BtnIcon="mdi mdi-delete-outline" Height="42" Title="Delete" OnClick="() => ShowDeleteDialog() " Style="color:#2b2b2b;" Class="mb-1" />
+        <SNListItem BtnIcon="mdi mdi-subdirectory-arrow-right" Height="42" Title="Move To" Style="color:#2b2b2b;" Class="mb-1"
+            OnClick="() => GetSelectionPackets(ContextMenuCard)" />
+        @if (ContextMenuCard.Parent is not null)
+        {
+            @if (ContextMenuCard.Selected == true)
+            {
+                <SNListItem BtnIcon="mdi mdi-pin-off" Height="42" Title="UnPin Packet" OnClick="() => PinPacket(ContextMenuCard)" Style="color:#2b2b2b;" Class="mb-1" />
+                <SNListItem BtnIcon="mdi mdi-arrow-split-horizontal" Height="42" Title="Detach" Style="color:#2b2b2b;" Class="mb-1"
+                    OnClick="() => DetachSubPacket(ContextMenuCard)" />
             }
-        </MList>
+            else
+            {
 
+                <SNListItem BtnIcon="mdi mdi-pin" Height="42" Title="Pin Packet" OnClick="() => PinPacket(ContextMenuCard)" Style="color:#2b2b2b;" Class="mb-1" />
+                <SNListItem BtnIcon="mdi mdi-arrow-split-horizontal" Height="42" Title="Detach" Style="color:#2b2b2b;" Class="mb-1"
+                    OnClick="() => DetachSubPacket(ContextMenuCard)" />
 
-    </MMenu>
+            }
+        }
+
+    </SNContextMenu>
 
 }
-
 
 
 @code {
@@ -225,7 +125,7 @@
     IJSObjectReference _module;
 
     private Packet? ContextMenuCard = null;
-    private bool ShowCardContext;
+
     double X = 0;
     double Y = 0;
 
@@ -261,20 +161,20 @@
         base.OnInitialized();
 
         dataSvs.WhenAnyValue(x => x.FilterPacketsTxt)
-      .Throttle(TimeSpan.FromSeconds(1.5))
-      .Subscribe(async FilterPacketsTxt =>
-      {
-          if (string.IsNullOrEmpty(FilterPacketsTxt))
-          {
-              dataSvs.FiltredPackets.Clear();
-          }
-          else
-          {
-              dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
+        .Throttle(TimeSpan.FromSeconds(1.5))
+        .Subscribe(async FilterPacketsTxt =>
+        {
+            if (string.IsNullOrEmpty(FilterPacketsTxt))
+            {
+                dataSvs.FiltredPackets.Clear();
+            }
+            else
+            {
+                dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
 
-          }
-          StateHasChanged();
-      });
+            }
+            StateHasChanged();
+        });
 
     }
 
@@ -282,8 +182,10 @@
     {
 
         dataSvs.MainProject = await ProjectVM.GetProject();
-        
-        
+        PacketVM.OnChange += StateHasChanged;
+        ProjectVM.OnChange += StateHasChanged;
+        dataSvs.OnChange += StateHasChanged;
+
     }
 
 
@@ -298,49 +200,43 @@
             dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.FirstOrDefault();
             MessageService.SendMessage();
         }
-       
+
 
         await BackToMain.InvokeAsync("notecards");
     }
 
-    private async Task ShowCardContextMenu(MouseEventArgs args, Packet card)
-    {
-        dataSvs.SelectionCards = new();
-
-        ShowCardContext = false;
-        ContextMenuCard = null;
-        await Task.Delay(1);
-
-        X = args.ClientX;
-        Y = args.ClientY;
-        ContextMenuCard = card;
-        ShowCardContext = true;
-        StateHasChanged();
-    }
 
     private async Task GetSelectionPackets(Packet chPacket)
     {
+        await HideContextMenu();
         dataSvs.ContextMenuCard = chPacket;
         dataSvs.filterPackets = false;
         dataSvs.FilterPacketsTxt = "";
         dataSvs.SelectionCards = await PacketVM.GetSelectionPackets(chPacket);
+        await PacketVM.movePacketTo_Modal.ShowAsync();
+
+
+        /*
         dataSvs.moveto_dialog = true;
+        await HideContextMenu();
+        */
 
     }
 
     #region Rename Card
     string oldname;
-    void RenameCard(Packet card)
+    async Task RenameCard(Packet card)
     {
 
         dataSvs.MainProject.Packets.Select(ed => { ed.Editable = false; return ed; }).ToList();
         oldname = card.Title;
 
         card.Editable = true;
+        await HideContextMenu();
 
     }
 
-    private async Task SavePacketName(Packet packet )
+    private async Task SavePacketName(Packet packet)
     {
         if (!string.IsNullOrWhiteSpace(packet.Title))
         {
@@ -359,11 +255,12 @@
 
     private async Task PinPacket(Packet packet)
     {
-        packet.Selected = !packet.Selected ; 
+        packet.Selected = !packet.Selected;
 
         await PacketVM.UpdatePacket(packet);
-
+        await HideContextMenu();
         ContextMenuCard = null;
+
     }
 
     private async Task DetachSubPacket(Packet packet)
@@ -374,10 +271,86 @@
         await PacketVM.UpdatePacket(packet);
         // await dataSvs.GetCard(dataSvs.SelectedCard);
         await PacketVM.GetPacket(dataSvs.SelectedCard);
+        await HideContextMenu();
         ContextMenuCard = null;
+
 
     }
 
+    private async Task ShowDeleteDialog()
+    {
+        await HideContextMenu();
+        dataSvs.ContextMenuCard = ContextMenuCard;
 
-   
+        var options = new ConfirmDialogOptions
+            {
+                IsVerticallyCentered = true,
+                NoButtonColor = ButtonColor.Primary,
+                YesButtonColor = ButtonColor.Primary,
+                HeaderCssClass = "headeralertdialog",
+                DialogCssClass = "sn-dialog"
+            };
+        var confirmation = await PacketVM.deletePacketDialog.ShowAsync(
+        title: "Delete Packet",
+        message1: "This will delete this packet and all sub-packets",
+        confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            await PacketVM.DeletePacket(dataSvs.ContextMenuCard);
+        }
+        else
+        {
+            // do something
+        }
+
+        /*
+        await HideContextMenu();
+        dataSvs.showDeletePacketConfirmation = true;
+        dataSvs.ContextMenuCard = ContextMenuCard;
+        */
+    }
+
+
+    #region ContextMenu
+    private SNContextMenu sncontextMenu;
+
+
+
+    private async Task ShowCardContextMenu(MouseEventArgs e, Packet packet)
+    {
+        int crdcontextmenuhieght;
+        if(packet.Parent is null){
+            crdcontextmenuhieght = 144;
+        }else{
+            crdcontextmenuhieght = 236;
+        }
+        ContextMenuCard = packet;
+        await Task.Delay(10);
+        await sncontextMenu.HideAsync();
+        dataSvs.SelectionCards = new();
+        if(e.ClientY < dataSvs.Wdimension.Height - crdcontextmenuhieght){
+        await sncontextMenu.ShowAsync(e.ClientX, e.ClientY); // Use ClientX and ClientY for correct positioning
+        }else{
+        await sncontextMenu.ShowAsync(e.ClientX, e.ClientY-crdcontextmenuhieght); // Use ClientX and ClientY for correct positioning
+        }
+        
+    }
+
+    private async Task HideContextMenu()
+    {
+        await sncontextMenu.HideAsync();
+    }
+
+    #endregion
+
+
+
+    public void Dispose()
+    {
+        PacketVM.OnChange -= StateHasChanged;
+        ProjectVM.OnChange -= StateHasChanged;
+        dataSvs.OnChange -= StateHasChanged;
+    }
+
 }

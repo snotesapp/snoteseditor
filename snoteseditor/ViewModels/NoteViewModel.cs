@@ -1,12 +1,15 @@
 ﻿using BlazorApp1.Data;
 using BlazorApp1.Helpers;
 using BlazorApp1.Services;
-using BlazorComponent;
+using BlazorBootstrap;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using SkiaSharp;
 using SkiaSharp.Views.Blazor;
 using System.Data;
+using Microsoft.JSInterop;
+
 
 namespace BlazorApp1.ViewModels
 {
@@ -14,11 +17,21 @@ namespace BlazorApp1.ViewModels
     {
         private SharedDataService SharedDataService_service;
         private NoteService NoteService_service;
-        public NoteViewModel(NoteService noteService_service,SharedDataService sharedDataService_service)
+        private readonly IJSRuntime jSRuntime_JS;
+
+        public NoteViewModel(NoteService noteService_service,SharedDataService sharedDataService_service,IJSRuntime jsRuntime)
         {
             NoteService_service = noteService_service;
             SharedDataService_service = sharedDataService_service;
+            this.jSRuntime_JS = jsRuntime;
         }
+
+
+
+        public ConfirmDialog saveNoteDialog = default!;
+
+        public bool showNoteSummary = true;
+
 
         public void AddNCNotes(NotesCollection notesCollection)
         {
@@ -253,8 +266,22 @@ public async Task GetNotesAsync(int pageIndex = 0, int pageSize = 20, Action onL
            SharedDataService_service.skiaView.Invalidate();
 
            SharedDataService_service.NotifyStateChanged();
-            // StateHasChanged();
+           
         }
+
+
+        public async Task ScrollToSummaryPanel()
+        {
+            showNoteSummary = true;    
+            NotifyStateChanged();
+            await jSRuntime_JS.InvokeVoidAsync("interop.scrollToSummary");
+           
+            
+        }
+
+
+        public event Action OnChange;
+        public void NotifyStateChanged() => OnChange?.Invoke();
 
     }
 }

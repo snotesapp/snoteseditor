@@ -1,4 +1,4 @@
-﻿
+
 body {
 }
 
@@ -122,5 +122,5 @@ ul.nclist-style, li
     position: absolute;
     top: 39%;
     left: 50%;
-    transform: translate(-39%, -50%);
+    
 }

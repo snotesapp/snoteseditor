@@ -1,0 +1,334 @@
+﻿@using BlazorApp1.Data
+@using BlazorApp1.Helpers
+@using BlazorApp1.Pages.Components
+@inject SharedDataService dataSvs
+@inject PacketViewModel PacketVM
+@inject IMessageService MessageService
+@inject NoteViewModel NoteVM
+@using BlazorApp1.ViewModels;
+@using BlazorBootstrap;
+@using Microsoft.JSInterop
+@using SkiaSharp
+@using SkiaSharp.Views.Blazor
+@inject IJSRuntime JSRuntime
+
+@if (dataSvs.SelectedNoteCard != null)
+{
+
+
+
+
+
+    <div class="p-0 shownavbtns @((navbuttonsEnabled) ? "shownavbtns" : "navbuttons")
+                    @(PacketVM.upAnimation ? "slide-animation-up" : "")
+                    @(PacketVM.downAnimation ? "slide-animation-down" : "")
+                    @(PacketVM.leftAnimation ? "slide-animation-left" : "")
+                    @(PacketVM.rightAnimation ? "slide-animation-right" : "") 
+                    " 
+                    style="position: relative; overflow: auto ; width: 100% ; margin-left: 3px; 
+                    height: @(dataSvs.Wdimension.Height )px; 
+                    
+                    border-radius: 5px;
+                        ">
+
+        @if (dataSvs.SelectedNoteCard.Note != null)
+        {
+
+
+            @if (dataSvs.SelectedNoteCard.Note is not null)
+            {
+                <div
+                    style="position: absolute;top: 0;left: 50; 
+                                        height: @(dataSvs.SelectedNoteCard.Note.MainImgHeight)px; 
+                                        width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;  background-color: @dataSvs.SelectedNoteCard.Note.BackgroundColor;">
+
+                    <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images">
+                        <ImgTemplate Context="ncimg">
+                            <span class="position-relative" style="left:@(@ncimg.X)px;top:@(@ncimg.Y)px">
+
+
+                                <img id="ncimage_@ncimg.NoteImageID" draggable="true"
+                                    style="border:4px none #1565c0;border-radius:6px" width="@ncimg.Width" height="@ncimg.Height"
+                                    class="rounded mx-auto d-block position-absolute  " src="@ncimg.Location" alt="zoom image">
+
+                            </span>
+
+                        </ImgTemplate>
+
+                    </NoteCardsTemplate>
+                </div>
+                <SKCanvasView @ref="skiaView" AdditionalAttributes="@(new Dictionary<string, object> 
+                                                                    {
+                                                                        { "id", "my-canvas" },
+
+                                                                        { "style", $"pointer-events:{PointerEvent}; width:{dataSvs.SelectedNoteCard.Note.MainImgWidth}px; height:{dataSvs.SelectedNoteCard.Note.MainImgHeight}px; position: absolute;top: 0;left: 50;background-color:transparent;"},
+                                                                    })" OnPaintSurface="OnPaintSurface"
+                    IgnorePixelScaling="true">
+
+
+                </SKCanvasView>
+
+
+
+    
+
+            }
+
+
+        }
+
+
+    </div>
+
+      
+       
+    
+    @if (dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
+    {
+
+        
+        <div class="position-absolute navbuttons ms-3 top-50  translate-middle-y" style="left: 50;">
+
+            <NavButtons EmptyNCPage="false" />
+        </div>
+
+        <SNNoteSummary ReadOnly="true" ShowOrHide="ExpandCollapseNoteSummary"/>
+     
+    }
+
+
+
+
+
+
+
+
+
+}
+else
+{
+
+    <div class="container sn-container">
+        @if (dataSvs.SelectedCard is not null && dataSvs.SelectedCard.NotePackets is not null)
+        {
+            <div class="position-absolute ms-3 top-50 start-0 translate-middle-y">
+                <NavButtons EmptyNCPage="true" />
+            </div>
+        }
+
+        <div class="sn-addnotebutton ">
+            <SNSideIconButton BtnIcon="mdi mdi-arrow-left" Height="40px" Width="150px"
+                OnClick='() => dataSvs.SwitchMenus("collection")' Title="Add Notes" />
+
+
+        </div>
+
+    </div>
+}
+
+
+<Modal @ref="PacketVM.movedownPacketTo_Modal" ShowCloseButton="false" HeaderCssClass="font-class gradient-blue"
+    BodyCssClass="p-1" FooterCssClass="font-class" IsVerticallyCentered="true">
+    <HeaderTemplate>
+
+        <div class="input-group shadow">
+            <input type="text" class="form-control" placeholder="Add Sub Packet" @bind-value="packetTitle"
+                @onkeypress="((eventArg) => AddSubPacket(eventArg)) " aria-describedby="addpktbtnGroup">
+            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddSubPacket">
+                Add
+            </button>
+        </div>
+
+
+    </HeaderTemplate>
+    <BodyTemplate>
+        <ul class="py-0 px-1 m-0 " style="max-height: 250px; width: 100%; list-style: none; overflow:auto ">
+            <ListTemplate Items="dataSvs.CurrentPacketsSet">
+                <RowTemplate Context="packet">
+                    <SNPacketListItem Packet="@packet" OnClick="() => MoveDownNotePacketN(packet)" />
+
+                </RowTemplate>
+            </ListTemplate>
+
+        </ul>
+    </BodyTemplate>
+    <FooterTemplate>
+        <div style=" display: flex; justify-content: space-between; width: 100%; ">
+            <Button style="background-color: #1565c0; color: #e2e1fb;"
+                @onclick="OnHideMoveDownPacketModalClick">Close</Button>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+
+
+
+@code {
+
+    IJSObjectReference _module;
+
+    string PointerEvent = "none";
+    SKCanvasView skiaView = new SKCanvasView();
+    private bool navbuttonsEnabled = true;
+
+    [CascadingParameter]
+    public Error? Error { get; set; }
+
+    private string packetTitle { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MessageService.OnMessage += MessageHandler;
+        dataSvs.OnChange += StateHasChanged;
+
+
+        StateHasChanged();
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (dataSvs.SelectedNoteCard != null)
+        {
+            skiaView.Invalidate();
+
+        }
+
+
+    }
+
+    #region Drawing
+    SKPoint? touchLocation;
+    SKBitmap? saveBitmap;
+
+    SKPaint paint = new SKPaint
+        {
+            Style = SKPaintStyle.Stroke,
+            IsAntialias = true,
+            StrokeCap = SKStrokeCap.Round,
+            StrokeJoin = SKStrokeJoin.Round,
+            FilterQuality = SKFilterQuality.High,
+            BlendMode = SKBlendMode.SrcOver,
+            PathEffect = SKPathEffect.CreateCorner(45)
+
+
+
+        };
+
+    void OnPaintSurface(SKPaintSurfaceEventArgs args)
+    {
+
+        SKImageInfo info = args.Info;
+        SKSurface surface = args.Surface;
+        SKCanvas canvas = args.Surface.Canvas;
+
+        try
+        {
+            canvas.Clear();
+
+            foreach (NotePath notePath in dataSvs.SelectedNoteCard.Note.NotePaths)
+            {
+
+                paint.BlendMode = Enum.Parse<SKBlendMode>(notePath.StrokeBlendMode);
+                paint.Color = SKColor.Parse(notePath.StrokeColor);
+                paint.StrokeWidth = notePath.StrokeWidth;
+                canvas.DrawPath(SKPath.ParseSvgPathData(notePath.SvgPath), paint);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error Here");
+
+        }
+
+    }
+
+    #endregion
+
+
+    #region MoveDown Note
+    private async Task AddSubPacket()
+    {
+        if (!string.IsNullOrWhiteSpace(packetTitle))
+        {
+            Packet newPacket = new Packet { Title = packetTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+            await PacketVM.AddPacket(newPacket);
+            await PacketVM.SetParentPacket(dataSvs.SelectedCard, newPacket);
+            dataSvs.CurrentPacketsSet.Add(newPacket);
+
+            packetTitle = "";
+        }
+
+    }
+
+    private async Task AddSubPacket(KeyboardEventArgs keyboardEvent)
+    {
+        if (keyboardEvent.Key == "Enter")
+        {
+            await Task.Delay(100);
+            if (!string.IsNullOrWhiteSpace(packetTitle))
+            {
+
+                Packet newPacket = new Packet { Title = packetTitle, Selected = true, ProjectFK = dataSvs.MainProject.ProjectID };
+                await PacketVM.AddPacket(newPacket);
+                await PacketVM.SetParentPacket(dataSvs.SelectedCard, newPacket);
+                dataSvs.CurrentPacketsSet.Add(newPacket);
+
+                packetTitle = "";
+
+
+            }
+        }
+
+    }
+
+    public async Task MoveDownNotePacketN(Packet packet)
+    {
+
+        await dataSvs.NewNoteCard(packet, PacketVM.NotePacketToDel.Note);
+
+        await PacketVM.DeleteNotePacket(PacketVM.NotePacketToDel);
+
+        await OnHideMoveDownPacketModalClick();
+
+
+    }
+
+
+    private async Task OnHideMoveDownPacketModalClick()
+    {
+        await PacketVM.movedownPacketTo_Modal.HideAsync();
+    }
+
+    #endregion
+
+    private void ExpandCollapseNoteSummary(){
+        NoteVM.showNoteSummary = ! NoteVM.showNoteSummary;
+    StateHasChanged();
+    }
+
+    private void MessageHandler()
+    {
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+
+        MessageService.OnMessage -= MessageHandler;
+        dataSvs.OnChange -= StateHasChanged;
+        if (skiaView != null)
+        {
+            skiaView.Dispose();
+
+        }
+
+
+    }
+
+}

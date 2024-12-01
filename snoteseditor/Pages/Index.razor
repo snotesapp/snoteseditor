@@ -6,8 +6,7 @@
 
 @using BlazorApp1.Helpers
 @using System.IO.Compression
-@using BlazorApp1.ViewModels;
-@using BlazorComponent
+@using BlazorApp1.ViewModels; 
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -32,375 +31,191 @@
 
 <PageTitle>@dataSvs.MainProject.Name</PageTitle>
 
-<NavigationLock ConfirmExternalNavigation = "@ProjectVM.ConfirmLeave" >
-    
+<NavigationLock ConfirmExternalNavigation="@ProjectVM.ConfirmLeave">
+
 </NavigationLock>
 
 @if (dataSvs.menustatus == "notetools")
 {
-    <MRow >
-
-        <DropZonePg />
-    </MRow>
-
-
-
+    <NoteEditorView />
+    
 }
 else if (dataSvs.menustatus == "cards")
 {
-    <MRow>
-        <!--
 
+    <ConfirmDialog @ref="PacketVM.deletePacketDialog" />
 
-        <NoteCardsPg />
-              -->
+    <Modal @ref="PacketVM.movePacketTo_Modal" ShowCloseButton="false" HeaderCssClass="font-class gradient-blue"
+        BodyCssClass="p-1" FooterCssClass="font-class" IsVerticallyCentered="true">
+        <HeaderTemplate>
+            @if (moveto_filterPackets == false)
+            {
+                <p class="m-2 text-h5 ">
+                    Select Destination Packet
+                </p>
+            }
+            else
+            {
+                <div class="input-group mx-1 shadow">
+                    <input type="text" class="form-control " placeholder="Filter Packets" @bind-value:event=oninput
+                        @bind-value="@dataSvs.FilterPacketsTxt" aria-describedby="filterpktbtnGroup">
+                </div>
+            }
 
-        <AlertDialog Show="@dataSvs.showDeletePacketConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Packet"
-                 Text="Confirm deleting packet with all sub-packets?" YesEvent="() =>  PacketVM.DeletePacket(dataSvs.ContextMenuCard)" NoEvent="()=> dataSvs.showDeletePacketConfirmation = false">
+        </HeaderTemplate>
+        <BodyTemplate>
+            <ul class="py-0 px-1 m-0 " style="max-height: 250px; width: 100%; list-style: none; overflow:auto ">
+                <ListTemplate
+                    Items="@(moveto_filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.ToLower().Contains(dataSvs.FilterPacketsTxt.Trim().ToLower()) ).ToList() : dataSvs.SelectionCards)">
+                    <RowTemplate Context="packet">
+                        <SNPacketListItem Packet="@packet"
+                            OnClick="() => PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard)" />
 
-        </AlertDialog>
+                    </RowTemplate>
+                </ListTemplate>
 
-        <SNmodal Width="500" Height="250" IsOpen="dataSvs.moveto_dialog">
-            <MCard>
-                <MCardTitle Class="p-2 gradient-blue">
-
-                    @if (moveto_filterPackets == false)
-                    {
-                        <p class="m-2 text-h5 ">
-                            Select Destination Packet
-                        </p>
-
-                    }
-                    else
-                    {
-                        <div class="input-group mx-1 shadow">
-                            <input type="text" class="form-control " placeholder="Filter Packets"
-                           @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
-                           aria-describedby="filterpktbtnGroup">
-
-
-                        </div>
-                    }
-                </MCardTitle>
-
-                <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-
-                    <ListTemplate Items="@(moveto_filterPackets ? dataSvs.SelectionCards.Where(sm => sm.Title.ToLower().Contains(dataSvs.FilterPacketsTxt.Trim().ToLower()) ).ToList() : dataSvs.SelectionCards)">
-                        <RowTemplate Context="packet">
-                            @if (packet.Parent is null)
-                            {
-                                <MListItem Link style="background-color:#1565c0"
-                                       OnClick="() => PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard)"
-                                       Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
-                                <MListItemContent>
-                                    <MListItemTitle>@packet.Title </MListItemTitle>
-                                </MListItemContent>
-                            </MListItem>
-                            }
-                            else
-                            {
-
-
-                                <MListItem Link style="background-color:#1565c0"
-                                       OnClick="() => PacketVM.SetParentPacket(packet,dataSvs.ContextMenuCard)"
-                                       Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
-                                <MListItemContent>
-                                    <MListItemTitle>@packet.Title </MListItemTitle>
-
-                                    <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
-
-
-                                </MListItemContent>
-                            </MListItem>
-
-
-                            }
-                           
-
-                        </RowTemplate>
-
-                    </ListTemplate>
-
-                </MList>
-
-                <MDivider></MDivider>
-
-                <MCardActions>
-                    <MCheckbox TValue="bool" OnClick='()=> {moveto_filterPackets = !moveto_filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
-
-                    </MCheckbox>
-                    <MSpacer></MSpacer>
-                    <MButton Color="primary"
-                         Text
-                         OnClick="() => {dataSvs.moveto_dialog = false; moveto_filterPackets = false;}">
-                        Close
-                    </MButton>
-                </MCardActions>
-            </MCard>
-        </SNmodal>
-
-    </MRow>
-
-
+            </ul>
+        </BodyTemplate>
+        <FooterTemplate>
+            <div style=" display: flex; justify-content: space-between; width: 100%; ">
+                <CircleIcon Icon="@(moveto_filterPackets ? "mdi mdi-filter-off-outline" : "mdi mdi-filter-outline")"
+                    CircleRadius="35" IconSize="20"
+                    OnClick='()=> {moveto_filterPackets = !moveto_filterPackets;dataSvs.FilterPacketsTxt = "";}' />
+                <Button style="background-color: #1565c0; color: #e2e1fb;"
+                    @onclick="OnHideMovePacketModalClick">Close</Button>
+            </div>
+        </FooterTemplate>
+    </Modal>
 
 }
 else if (dataSvs.menustatus == "notecards")
 {
-
-    <MRow>
-        <NoteCardsPg />
-
-    </MRow>
-
-
+    <NotePacketView />
 }
 else
 {
+<div  style="width: 100% ;  " >
 
-
-    <div class="mx-auto mb-2 w-75" style="display:@(dataSvs.showFilterNotes ? "block" : "none")">
-        <MTextField Dense Solo Placeholder="Search Notes" TValue="string"
-                @bind-value:event=oninput @bind-value="@dataSvs.SearchTerm"
-                ClearIcon="mdi-close-circle"
-                Clearable
-                OnClearClick="@(() => dataSvs.SearchTerm = "")"
-                AppendOuterIcon="mdi-close"
-                OnAppendOuterClick="CloseSearch"
-                SingleLine
-                HideDetails=true></MTextField>
-
+    
+    <div
+        style="display:@(dataSvs.showFilterNotes ? "flex" : "none"); justify-content: center; align-items: center;  height: 50px;">
+        <SNSearchTextField OnClearClick="@(() => dataSvs.SearchTerm = "")" OnCloseClick="CloseSearch" />
     </div>
 
+    <div style="background-color: transparent; max-width: 100%; height: 100vh; overflow-y: auto;"
+     class="d-flex flex-row justify-content-evenly flex-wrap bd-highlight "
+             @ref="_mainPg">
 
-    <div style="background-color: transparent;" class="overflow-auto  d-flex flex-row justify-content-evenly flex-wrap   bd-highlight mb-3" @ref="_mainPg">
 
         <NotesTemplate Items="@(dataSvs.selectedNCNotes)">
             <NoteTemplate Context="note">
-                @if (note.Selected)
-                {
-
-                   <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e )"
-                   Dark
-                   OnClick="() => NoteVM.StyleSelectNote(note)"
-                   @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
-
-                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                            <MCardText Class="lh-sm text-body" 
-                               Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:100px; ">
-                                @note.Text
-                            </MCardText>
-
-                        </MImage>
-
-
-
-                    </MCard>
-
-                }
-                else
-                {
-                    <MCard Elevation="6" Class="m-1" Style="background-image: linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"
-                   Dark
-                   OnClick="() => NoteVM.StyleSelectNote(note)"
-                   @oncontextmenu="@(args => { ShowNoteContextMenu(args,note);})" __internal_preventDefault_oncontextmenu>
-
-                        <MImage Width="350" Height="197" Class="align-end" Src="@note.Thumbnail">
-                            <MCardText Class="lh-sm text-body"
-                                   Style="overflow: hidden; text-overflow: ellipsis;white-space:pre-wrap;max-height:100px;">
-                                @note.Text
-                            </MCardText>
-
-                        </MImage>
-
-
-
-                    </MCard>
-
-                }
-
-
+                    <div class="p-0 me-1 mb-1" @oncontextmenu:preventDefault="true"
+                        @oncontextmenu="@( (args) => ShowNoteContextMenu(args,note))">
+                        <SNoteCard Note="@note" OnClick="() => NoteVM.StyleSelectNote(note)" Text="@note.Text"
+                            ImageUrl="@note.Thumbnail" />
+                    </div>
+                
             </NoteTemplate>
         </NotesTemplate>
 
-        @if ( NoteVM.LastPageReached == false  && dataSvs.showFilterNotes is false)
+        @if (NoteVM.LastPageReached == false && dataSvs.showFilterNotes is false)
         {
-            <MButton class="position-fixed bottom-0 start-50 translate-middle-x my-6 mx-3 "
-            @onclick = "LoadMoreNotes" 
-             title="Load More Notes"
-             Fab
-             Dark
-             Color="#1565c0">
-                <MIcon>mdi-playlist-plus </MIcon>
-            </MButton>
+            <div class="position-fixed bottom-0 start-50 translate-middle-x mb-2 p-0 ">
+
+                <CircleIcon CircleRadius="40" Icon="mdi mdi-playlist-plus" IconSize="22" OnClick="LoadMoreNotes" />
+
+            </div>
+
         }
 
-    </div>
-
-
-   
-  
-
-    @if (dataSvs.MainProject.ProjectID == 0 && dataSvs.UserAgent is not null)
+    
+    
+    @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
     {
-
-        <WelcomeScreen />
-        
+        <div class="p-0 " style="position:fixed; right: 24px;
+    bottom: 8px;">
+            <CircleIcon CircleRadius="40" Icon="mdi mdi-plus-box-multiple" IconSize="20" OnClick="AddToPacketGetPackets" />
+        </div>
        
     }
 
- 
+ <Modal @ref="PacketVM.addNoteToPacket_Modal" ShowCloseButton="false" HeaderCssClass="font-class gradient-blue"
+          
+            BodyCssClass="p-1" FooterCssClass="font-class" IsVerticallyCentered="true">
+            <HeaderTemplate>
+                @if (filterPackets == false)
+                {
+                    <div class="input-group shadow">
+                        <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle"
+                            @onkeypress="((eventArg) => AddPacket(eventArg)) " aria-describedby="addpktbtnGroup">
+                        <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddPacket">
+                            Add
+                        </button>
 
-    @if (ContextMenuNote != null)
-    {
-        <MMenu @bind-Value="ShowNoteContext"
-       PositionX="X"
-       PositionY="Y"
-       Absolute
-       OffsetY
-       CloseOnContentClick>
-            <MList Dense Width="200">
-
-                <MListItem OnClick="() => EditNote(ContextMenuNote)">
-                    <MListItemIcon>
-                        <MIcon>
-                            mdi-pencil-outline
-                        </MIcon>
-                    </MListItemIcon>
-                    <MListItemContent>
-                        <MListItemTitle>
-                            Edit
-                        </MListItemTitle>
-                    </MListItemContent>
-                </MListItem>
-
-                <MListItem OnClick="() => DeleteNote(ContextMenuNote)">
-                    <MListItemIcon>
-                        <MIcon>
-                            mdi-delete-outline
-                        </MIcon>
-                    </MListItemIcon>
-                    <MListItemContent>
-
-                        <MListItemTitle>
-                            Delete
-                        </MListItemTitle>
-                    </MListItemContent>
-                </MListItem>
-
-            </MList>
-        </MMenu>
-
-    }
+                    </div>
+                }
+                else
+                {
+                    <div class="input-group shadow">
+                        <input type="text" class="form-control" placeholder="Filter Packets" @bind-value:event=oninput
+                            @bind-value="@dataSvs.FilterPacketsTxt" aria-describedby="filterpktbtnGroup">
 
 
-    @if (dataSvs.selectedNCNotes.Exists(nt => nt.Selected == true))
-    {
-
-        <MButton class="position-fixed bottom-0 end-0 my-6 mx-3 "
-         OnClick= "AddToPacketGetPackets"
-         title="Add To Packet"
-         Fab
-         Dark
-         Color="#1565c0">
-            <MIcon>mdi-plus-box-multiple </MIcon>
-        </MButton>
-
-        <SNmodal Width="500" Height="250" IsOpen="addcard_dialog">
-            <MCard>
-                <MCardTitle Class="p-2 gradient-blue ">
-                    @if (filterPackets == false)
-                    {
-                        <div class="input-group shadow">
-                            <input type="text" class="form-control" placeholder="Add Packets" @bind-value="cardTitle" @onkeypress="((eventArg) => AddPacket(eventArg)) " aria-describedby="addpktbtnGroup">
-                            <button class="btn btn-primary" id="addpktbtnGroup" @onclick="AddPacket">
-                                Add
-                            </button>
-
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="input-group shadow">
-                            <input type="text" class="form-control" placeholder="Filter Packets"
-                       @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
-                       aria-describedby="filterpktbtnGroup">
+                    </div>
+                }
 
 
-                        </div>
-                    }
-
-
-                </MCardTitle>
-
-                     <MList MaxHeight="250" Class="mx-1" Style="overflow:auto">
-
+            </HeaderTemplate>
+            <BodyTemplate>
+                <ul class="py-0 px-1 m-0 " style="max-height: 250px; width: 100%; list-style: none; overflow:auto ">
                     <ListTemplate Items="@(filterPackets ? dataSvs.FiltredPackets : PacketVM.NotesToPackeList)">
                         <RowTemplate Context="packet">
-
-                        @if (packet.Parent is null)
-                        {
-                            <MListItem Link style="background-color:#1565c0"
-                            OnClick="() => AddUserSelectedNotes(packet)"
-                                   Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
-                            <MListItemContent>
-                                <MListItemTitle>@packet.Title </MListItemTitle>
-                            </MListItemContent>
-                        </MListItem>
-                        }
-                        else
-                        {
-
-                           <MListItem Link style="background-color:#1565c0"
-                                   OnClick ="() => AddUserSelectedNotes(packet)"
-                                   Color="white" Class="m-1 elevation-4 rounded-3 truncate-text">
-                            <MListItemContent>
-                                <MListItemTitle>@packet.Title </MListItemTitle>
-
-                                <MListItemSubtitle Style="color:white; text-align:end;">@packet.Parent.Title</MListItemSubtitle>
-
-                            </MListItemContent>
-                        </MListItem>
-
-                        }
+                            <SNPacketListItem Packet="@packet" OnClick="() => AddUserSelectedNotes(packet)" />
 
                         </RowTemplate>
 
                     </ListTemplate>
 
-                </MList>
+                </ul>
+            </BodyTemplate>
+            <FooterTemplate>
+                <div style=" display: flex; justify-content: space-between; width: 100%; ">
+                    <CircleIcon Icon="@(filterPackets ? "mdi mdi-filter-off-outline" : "mdi mdi-filter-outline")"
+                        CircleRadius="35" IconSize="20"
+                        OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' />
+                    <Button style="background-color: #1565c0; color: #e2e1fb;"
+                        @onclick="OnHideNoteToPacketModalClick">Close</Button>
 
-             
-
-               
-                <MDivider Class="my-1"></MDivider>
-
-                <MCardActions>
-
-                    <MCheckbox TValue="bool" OnClick='()=> {filterPackets = !filterPackets;dataSvs.FilterPacketsTxt = "";}' OnIcon="mdi-filter-off-outline" OffIcon="mdi-filter-outline">
-
-                    </MCheckbox>
-                    <MSpacer></MSpacer>
-                    <MButton Color="primary"
-                     Text
-                     OnClick="() =>{ addcard_dialog = false; filterPackets = false;}">
-                        Close
-                    </MButton>
-                </MCardActions>
-            </MCard>
+                </div>
+            </FooterTemplate>
+        </Modal>
 
 
-        </SNmodal>
 
+    </div>
+</div>
+
+    @if (dataSvs.MainProject.ProjectID == 0 && dataSvs.UserAgent is not null)
+    {
+        <WelcomeScreen />
 
     }
 
-    
+    @if (ContextMenuNote != null)
+    {
+        <SNContextMenu @ref="snContextMenuNote" OnOutsideClick="HideContextMenu" Width="240">
+            <SNListItem BtnIcon="mdi mdi-pencil-outline" Height="42" Title="Edit" OnClick="() => EditNote(ContextMenuNote)" Style="color:#2b2b2b;" Class="mb-1" />
+            <SNListItem BtnIcon="mdi mdi-delete-outline" Height="42" Title="Delete" Style="color:#2b2b2b;" Class="mb-1"
+                OnClick="() => DeleteNote(ContextMenuNote) " />
+
+        </SNContextMenu>
+    }
 
 
-    <AlertDialog Show="@dataSvs.showDeleteNCConfirmation" DialogType="DialogTypes.DialogType.GeneralSave" Title="Delete Collection"
-             Text="Confirm deleting collection with all notes inside?" YesEvent="() => NotesCollectionVM.DeleteNotesCollection(dataSvs.ContextMenuNotesCollection)" NoEvent="()=> dataSvs.showDeleteNCConfirmation = false">
+    <ConfirmDialog @ref="NotesCollectionVM.deleteNCDialog" />
 
-    </AlertDialog>
+  
+
 
 
 }
@@ -412,26 +227,19 @@ else
     [Parameter]
     public EventCallback<string> BackToMain { get; set; }
 
-
     IJSObjectReference _module;
     IJSObjectReference _dropZoneJS;
 
-
-
     private ElementReference _mainPg;
     private bool _hasMore;
-   
+
     [CascadingParameter]
     public Error? Error { get; set; }
 
-    bool addcard_dialog;
     bool filterPackets;
-
-
     bool moveto_filterPackets;
 
     private Note? ContextMenuNote = null;
-    private bool ShowNoteContext;
     double X = 0;
     double Y = 0;
 
@@ -440,37 +248,21 @@ else
     protected override void OnInitialized()
     {
 
-        dataSvs.WhenAnyValue(x => x.SearchTerm)
-       .Throttle(TimeSpan.FromSeconds(1.5))
-       .Subscribe(async searchTerm =>
-       {
-           if (string.IsNullOrEmpty(searchTerm))
-           {
-               dataSvs.selectedNCNotes = dataSvs.selectedNCNotes;
-           }
-           else
-           {
-                await NoteVM.GetNotesAsync(searchTerm);
-
-           }
-           StateHasChanged();
-       });
-
         dataSvs.WhenAnyValue(x => x.FilterPacketsTxt)
-       .Throttle(TimeSpan.FromSeconds(1.5))
-       .Subscribe(async FilterPacketsTxt =>
-       {
-           if (string.IsNullOrEmpty(FilterPacketsTxt))
-           {
-               dataSvs.FiltredPackets.Clear();
-           }
-           else
-           {
-               dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
+        .Throttle(TimeSpan.FromSeconds(1.5))
+        .Subscribe(async FilterPacketsTxt =>
+        {
+            if (string.IsNullOrEmpty(FilterPacketsTxt))
+            {
+                dataSvs.FiltredPackets.Clear();
+            }
+            else
+            {
+                dataSvs.FiltredPackets = await PacketVM.GetPackets(FilterPacketsTxt);
 
-           }
-           StateHasChanged();
-       });
+            }
+            StateHasChanged();
+        });
 
 
         ProjectVM.OnChange += StateHasChanged;
@@ -484,19 +276,17 @@ else
         if (firstRender)
         {
 
-
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-            
-             
+
+
             if (dataSvs.MainProject.ProjectID == 0)
             {
                 dataSvs.UserAgent = await _module.InvokeAsync<string>("getBrowserName");
-           
+
                 //await ProjectVM.newProjectModal?.ShowAsync();
-                
 
             }
 
@@ -511,18 +301,6 @@ else
         dataSvs.OnChange -= StateHasChanged;
     }
 
-    private async Task ShowNoteContextMenu(MouseEventArgs args, Note note)
-    {
-        ShowNoteContext = false;
-        ContextMenuNote = null;
-        await Task.Delay(1);
-
-        X = args.ClientX;
-        Y = args.ClientY;
-        ContextMenuNote = note;
-        ShowNoteContext = true;
-        StateHasChanged();
-    }
 
 
     public async Task AddUserSelectedNotes(Packet packet)
@@ -531,31 +309,29 @@ else
         await dataSvs.AddRangNoteCard(packet, UserSelectedNotes);
 
         UserSelectedNotes.Select(nts => { nts.Selected = false; return nts; }).ToList();
+         await OnHideNoteToPacketModalClick();
+       
 
-        addcard_dialog=false;
     }
 
     private async Task AddNoteCard(Packet card, Note note)
     {
-
         await dataSvs.NewNoteCard(card, note);
-
     }
 
     private async Task DeleteNote(Note note)
     {
-
+        await HideContextMenu();
         await NoteVM.DeleteNoteImgFiles(note, false);
         await NoteVM.DeleteNote(note);
         dataSvs.selectedNCNotes.Remove(note);
-        
     }
 
     private async Task EditNote(Note note)
     {
+        await HideContextMenu();
         PacketVM.editNotePacketNote = false;
         dataSvs.editNote = await NoteVM.GetNote(note);
-
         dataSvs.SwitchMenus("notetools");
 
     }
@@ -593,20 +369,21 @@ else
 
     }
 
-private async Task AddToPacketGetPackets(){
-    addcard_dialog = true;
-    filterPackets=false;
-    dataSvs.FilterPacketsTxt="";
-    PacketVM.NotesToPackeList= await PacketVM.GetPackets(Pinned:true);
-}
-    
+    private async Task AddToPacketGetPackets()
+    {
+        filterPackets = false;
+        dataSvs.FilterPacketsTxt = "";
+        PacketVM.NotesToPackeList = await PacketVM.GetPackets(Pinned: true);
+        await PacketVM.addNoteToPacket_Modal.ShowAsync();
 
-void HaseMore(){
-    //_hasMore = false;
-    NoteVM.LastPageReached = true;
-    
-    StateHasChanged();
-}
+    }
+
+    void HaseMore()
+    {
+        //_hasMore = false;
+        NoteVM.LastPageReached = true;
+        StateHasChanged();
+    }
 
     private async Task LoadMoreNotes()
     {
@@ -614,16 +391,52 @@ void HaseMore(){
         List<Note> append = await NoteVM.GetNotes(dataSvs.selectedNCNotes.Count, 20);
         dataSvs.selectedNCNotes.AddRange(append) ;
         */
-        await NoteVM.GetNotesAsync(dataSvs.selectedNCNotes.Count, 20,HaseMore);
+        await NoteVM.GetNotesAsync(dataSvs.selectedNCNotes.Count, 20, HaseMore);
         //_hasMore = append.Count > 0;
     }
 
 
-private async Task CloseSearch(){
-    dataSvs.showFilterNotes = false;
-    dataSvs.SearchTerm = "";
-    await NoteVM.GetNotesAsync();
-}
+    private async Task CloseSearch()
+    {
+        dataSvs.showFilterNotes = false;
+        dataSvs.SearchTerm = "";
+        await NoteVM.GetNotesAsync();
+    }
 
+
+    #region ContextMenuNote
+    private SNContextMenu snContextMenuNote;
+
+    private async Task ShowNoteContextMenu(MouseEventArgs e, Note note)
+    {
+        ContextMenuNote = note;
+        await Task.Delay(10);
+        //await snContextMenuNote.HideAsync();
+        if(e.ClientY < dataSvs.Wdimension.Height - 98){
+        await snContextMenuNote.ShowAsync(e.ClientX, e.ClientY); // Use ClientX and ClientY for correct positioning
+        }else{
+        await snContextMenuNote.ShowAsync(e.ClientX, e.ClientY-98); // Use ClientX and ClientY for correct positioning
+       }
+         dataSvs.SelectionCards = new();
+
+    }
+
+    private async Task HideContextMenu()
+    {
+        await snContextMenuNote.HideAsync();
+    }
+
+    #endregion
+
+    private async Task OnHideMovePacketModalClick()
+    {
+        await PacketVM.movePacketTo_Modal.HideAsync();
+    }
+
+    private async Task OnHideNoteToPacketModalClick()
+    {
+        await PacketVM.addNoteToPacket_Modal.HideAsync();
+
+    }
 
 }

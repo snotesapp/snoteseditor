@@ -9,161 +9,62 @@
 @inject NoteViewModel NoteVM
 
 
-<MContainer Style="height:calc(100vh - 140px); overflow:auto"  class="px-2">
- 
-        <MList>
-            <ListTemplate Items="dataSvs.MainProject.NotesCollection">
-                <RowTemplate Context="coll">
+<div class="w-100 px-2 my-2 " style="height:100%;" >
+    <ListTemplate Items="dataSvs.MainProject.NotesCollection">
+        <RowTemplate Context="coll">
 
-                    <div class=" mb-1">
-                        @if (coll.Editable == false)
-                        {
-
-                            @if (coll.Selected == true)
-                            {
-                                <MListItem Link style="background-color:#1565c0" title="@coll.Title"
-                                   @ondblclick="() => SetCollection(coll)"
-                                   @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
-                                   __internal_preventDefault_oncontextmenu
-                                   Color="white" Class="elevation-4  rounded-3">
-                                    <MListItemContent>
-                                        <MListItemTitle> @coll.Title </MListItemTitle>
-                                    </MListItemContent>
-                                </MListItem>
-
-
-                            }
-                            else
-                            {
-
-                                <MListItem Link style="background-color:#ffb07e" title="@coll.Title"
-                                   @ondblclick="() => SetCollection(coll)"
-                                   @oncontextmenu="@(args => { ShowNCContextMenu(args,coll);})"
-                                   __internal_preventDefault_oncontextmenu
-                                   Color="black" Class="elevation-4  rounded-3">
-                                    <MListItemContent>
-                                        <MListItemTitle> @coll.Title </MListItemTitle>
-                                    </MListItemContent>
-                                </MListItem>
-
-                            }
-                        }
-                        else
-                        {
-
-                            <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
-                               placeholder="Collection Name" aria-label="Collection Name"
-                               aria-describedby="basic-addon2" @bind-value="coll.Title" @onfocusout="() => SaveCollectionName(coll)">
-
-                        }
-
-                    </div>
-
-
-                </RowTemplate>
-
-            </ListTemplate>
-
-        </MList>
-
-   
-
-
-
-</MContainer>
-
-
-@if (ContextMenuNotesCollection != null)
-{
-    <MMenu @bind-Value="ShowNCContext"
-       PositionX="X"
-       PositionY="Y"
-       Absolute
-       OffsetY
-       CloseOnContentClick>
-       <MList Dense Width="200">
-
-            <MListItem OnClick="() => AddNCNotes(ContextMenuNotesCollection)">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-shape-rectangle-plus
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
-                    <MListItemTitle>
-                        Add Notes
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
-
-            @if (ContextMenuNotesCollection.Selected == true)
+            @if (coll.Editable == false)
             {
-                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)">
-                    <MListItemIcon>
-                        <MIcon>
-                            mdi-checkbox-blank-outline
-                        </MIcon>
-                    </MListItemIcon>
-                    <MListItemContent>
-                        <MListItemTitle>
-                            UnSelect
-                        </MListItemTitle>
-                    </MListItemContent>
-                </MListItem>
+                <div class=" mb-1 " @oncontextmenu:preventDefault="true"
+                    @oncontextmenu="@(args => ShowNCContextMenu(args,coll))">
+                    <SNCollectionListItem NotesCollection="@coll" OndblClick="() => SetCollection(coll)" />
 
+                </div>
 
             }
             else
             {
-                <MListItem OnClick="() => SetCollection(ContextMenuNotesCollection)" >
-                    <MListItemIcon>
-                        <MIcon>
-                            mdi-checkbox-marked-outline
-                        </MIcon>
-                    </MListItemIcon>
-                    <MListItemContent>
-                        <MListItemTitle>
-                            Select
-                        </MListItemTitle>
-                    </MListItemContent>
-                </MListItem>
+
+                <input type="text" class="list-group-item list-group-item-action mb-1 shadow rounded"
+                    placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2"
+                    @bind-value="coll.Title" @onfocusout="() => SaveCollectionName(coll)">
 
             }
 
-            <MListItem OnClick="() => RenameCollection(ContextMenuNotesCollection)">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-form-textbox
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
+        </RowTemplate>
 
-                    <MListItemTitle>
-                        Rename
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
+    </ListTemplate>
 
-            <MListItem OnClick="() =>{dataSvs.showDeleteNCConfirmation = true; dataSvs.ContextMenuNotesCollection = ContextMenuNotesCollection;}">
-                <MListItemIcon>
-                    <MIcon>
-                        mdi-delete-outline
-                    </MIcon>
-                </MListItemIcon>
-                <MListItemContent>
-
-                    <MListItemTitle>
-                        Delete
-                    </MListItemTitle>
-                </MListItemContent>
-            </MListItem>
+</div>
 
 
-        </MList>
-    </MMenu>
 
 
+@if (ContextMenuNotesCollection != null)
+{
+    <SNContextMenu @ref="snNCContextMenu" OnOutsideClick="HideContextMenu" Width="240">
+        <SNListItem BtnIcon="mdi mdi-shape-rectangle-plus" Height="42" Title="Add Notes" Style="color:#2b2b2b;" Class="mb-1"
+            OnClick="() => AddNCNotes(ContextMenuNotesCollection)" />
+        @if (ContextMenuNotesCollection.Selected == true)
+        {
+            <SNListItem BtnIcon="mdi mdi-checkbox-blank-outline" Height="42" Title="UnSelect" Style="color:#2b2b2b;" Class="mb-1"
+                OnClick="() => SetCollection(ContextMenuNotesCollection)" />
+        }
+        else
+        {
+            <SNListItem BtnIcon="mdi mdi-checkbox-marked-outline" Height="42" Title="Select" Style="color:#2b2b2b;" Class="mb-1"
+                OnClick="() => SetCollection(ContextMenuNotesCollection)" />
+        }
+        <SNListItem BtnIcon="mdi mdi-form-textbox" Height="42" Title="Rename" Style="color:#2b2b2b;" Class="mb-1"
+            OnClick="() => RenameCollection(ContextMenuNotesCollection) " />
+        <SNListItem BtnIcon="mdi mdi-delete-outline" Height="42" Title="Delete" OnClick="ShowDeleteNCDialog" Style="color:#2b2b2b;" Class="mb-1" />
+
+
+
+
+    </SNContextMenu>
 }
+
 
 
 
@@ -177,7 +78,7 @@
     private string editNCTitle { get; set; }
 
     private NotesCollection? ContextMenuNotesCollection = null;
-    private bool ShowNCContext;
+
     double X = 0;
     double Y = 0;
 
@@ -193,41 +94,28 @@
         NotesCollectionVM.OnChange += StateHasChanged;
     }
 
-    private async Task ShowNCContextMenu(MouseEventArgs args, NotesCollection notesCollection)
-    {
-        ContextMenuNotesCollection = null;
-        ShowNCContext = false;
-        await Task.Delay(1);
-
-        X = args.ClientX;
-        Y = args.ClientY;
-        ContextMenuNotesCollection = notesCollection;
-        ShowNCContext = true;
-        StateHasChanged();
-    }
-
     private bool GetNoteIsRunning;
     private async Task SetCollection(NotesCollection nc)
     {
-        if(GetNoteIsRunning == false)
+        if (GetNoteIsRunning == false)
         {
 
-        GetNoteIsRunning = true;
-        
-        if (nc.Selected == true)
-        {
-            nc.Selected = false;
-            await NotesCollectionVM.UpdateNotesCollection(nc);
-        }
-        else
-        {
-            nc.Selected = true;
-            await NotesCollectionVM.UpdateNotesCollection(nc);
-        }
+            GetNoteIsRunning = true;
+
+            if (nc.Selected == true)
+            {
+                nc.Selected = false;
+                await NotesCollectionVM.UpdateNotesCollection(nc);
+            }
+            else
+            {
+                nc.Selected = true;
+                await NotesCollectionVM.UpdateNotesCollection(nc);
+            }
 
 
-        await NoteVM.GetNotesAsync();
-        GetNoteIsRunning = false;
+            await NoteVM.GetNotesAsync();
+            GetNoteIsRunning = false;
         }
     }
 
@@ -243,7 +131,7 @@
                 BackgroundColor = dataSvs.noteBackgroundColor,
             };
 
-           
+
 
         return GoToMenu.InvokeAsync("notetools");
 
@@ -251,14 +139,41 @@
 
     #region Rename Collection
     string oldname;
-    void RenameCollection(NotesCollection notesCollection)
+    async Task RenameCollection(NotesCollection notesCollection)
     {
-
+        await snNCContextMenu.HideAsync();
         dataSvs.MainProject.NotesCollection.Select(ed => { ed.Editable = false; return ed; }).ToList();
         oldname = notesCollection.Title;
 
         notesCollection.Editable = true;
 
+    }
+    async Task ShowDeleteNCDialog()
+    {
+        await snNCContextMenu.HideAsync();
+        //dataSvs.showDeleteNCConfirmation = true;
+        dataSvs.ContextMenuNotesCollection = ContextMenuNotesCollection;
+         var options = new ConfirmDialogOptions
+            {
+                IsVerticallyCentered = true,
+                NoButtonColor = ButtonColor.Primary,
+                YesButtonColor = ButtonColor.Primary,
+                HeaderCssClass = "headeralertdialog",
+                DialogCssClass = "sn-dialog"
+            };
+        var confirmation = await NotesCollectionVM.deleteNCDialog.ShowAsync(
+        title: "Delete Collection",
+        message1: "Confirm deleting collection with all notes inside?",
+        confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            await NotesCollectionVM.DeleteNotesCollection(dataSvs.ContextMenuNotesCollection);
+        }
+        else
+        {
+            // do something
+        }
     }
 
     private async Task SaveCollectionName(NotesCollection nc)
@@ -285,6 +200,39 @@
 
 
     }
+
+
+    #region ContextMenu
+    private SNContextMenu snNCContextMenu;
+
+
+
+
+    private async Task ShowNCContextMenu(MouseEventArgs e, NotesCollection notesCollection)
+    {
+        ContextMenuNotesCollection = notesCollection;
+        await Task.Delay(10);
+        await snNCContextMenu.HideAsync();
+        dataSvs.SelectionCards = new();
+        //184 is the hight of the contextmenu
+        if(e.ClientY < dataSvs.Wdimension.Height - 184){
+        await snNCContextMenu.ShowAsync(e.ClientX, e.ClientY); // Use ClientX and ClientY for correct positioning
+        }else{
+        await snNCContextMenu.ShowAsync(e.ClientX, e.ClientY-184); // Use ClientX and ClientY for correct positioning
+        }
+
+
+
+
+    }
+
+
+    private async Task HideContextMenu()
+    {
+        await snNCContextMenu.HideAsync();
+    }
+
+    #endregion
 
 
 }

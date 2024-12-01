@@ -10,7 +10,6 @@ using System.IO.Compression;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Util.Reflection.Expressions;
 
 namespace BlazorApp1.Helpers
 {
@@ -41,8 +40,12 @@ namespace BlazorApp1.Helpers
         public int bodyCols = 10;
 
 
-        public bool noteEdited;
-
+        private bool _noteEdited;
+        public bool noteEdited
+        {
+            get => _noteEdited;
+            set => this.RaiseAndSetIfChanged(ref _noteEdited, value);
+        }
 
         private bool _showFilterNotes = false;
         public bool showFilterNotes
@@ -196,24 +199,6 @@ namespace BlazorApp1.Helpers
 
         }
 
-
-
-        private bool _showDeletePacketConfirmation;
-        public bool showDeletePacketConfirmation
-        {
-            get { return _showDeletePacketConfirmation; }
-            set { this.RaiseAndSetIfChanged(ref _showDeletePacketConfirmation, value); NotifyStateChanged(); }
-
-        }
-
-
-        private bool _moveto_dialog;
-        public bool moveto_dialog
-        {
-            get { return _moveto_dialog; }
-            set { this.RaiseAndSetIfChanged(ref _moveto_dialog, value); NotifyStateChanged(); }
-
-        }
 
 
         public Packet? ContextMenuCard = null;
@@ -462,13 +447,7 @@ namespace BlazorApp1.Helpers
         #region Collection ViewModel
 
         
-        private bool _showDeleteNCConfirmation;
-        public bool showDeleteNCConfirmation
-        {
-            get { return _showDeleteNCConfirmation; }
-            set { this.RaiseAndSetIfChanged(ref _showDeleteNCConfirmation, value); NotifyStateChanged(); }
-
-        }
+        
 
         public NotesCollection? ContextMenuNotesCollection = null;
 

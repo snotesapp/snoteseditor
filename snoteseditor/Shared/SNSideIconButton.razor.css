@@ -1,0 +1,31 @@
+
+.snSideIconButton {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center;  
+     cursor: pointer; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+    
+     
+}
+
+.snSideIconButton:active {
+    background-color: #97aaf6;
+    transform: scale(0.98); /* Shrinks slightly when clicked */
+}
+
+.snSideIconButtonNClickable {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center;  
+     cursor: pointer; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+    
+    
+     
+}
+
+.snSideIconButtonNClickable:hover {
+    background-color: #97aaf6;
+  
+   
+}
+

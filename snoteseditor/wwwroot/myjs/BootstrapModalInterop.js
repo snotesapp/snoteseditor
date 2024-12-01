@@ -209,7 +209,13 @@ window.interop = {
 
         console.error('File picker was cancelled by the user');
     }
-},
+    },
+
+    
+    scrollToSummary: async function() {
+        document.getElementById('summarypannel').scrollIntoView({ behavior: 'smooth' });
+    },
+
 
 };
 

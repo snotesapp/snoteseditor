@@ -1,0 +1,13 @@
+
+.snListItem {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center; 
+     width: auto ; background-color: #dbdbdb; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+     cursor: pointer;
+}
+
+.snListItem:hover {
+    background-color: #97aaf6;
+   
+}

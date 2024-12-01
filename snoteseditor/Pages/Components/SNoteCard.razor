@@ -1,0 +1,33 @@
+﻿@using BlazorApp1.Data
+@* Card Component *@
+<div class="card-container " @onclick="OnClicSNoteCard"
+     style="border: @(Note.Selected ? "3px solid #1565c0":"1px solid #c7c7c7");  background-image:  @(Note.Selected ? "linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)":"linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"); " @onmouseover="ExpandText" @onmouseout="ShrinkText">
+    <div class="image-container">
+        <img src="@ImageUrl" alt="Card image">
+    </div>
+    <div class="text-container font-class lh-sm text-body " style="text-overflow: ellipsis;white-space:pre-wrap; height: @(textExpanded ? "50%" : "42px")">
+        <p>@Text</p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string ImageUrl { get; set; } = string.Empty;
+    [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public Note Note { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+
+
+
+    private bool textExpanded = false;
+
+    private void ExpandText() => textExpanded = true;
+
+    private void ShrinkText() => textExpanded = false;
+
+
+    private async Task OnClicSNoteCard (){
+
+     await OnClick.InvokeAsync();
+     
+   }
+}

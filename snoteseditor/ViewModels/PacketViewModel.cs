@@ -4,6 +4,7 @@ using BlazorApp1.Services;
 using DynamicData;
 using System.Data;
 using ReactiveUI;
+using BlazorBootstrap;
 
 namespace BlazorApp1.ViewModels
 {
@@ -20,6 +21,7 @@ namespace BlazorApp1.ViewModels
             ProjectVM = projectVM;
         }
 
+
         public Packet? PrevPacket { get; set; }
         private Packet? _nexPacket;
         public Packet? NextPacket
@@ -31,7 +33,6 @@ namespace BlazorApp1.ViewModels
         public bool editNotePacketNote = false;
         public bool NotesMenuSelected = false;
 
-        public bool ShowMoveDownPacketModal = false;
         public NotePacket NotePacketToDel ;
 
         #region NotePacketNavigatior
@@ -43,13 +44,19 @@ namespace BlazorApp1.ViewModels
 
         #endregion
 
+        public ConfirmDialog deletePacketDialog = default!;
+        public Modal movePacketTo_Modal = default!;
+        public Modal movedownPacketTo_Modal = default!;
+        public Modal addNoteToPacket_Modal = default!;
 
         public async Task AddPacket(Packet newPacket)
         {
             await PacketService_service.AddPacket(newPacket);
-
-            SharedDataService_service.MainProject = await ProjectVM.GetProject();
-            
+          
+            SharedDataService_service.MainProject.Packets.Add(newPacket);
+           
+            //SharedDataService_service.MainProject = await ProjectVM.GetProject();
+            NotifyStateChanged();
         }
 
         public async Task<Packet> GetPacket(Packet packet)
@@ -145,7 +152,6 @@ namespace BlazorApp1.ViewModels
                
             await PacketService_service.DeletePacket(packet.PacketID);
             
-            SharedDataService_service.showDeletePacketConfirmation = false;
             SharedDataService_service.ContextMenuCard = null;
         }
 
@@ -158,9 +164,12 @@ namespace BlazorApp1.ViewModels
             await UpdatePacket(childPacket);
 
            SharedDataService_service.MainProject = await ProjectVM.GetProject();
+           await movePacketTo_Modal.HideAsync();
+           NotifyStateChanged();
+           /*
            SharedDataService_service.ContextMenuCard = null;
            SharedDataService_service.moveto_dialog = false;
-
+            */
         }
 
 
@@ -206,5 +215,10 @@ namespace BlazorApp1.ViewModels
             set => this.RaiseAndSetIfChanged(ref _notesToPackeList, value);
         }
 
+        public event Action OnChange;
+        public void NotifyStateChanged() => OnChange?.Invoke();
+
     }
+
+    
 }

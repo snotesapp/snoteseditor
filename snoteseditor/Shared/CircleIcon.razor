@@ -1,0 +1,38 @@
+﻿
+<div class="icon-circle border" style="@(Style) width:@(CircleRadius)px; height: @(CircleRadius)px; background-color: @(BackgroundColor); color: @(IconColor); font-size: @(IconSize)px;" @onclick = "OnIconClick">
+  <i  class="@Icon"></i>
+</div>
+
+
+
+@code {
+
+
+[Parameter] 
+public string Icon { get; set; }
+
+
+[Parameter] 
+public int CircleRadius { get; set; }
+
+[Parameter] 
+public string BackgroundColor { get; set; } = "#1565c0" ;
+
+[Parameter] 
+public string IconColor { get; set; } = "white" ;
+
+[Parameter] 
+public int IconSize { get; set; } = 24 ;
+
+[Parameter] 
+public string Style { get; set; } 
+
+[Parameter]
+public EventCallback OnClick { get; set; }
+private async Task OnIconClick (){
+    
+     await   OnClick.InvokeAsync();
+     
+}   
+
+}

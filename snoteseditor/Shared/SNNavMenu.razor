@@ -13,32 +13,17 @@
 
 @inject ISessionStorageService sessionStorage
 
+<div class=" w-100 px-2 mt-3  " >
+<div class="mb-2 " >
+    <SNSideIconButton BtnIcon="mdi mdi-image" OnClick="@NavMenuGoToColl" Title="Collections" Width="100%" Height="40px" HoverColor="#5e92f3" /> 
+    
+</div>
+<div class=" mb-1 " >
+    <SNSideIconButton BtnIcon="mdi mdi-tray-full" OnClick="@NavMenuGoToCards" Title="Packets" Width="100%" Height="40px" HoverColor="#5e92f3"  /> 
+    
+</div>
+</div>
 
-<MList Dense Nav>
-    <MListItem Style="background-color:white" Link class="elevation-4" OnClick="@NavMenuGoToColl">
-
-        <MListItemIcon>
-            <MIcon>mdi-image</MIcon>
-        </MListItemIcon>
-
-        <MListItemContent>
-            <MListItemTitle>Collections</MListItemTitle>
-        </MListItemContent>
-
-    </MListItem>
-
-    <MListItem Style="background-color:white" Link class="elevation-4" OnClick="@NavMenuGoToCards">
-        <MListItemIcon>
-            <MIcon>mdi-tray-full</MIcon>
-        </MListItemIcon>
-
-        <MListItemContent>
-            <MListItemTitle>Packets</MListItemTitle>
-        </MListItemContent>
-    </MListItem>
-
-
-</MList>
 
 <div class="ms-2 mb-2 lh-sm position-absolute bottom-0 start-50 translate-middle-x w-100">
     <a style="display:block;" class="text-dark fs-6" href="TermsAndConditions">Terms and Conditions</a>

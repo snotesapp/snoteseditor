@@ -1,0 +1,21 @@
+
+
+.selectedNCtListItem {
+    user-select: none;
+    height:50px;
+    cursor: pointer; 
+    border-radius: 6px;
+    transition: background-color 0.8s ease;
+}
+
+.selectedNCtListItem:active {
+    background-color: rgb(212, 215, 255);
+    /* transform: scale(0.98);  Shrinks slightly when clicked */
+}
+
+.truncate_text {
+    white-space: nowrap;         /* Prevents text from wrapping to the next line */
+    overflow: hidden;            /* Hides the overflowed text */
+    text-overflow: ellipsis;     /* Adds "..." to the truncated text */
+      
+}

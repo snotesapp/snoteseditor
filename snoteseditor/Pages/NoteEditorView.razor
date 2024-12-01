@@ -1,9 +1,10 @@
-﻿@page "/dropzonepg"
+﻿@page "/noteditorview"
 @using BlazorApp1.Data
 @using BlazorApp1.Helpers
 @using BlazorApp1.ViewModels;
-@using BlazorComponent
 @using Microsoft.JSInterop
+@using ReactiveUI
+@using System.Reactive.Linq
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @using System.IO;
@@ -17,20 +18,26 @@
 @inject SharedDataService dataSvs
 @inject ProjectViewModel ProjectVM
 
-<MCol>
-    <MRow>
-        <MCard  Elevation="3" class=" m-1 p-0 overflow-auto" >
-            <div @ref="@dropZoneElement" class="position-relative "
-                 style="
+
+
+
+<div class="mb-4" style="position: relative ;
+   height:100% ;  border-radius: 5px; overflow:auto;">
+
+            
+            <div  @ref="dropZoneElement" 
+                
+                 style="position: absolute;top: 0;left: 50; 
                         width: @(dataSvs.editNote.MainImgWidth)px;
                         height:@(dataSvs.editNote.MainImgHeight)px;
                         touch-action:none;
                         background-color:@dataSvs.editNote.BackgroundColor;
-                        z-index:1
+                       z-index: 0   ;
                         "
-                 @oncontextmenu="@(args => ShowCanvasContextMenu(args))"
-                 @oncontextmenu:preventDefault="true"
-                 @onpointermove="((de) => ImgDragOver(de))">
+                    @oncontextmenu="(args) => ShowCanvasContextMenu(args)"
+                    @oncontextmenu:preventDefault="true"
+                    @onpointermove="((de) => ImgDragOver(de))"
+                 >
 
 
                 @if (dataSvs.editNote.Images != null)
@@ -98,168 +105,65 @@
 
                 }
 
-
-                <div style="pointer-events:@(dataSvs.PointerEvent);
-                            width: @(dataSvs.editNote.MainImgWidth)px;
-                            height:@(dataSvs.editNote.MainImgHeight)px;">
-
-
-                    <SKCanvasView @ref="dataSvs.skiaView" OnPaintSurface="OnPaintSurface" IgnorePixelScaling="true"
-                                  @onpointerdown="OnPointerDown"
-                                  @onpointermove="OnPointerMove"
-                                  @onpointerup="OnPointerUp"
-                                  @onpointercancel="OnPointerCancel"
-                                  style="position: absolute;
-                                         top: 0;background-color:transparent;
-                                         left: 0; width:inherit;height:inherit;
-                                         pointer-events:inherit">
-
-
-
-                    </SKCanvasView>
-                </div>
-
-                <div @ref="@inputFileContainer">
-                    <InputFile style=" width: 0;
-                                       height: 0;
-                                       position:absolute;
-                                       bottom:0px;
-                                       overflow: hidden;"
-                               OnChange="@OnChange" multiple />
-                </div>
-
+                
             </div>
-        
-        <MExpansionPanels id="summarypannel" Style="width:50%;position:absolute;bottom:10px;left:25%" Class="elevation-6 m-2">
 
-                <MExpansionPanel>
-                    <MExpansionPanelHeader DisableIconRotate>
-
-                        <ChildContent>
-                            Summary
-                        </ChildContent>
-
-                        <ActionsContent>
-                            @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
-                            {
-                                <MIcon Color="teal">
-                                    mdi-check
-                                </MIcon>
-                            }
-                            else
-                            {
-                                <MIcon Color="error">
-                                    mdi-alert-circle
-                                </MIcon>
-                            }
-
-                        </ActionsContent>
-
-                    </MExpansionPanelHeader>
-                    <MExpansionPanelContent>
-                        <MTextarea Outlined NoResize Class="font-class" TextColor="black" Counter="true" Clearable Rules="_rules"
-                                   Placeholder="Write something"
-                                   OnChange="() =>{ skiaSvs.UpdateBitmap();}"
-                                   @bind-Value="@(dataSvs.editNote.Text)">
+            <SKCanvasView  
+                    @ref="dataSvs.skiaView"  
+                    OnPaintSurface="OnPaintSurface" 
+                    IgnorePixelScaling="true"
+                    AdditionalAttributes="@(new Dictionary<string, object> 
+                    {
+                        { "id", "noteeditcanvas" },
+                        { "style", $"position: absolute; pointer-events:{dataSvs.PointerEvent}; width:{dataSvs.editNote.MainImgWidth}px; height:{dataSvs.editNote.MainImgHeight}px; position: absolute;top: 0;left: 50;background-color:transparent;" },
+                        { "onpointerdown", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerDown) },
+                        { "onpointermove", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerMove) },
+                        { "onpointerup", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerUp) },
+                        { "onpointercancel", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerCancel) }
+                    })">
+            </SKCanvasView>
 
 
-                        </MTextarea>
+ <SNNoteSummary ReadOnly = "false" ShowOrHide="ExpandCollapseNoteSummary"/>
 
-                        </MExpansionPanelContent>
-                        </MExpansionPanel>
+   
+@if (ContextImg != null)
+{
 
-                        </MExpansionPanels>
+<SNContextMenu @ref="snImgcontextMenu" OnOutsideClick="HideImgContextMenu" Width="240" >
+    <SNListItem BtnIcon="mdi mdi-magnify-plus-outline" Height="42" Title="ZoomIn" OnClick="() =>  ImgZoomIn(ContextImg)" Style="color:#2b2b2b;" Class="mb-1" />
+    <SNListItem BtnIcon="mdi mdi-magnify-minus-outline" Height="42" Title="ZoomOut" OnClick="() => ImgZoomOut(ContextImg) " Style="color:#2b2b2b;" Class="mb-1" />
+    <SNListItem BtnIcon="mdi mdi-image-remove" Height="42" Title="Remove" OnClick="() => RemoveNoteImg(ContextImg)" Style="color:#2b2b2b;" Class="mb-1" />          
+                                         
+</SNContextMenu>
+
+}
+
+
+<SNContextMenu @ref="snCanvasContext" OnOutsideClick="HideCanvasContextMenu" Width="240" >
+    <SNListItem BtnIcon="mdi mdi-image-plus" Height="42" Title="Past Image" OnClick="() => PastClipboardImg()" Style="color:#2b2b2b;" Class="mb-1" />                               
+</SNContextMenu>
 
 
 
-
-         @if (ContextImg != null)
-            {
-                <MMenu @bind-Value="ShowImgContext" OnOutsideClick="()=> skiaSvs.UpdateBitmap()"
-                   PositionX="X"
-                   PositionY="Y"
-                   Absolute
-                   CloseOnContentClick="false">
-                <MList Dense Width="200">
-
-                    <MListItem OnClick="() =>  ImgZoomIn(ContextImg)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-magnify-plus-outline
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-
-                            <MListItemTitle>
-                                ZoomIn
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-                    <MListItem OnClick="() => ImgZoomOut(ContextImg)">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-magnify-minus-outline
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-
-                            <MListItemTitle>
-                                ZoomOut
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-                    <MListItem OnClick="() => RemoveNoteImg(ContextImg)">
-                        <MListItemIcon>
-                            <MIcon>
-
-                                mdi-image-remove
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-                            <MListItemTitle>
-                                Remove
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-                    </MList>
-                    </MMenu>
-
-            }
-
-            <MMenu @bind-Value="ShowCanvasContext"
-                   PositionX="X"
-                   PositionY="Y"
-                   Absolute
-                   CloseOnContentClick>
-                <MList Dense Width="200">
-                    <MListItem OnClick="() => PastClipboardImg()">
-                        <MListItemIcon>
-                            <MIcon>
-                                mdi-image-plus
-                            </MIcon>
-                        </MListItemIcon>
-                        <MListItemContent>
-
-                            <MListItemTitle>
-                                Past Image
-                            </MListItemTitle>
-                        </MListItemContent>
-                    </MListItem>
-
-                </MList>
-                </MMenu>
-
-        </MCard>
-    </MRow>
-
-    <AlertDialog DialogType="DialogTypes.DialogType.SaveNote" Show="@dataSvs.savenotedialog">
-
-                </AlertDialog>
+<div @ref="@inputFileContainer">
+    <InputFile style=" width: 0; height: 0; position:absolute; bottom:0px; overflow: hidden;" OnChange="@OnChange" multiple />
+</div>
 
 
-</MCol>
+</div>
+
+
+
+
+
+
+
+
+<ConfirmDialog @ref="NoteVM.saveNoteDialog" />
+
+  
+
        
 
 
@@ -293,24 +197,19 @@
     bool show = true;
 
 
-    public List<Func<string, StringBoolean>> _rules = new()
-                {
-                  v =>  v is not null && v.Length <= 1500 ? true : "Max 1500 characters"
-                };
-
     private NoteImage? ContextImg = null;
     private bool ShowImgContext;
     double X = 0;
     double Y = 0;
-    private bool ShowCanvasContext;
-
+    
 
     protected override void OnInitialized()
     {
-
+      
         filesAndDirectories = new FilesAndDirectories(dataSvs);
         ProjectVM.ConfirmLeave = true;
         dataSvs.OnChange += StateHasChanged;
+        NoteVM.OnChange += StateHasChanged;
 
     }
 
@@ -732,34 +631,9 @@
 
     #endregion
 
-    private async Task ShowImgContextMenu(MouseEventArgs args, NoteImage noteImage)
-    {
-        ShowImgContext = false;
-        ShowCanvasContext = false;
-        ContextImg = null;
-
-        await Task.Delay(16);
-        X = args.ClientX;
-        Y = args.ClientY;
-        ContextImg = noteImage;
-        ShowImgContext = true;
-
-    }
-
-    private async Task ShowCanvasContextMenu(MouseEventArgs args)
-    {
-        ShowCanvasContext = false;
-        ShowImgContext = false;
-        ContextImg = null;
-
-        await Task.Delay(16);
-        X = args.ClientX;
-        Y = args.ClientY;
-
-        ShowCanvasContext = true;
+    
 
 
-    }
 
     private async Task RemoveNoteImg(NoteImage noteImage)
     {
@@ -789,7 +663,7 @@
         finally
         {
             ContextImg = null;
-            ShowImgContext = false;
+           
         }
     }
 
@@ -843,14 +717,19 @@
             var imageUrl = await _module.InvokeAsync<string>("imgStreamToSrc", dotnetImageStream);
 
             SaveImage(fPath, "image/png");
+           
 
 
         }
         catch (Exception ex)
         {
-
+            
             Error?.ProcessError(ex);
         }
+        
+        await HideCanvasContextMenu();
+           
+            
 
     }
 
@@ -879,9 +758,128 @@
     #endregion
 
 
+
+#region CanvasContextMenu
+private SNContextMenu snCanvasContext;
+
+
+private async Task ShowCanvasContextMenu(MouseEventArgs e)
+{
+    try
+    {
+        if (snImgcontextMenu is not null)
+        {
+            await HideImgContextMenu();
+        }
+
+        // Get the bounding rectangle of the div 
+        var containerRect = await  JSRuntime.InvokeAsync<BoundClientRect>("getBoundClientRect", dropZoneElement );
+        await Task.Delay(10);
+        // Adjust ClientX and ClientY to be relative to the container
+        var relativeX = e.ClientX - containerRect.Left;
+        var relativeY = e.ClientY - containerRect.Top;
+
+        if(e.ClientY < dataSvs.Wdimension.Height - 52){
+            await snCanvasContext.ShowAsync(relativeX, relativeY); // Use adjusted values for correct positioning
+        }else{
+            await snCanvasContext.ShowAsync(relativeX, relativeY-52); // Use adjusted values for correct positioning
+        }
+    
+        
+    }
+    catch (Exception ex)
+    {
+        Error?.ProcessError(ex);
+    }
+}
+
+    private async Task HideCanvasContextMenu()
+    {
+        try
+        {
+            await snCanvasContext.HideAsync();
+        }
+        catch (Exception ex)
+        {
+            
+            Error?.ProcessError(ex);
+        }
+        
+    }
+
+#endregion
+  
+
+#region ImgContextMenu
+    private SNContextMenu snImgcontextMenu;
+
+private async Task ShowImgContextMenu(MouseEventArgs e, NoteImage noteImage)
+    {
+        try
+        {
+            if(snCanvasContext is not null){
+            await HideCanvasContextMenu();
+            }
+
+            ContextImg = noteImage; 
+            
+            // Get the bounding rectangle of the div
+            var containerRect = await  JSRuntime.InvokeAsync<BoundClientRect>("getBoundClientRect", dropZoneElement );
+            await Task.Delay(10);
+            // Adjust ClientX and ClientY to be relative to the container
+            var relativeX = e.ClientX - containerRect.Left;
+            var relativeY = e.ClientY - containerRect.Top;
+
+            if(e.ClientY < dataSvs.Wdimension.Height - 150){
+            await snImgcontextMenu.ShowAsync(relativeX, relativeY); // Use adjusted values for correct positioning
+            }else{
+            await snImgcontextMenu.ShowAsync(relativeX, relativeY-144); // Use adjusted values for correct positioning
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            
+            Error?.ProcessError(ex);
+        }    
+    }
+
+    private async Task HideImgContextMenu()
+    {
+        try
+        {
+            skiaSvs.UpdateBitmap();
+            await snImgcontextMenu.HideAsync();
+        }
+        catch (Exception ex)
+        {
+            
+            Error?.ProcessError(ex);
+        }
+        
+    }
+
+private void ExpandCollapseNoteSummary(){
+    NoteVM.showNoteSummary = ! NoteVM.showNoteSummary;
+    StateHasChanged();
+}
+
+#endregion
+  
+
+
     public void Dispose()
     {
         dataSvs.OnChange -= StateHasChanged;
+        NoteVM.OnChange -= StateHasChanged;
     }
 
+
+public struct BoundClientRect
+{
+    public double Top { get; set; }
+    public double Left { get; set; }
 }
+
+}
+

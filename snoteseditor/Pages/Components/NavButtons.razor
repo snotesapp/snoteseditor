@@ -23,7 +23,7 @@
                            
                            @if (dataSvs.SelectedCard.Parent is not null)
                             {
-                                <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-up">@dataSvs.SelectedCard.Parent.Title </span>
+                                <span class="px-2 truncate-text sn-tooltiptext sn-tooltip-up" style=" font-size:14px; font-weight: 600;">@dataSvs.SelectedCard.Parent.Title </span>
                                
                             }          
                                         
@@ -79,17 +79,11 @@
                                 <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
                             </button>
 
-                            <Collapse @ref="collapse1" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
+                            <Collapse @ref="collapse1" OnShowing="ResetAnimation" Style="background-color:#f0eeee;width:200px;max-height:30vh;overflow:auto; padding: 1px; border-radius: 3px;">
                                 <ListTemplate Items="dataSvs.CurrentPacketsSet">
-                                    <RowTemplate Context="card">
-                                        <MListItem Class="dropdown-item elevation-4 rounded-3" Link title="@card.Title"
-                                                               style="background-color:#1565c0; margin-bottom:2px"
-                                           Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
-                                        <MListItemContent >
-                                        <MListItemTitle Class="truncate-text">@card.Title </MListItemTitle>
-
-                                        </MListItemContent>
-                                        </MListItem>
+                                    <RowTemplate Context="packet">
+                                        
+                                        <SNListItem Title="@packet.Title" OnClick="()=>SelectSubPacket(packet,false)" Height="35" Style="background-color:#1565c0;  color:#f5f5f5; margin-bottom: 1px;"  />
 
                                     </RowTemplate>
 
@@ -166,18 +160,13 @@ else{
                             <i class="mdi mdi-chevron-down mdi-24px " style="color:#f5f5f5"></i>
                         </button>
 
-                        <Collapse @ref="collapse1" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
+                        <Collapse @ref="collapse1" OnShowing="ResetAnimation" Style="background-color:transparent;width:200px;max-height:30vh;overflow:auto">
                             <ListTemplate Items="dataSvs.CurrentPacketsSet">
-                                <RowTemplate Context="card">
-                                    <MListItem Class="dropdown-item elevation-4 rounded-3" Link title="@card.Title"
-                                               style="background-color:#1565c0; margin-bottom:2px"
-                                               Color="white" @onpointerdown="ResetAnimation" OnClick="()=>SelectSubPacket(card,false)">
-                                        <MListItemContent>
-                                            <MListItemTitle Class="truncate-text" >@card.Title </MListItemTitle>
-
-                                        </MListItemContent>
-                                    </MListItem>
-
+                                <RowTemplate Context="packet">
+                                     
+                                    <SNListItem Title="@packet.Title" OnClick="()=>SelectSubPacket(packet,false)" Height="35" Style="background-color:#1565c0;  color:#f5f5f5; margin-bottom: 1px;"  />
+                                        
+                                   
                                 </RowTemplate>
 
                             </ListTemplate>
@@ -245,6 +234,8 @@ private async Task NextNC()
 
 
     }
+
+
  private async Task NullSelectdNCNextNC()
     {
         
@@ -298,6 +289,7 @@ private async Task SelectSubPacket(Packet subPacket, bool Up)
     {
         try
         {
+           
             if (dataSvs.ncDragingMode)
             {
                 dataSvs.ncDragingMode = false;

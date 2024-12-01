@@ -1,0 +1,52 @@
+﻿<div class="@(ClickEffect ? "snSideIconButton":"snSideIconButtonNClickable") mb-1 text-white" style="height: @(Height); width:@(Width) ; background-color:@(BackgroundColor); 
+     "@onpointerenter='()=>{BackgroundColor = HoverColor ;}' @onpointerleave='()=>{BackgroundColor = OriginalColor ;}'
+     @onclick="OnListItemClick">
+
+     <i class="ps-1 @BtnIcon mdi-24px" style="color:@TextColor; " /> <!-- MDI icon -->
+     <p class="text-start ms-2 my-1 font-listItem " style="color:@TextColor; ">@Title</p>
+</div>
+
+
+
+@code {   
+
+[Parameter] 
+public string Height { get; set; }
+
+[Parameter] 
+public string Width { get; set; }
+
+[Parameter] 
+public string Title { get; set; } = String.Empty;
+
+[Parameter] 
+public string? BtnIcon { get; set; }
+
+[Parameter] 
+public bool ClickEffect { get; set; } = true;
+
+[Parameter] 
+public string TextColor { get; set; } = "white";
+[Parameter] 
+public string BackgroundColor { get; set; } = "#1565c0";
+
+[Parameter] 
+public string HoverColor { get; set; } = "#97aaf6";
+
+
+[Parameter]
+public EventCallback OnClick { get; set; }
+
+private string OriginalColor = string.Empty;
+
+protected override void OnParametersSet(){
+     OriginalColor = BackgroundColor;
+}
+private async Task OnListItemClick (){
+    
+     
+     await   OnClick.InvokeAsync();
+     
+}   
+
+}

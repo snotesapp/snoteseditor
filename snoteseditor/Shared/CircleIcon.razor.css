@@ -1,0 +1,13 @@
+.icon-circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 50%; /* Makes the div circular */
+    
+  }
+
+  .icon-circle:active {
+    background-color: #97aaf6;
+    transform: scale(0.98); /* Shrinks slightly when clicked */
+}

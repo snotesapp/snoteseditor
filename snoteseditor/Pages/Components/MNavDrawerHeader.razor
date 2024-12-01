@@ -12,198 +12,89 @@
 @inject SkiaServices skiaSvs
 
 
+<div class="w-100 border-bottom border-info-subtle px-2" style="height: 52px;">
+
+
 @switch (dataSvs.menustatus)
 {
     case "mainmenu":
 
+        <div class="row my-1   w-100" >
 
-
-        <div class="row m-2 ">
-
-            @if (dataSvs.UserAgent is null)
+            @if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile")) )
             {
 
-                <b>
-
-                </b>
-
-
-            }
-            else if (dataSvs.UserAgent.Contains("Mobile"))
-            {
-                <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
-                    Loading="ProjectVM.Loader"
-                    Disabled="ProjectVM.Loader"
-                    Height="45">
-                    <LoaderContent>
-                        <span class="spinner-border spinner-border-sm"></span>
-                    </LoaderContent>
-                    <ChildContent>
-                        <MIcon>
-                            mdi-content-save-outline
-                        </MIcon>
-
-                    </ChildContent>
-                </MButton>
-            }
-            else if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile")) )
-            {
-
-                <MButton Class="primary" title="Save"
-                    OnClick="() =>  ProjectVM.SaveProject()"
-                    Loading="ProjectVM.Loader"
-                    Disabled="ProjectVM.Loader"
-                    Height="45">
-
-                    <LoaderContent>
-                        <span class="spinner-border spinner-border-sm"></span>
-                    </LoaderContent>
-                    <ChildContent>
-                        <MIcon>
-                            mdi-content-save-outline
-                        </MIcon>
-
-                    </ChildContent>
-
-
-                </MButton>
-
+                
+                
+                <SNButton Style ="mt-1" BtnIcon="mdi mdi-content-save-outline"  Height="40" Width="245" 
+                     TextLineHight="20"
+                    OnClick="() =>  ProjectVM.SaveProject()" 
+                    Spinner="@ProjectVM.Loader"/>
+               
             }
             else
             {
-
-                <MButton Class="primary" title="Download" OnClick="() => ProjectVM.DownloadProjectFile()"
-                    Loading="ProjectVM.Loader"
-                    Disabled="ProjectVM.Loader"
-                    Height="45">
-                    <LoaderContent>
-                        <span class="spinner-border spinner-border-sm"></span>
-                    </LoaderContent>
-                    <ChildContent>
-                        <MIcon>
-                            mdi-content-save-outline
-                        </MIcon>
-
-                    </ChildContent>
-                </MButton>
+                 <SNButton Style ="mt-1" BtnIcon="mdi mdi-content-save-outline"  Height="40" Width="245" 
+                     TextLineHight="20"
+                    OnClick="() => ProjectVM.DownloadProjectFile()" 
+                    Spinner="@ProjectVM.Loader"/> 
             }
 
         </div>
-        <MDivider Class="mt-0"></MDivider>
-
+        
         break;
     case "collection":
-
-        <MContainer Class="py-0 mt-3" Style="height:45px">
-
-            @if (_addItem)
+        @if (_addItem)
             {
+                <div class="input-group d-flex my-1 pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white;">
+                    <input type="text" @ref="inputTextRef"
+                            @onkeypress="@((eventArg) => AddCollection(eventArg) )" @onfocusout="@(() => EnableAddItem())"
+                            class="form-control border-0 shadow-none" placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2"
+                            @bind-value="textValue">
 
-                <MRow Class="ps-4 pe-4">
+                    <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
+                         <span class="bi bi-x"></span>
+                    </button>
 
-                    <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
-                        <input type="text" @ref="inputTextRef"
-                   @onkeypress="@((eventArg) => AddCollection(eventArg) )" @onfocusout="@(() => EnableAddItem())"
-                   class="form-control border-0 shadow-none" placeholder="Collection Name" aria-label="Collection Name" aria-describedby="basic-addon2"
-                   @bind-value="textValue">
+                    <button class="btn btn-outline-primary btn-sm ms-1  my-1 rounded-3" type="button" @onclick="AddCollection">
+                        <span class="bi bi-plus-circle"></span>
+                    </button>
 
-                        <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
-                            <span class="bi bi-x"></span>
-                        </button>
-
-                        <button class="btn btn-outline-primary btn-sm ms-1  my-1 rounded-3" type="button" @onclick="AddCollection">
-                            <span class="bi bi-plus-circle"></span>
-                        </button>
-
-                    </div>
-                </MRow>
+                </div>
+               
             }
             else
             {
-                <MRow>
-
-                    <div class="d-flex justify-content-between  align-items-center">
-
-                        <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("mainmenu"))">
+         
+            <div class="mx-0" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center;">
+                 <button class="btn btn-outline-primary  my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("mainmenu"))">
                             <span class="bi bi-arrow-left"></span>
-                        </button>
-                        <p class="text-center flex-fill my-1 text-white">
-                            Collections
+                </button>
+                <p  class="text-center  my-1 text-white"  >Collections</p>
+                  
+                <div class="p-0 my-1">
+                    <SNDropdownMenu isDropdownOpen = "@isCollDropdownMenuOpen" >
+                       <SNSideIconButton BtnIcon="mdi mdi-plus" Width="250px" Height="35px" Title="Add Collections" OnClick="@(() => EnableAddItem())" BackgroundColor="#dbdbdb" TextColor="#2b2b2b" ClickEffect="false" />
+                       <SNSideIconButton BtnIcon="mdi mdi-filter-outline" Width="250px" Height="35px" Title="Filter Notes" OnClick="@(() => { dataSvs.showFilterNotes = true; isCollDropdownMenuOpen = false; })" BackgroundColor="#dbdbdb" TextColor="#2b2b2b" ClickEffect="false" />
+                    </SNDropdownMenu>
+                </div>
+                  
+            </div>
 
-                        </p>
-
-                        <MMenu OffsetY>
-                            <ActivatorContent>
-
-                                <button class="btn  btn-outline-primary me-1 my-1 "
-                            type="button"
-                            @attributes='@context.Attrs'>
-                                    <span class="bi bi-caret-down">
-
-                                    </span>
-
-                                </button>
-                            </ActivatorContent>
-
-                            <ChildContent>
-                                <MList Dense>
-
-                                    <MListItem OnClick="@(() => EnableAddItem())">
-                                        <MListItemIcon>
-                                            <MIcon>
-                                                mdi-plus
-                                            </MIcon>
-                                        </MListItemIcon>
-                                        <MListItemContent>
-                                            <MListItemTitle>
-                                                Add Collections
-                                            </MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-
-                                    <MListItem OnClick="@(() => dataSvs.showFilterNotes = true )">
-                                        <MListItemIcon>
-                                            <MIcon>
-                                                mdi-filter-outline
-                                            </MIcon>
-                                        </MListItemIcon>
-                                        <MListItemContent>
-                                            <MListItemTitle>
-                                                Filter Notes
-                                            </MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-
-                                </MList>
-                            </ChildContent>
-                        </MMenu>
-
-
-
-                    </div>
-                </MRow>
-
+                 
             }
-
-            <MDivider></MDivider>
-        </MContainer>
 
         break;
     case "cards":
 
-        <MContainer Class="py-0 mt-3" Style="height:45px">
-
             @if (_addItem)
             {
 
-                <MRow Class="ps-4 pe-4">
-
-
-                    <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
+                    <div class="input-group  d-flex my-1 pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
                         <input type="text" @ref="inputTextRef"
-                   @onkeypress="@((eventArg) => AddPacket(eventArg) )" @onfocusout="@(() => EnableAddItem())"
-                   class="form-control border-0 shadow-none" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2"
-                   @bind-value="textValue">
+                            @onkeypress="@((eventArg) => AddPacket(eventArg) )" @onfocusout="@(() => EnableAddItem())"
+                            class="form-control border-0 shadow-none" placeholder="Packet Name" aria-label="Packet Name" aria-describedby="basic-addon2"
+                            @bind-value="textValue">
 
                         <button class="btn btn-outline-primary btn-sm ms-1 my-1 rounded-3" type="button" @onclick="ClearText">
                             <span class="bi bi-x"></span>
@@ -213,13 +104,12 @@
                         </button>
 
                     </div>
-                </MRow>
+                
             }
             else if (dataSvs.filterPackets)
             {
-                <MRow Class="ps-4 pe-4">
-
-                    <div class="input-group d-flex pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
+                
+                    <div class="input-group d-flex my-1 pe-1 " style="border:solid;border-width:thin;border-radius:3px;background-color:white">
                         <input type="text" @onfocusout="@(() => EnableFilterPacket())"
                    @bind-value:event=oninput @bind-value="@dataSvs.FilterPacketsTxt"
                    class="form-control border-0 shadow-none" placeholder="Filter Packets" aria-label="Filter Packets" aria-describedby="basic-addon2">
@@ -230,94 +120,45 @@
 
 
                     </div>
-                </MRow>
+                
             }
             else
             {
-                <MRow>
 
-
-                    <div class="d-flex justify-content-between  align-items-center">
-
-
-                        <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("mainmenu"))">
+            <div class="mx-0" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center;">
+                  <button class="btn btn-outline-primary  my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("mainmenu"))">
                             <span class="bi bi-arrow-left"></span>
-                        </button>
-                        <p class="text-center flex-fill my-1 text-white">
-                            Packets
-
-                        </p>
-
-
-                        <MMenu OffsetY>
-                            <ActivatorContent>
-
-                                <button class="btn  btn-outline-primary me-1 my-1 "
-                            type="button"
-                            @attributes='@context.Attrs'>
-                                    <span class="bi bi-caret-down">
-
-                                    </span>
-
-                                </button>
-                            </ActivatorContent>
-
-                            <ChildContent>
-                                <MList Dense>
-
-                                    <MListItem OnClick="@(() => EnableAddItem())">
-                                        <MListItemIcon>
-                                            <MIcon>
-                                                mdi-plus
-                                            </MIcon>
-                                        </MListItemIcon>
-                                        <MListItemContent>
-                                            <MListItemTitle>
-                                                Add Packets
-                                            </MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-
-                                    <MListItem OnClick="@(() => dataSvs.filterPackets = true )">
-                                        <MListItemIcon>
-                                            <MIcon>
-                                                mdi-filter-outline
-                                            </MIcon>
-                                        </MListItemIcon>
-                                        <MListItemContent>
-                                            <MListItemTitle>
-                                                Filter Packets
-                                            </MListItemTitle>
-                                        </MListItemContent>
-                                    </MListItem>
-
-
-                                </MList>
-                            </ChildContent>
-                        </MMenu>
-
+                </button>
+                
+                <p  class="text-center  my-1 text-white" >Packets</p>
+                    <div class="p-0 my-1">
+                        <SNDropdownMenu isDropdownOpen = "@isPacketDropdownMenuOpen" >
+                        <SNSideIconButton BtnIcon="mdi mdi-plus" Width="250px" Height="35px" Title="Add Packets" OnClick="@(() => EnableAddItem())" BackgroundColor="#dbdbdb" TextColor="#2b2b2b" ClickEffect="false" />
+                        <SNSideIconButton BtnIcon="mdi mdi-filter-outline" Width="250px" Height="35px" Title="Filter Packets" OnClick="@(() => {  dataSvs.filterPackets = true; isPacketDropdownMenuOpen = false; })" BackgroundColor="#dbdbdb" TextColor="#2b2b2b" ClickEffect="false" />
+                        </SNDropdownMenu>
                     </div>
-                </MRow>
+                    
+            </div>
 
+              
+
+                   
             }
 
-            <MDivider></MDivider>
-        </MContainer>
-
+        
         break;
     case "notetools":
 
-        <MContainer Class="py-0 mt-3" Style="height:45px">
+    
 
-
-            <MRow>
+            
 
                 @if (dataSvs.editNote.NoteID == 0)
                 {
-                    <div class="d-flex justify-content-between  align-items-center">
+                    <div class="mx-0" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center;">
 
 
-                        <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
+                        <button class="btn btn-outline-primary   my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
                             <span class="bi bi-arrow-left"></span>
                         </button>
 
@@ -327,16 +168,17 @@
                         </p>
 
 
-                        @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                        @if (!string.IsNullOrWhiteSpace(dataSvs.editNote.Text) && dataSvs.editNote.Text.Length <= 1500)
                         {
-                            <button class="btn btn-outline-success  me-1  my-1 rounded-3" type="button" disabled="@(!dataSvs.noteEdited)" @onclick="@(() => SaveNote())">
+                            <button class="btn btn-outline-success   my-1 rounded-3" type="button" @onpointerenter = "(()=> {StateHasChanged();})" disabled="@(!dataSvs.noteEdited)" @onclick="@(() => SaveNote())">
                                 <span class="bi bi-save"></span>
                             </button>
                         }
                         else
                         {
-                            <button class="btn btn-outline-danger  me-1  my-1 rounded-3" type="button"
-                    onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
+                            <button class="btn btn-outline-danger    my-1 rounded-3" type="button" @onpointerenter = "(()=> {StateHasChanged(); })"
+                                @onclick="NoteVM.ScrollToSummaryPanel">
+                                
                                 <span class="bi bi-save"></span>
                             </button>
                         }
@@ -349,24 +191,24 @@
                 {
 
 
-                    <div class="d-flex justify-content-between  align-items-center">
+                    <div class="mx-0" style="display: grid; grid-template-columns: auto 1fr ; align-items: center;">
 
 
-                        @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                        @if (!string.IsNullOrWhiteSpace(dataSvs.editNote.Text) && dataSvs.editNote.Text.Length <= 1500)
                         {
-                            <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
+                            <button class="btn btn-outline-primary  my-1 rounded-3" type="button" @onclick:stopPropagation @onclick="@(() => NoteEditSwitchMenu())">
                                 <span class="bi bi-arrow-left"></span>
                             </button>
                         }
                         else
                         {
-                            <button class="btn btn-outline-danger  ms-1  my-1 rounded-3" type="button"
-                    onclick="document.getElementById('summarypannel').scrollIntoView({behavior:'smooth'})">
+                            <button class="btn btn-outline-danger    my-1 rounded-3" type="button"
+                    @onclick="NoteVM.ScrollToSummaryPanel">
                                 <span class="bi bi-arrow-left"></span>
                             </button>
                         }
 
-                        <p class="text-center flex-fill my-1 text-white">
+                        <p class="text-center me-3 my-1 text-white">
                             Note
 
                         </p>
@@ -375,21 +217,18 @@
 
                 }
 
-            </MRow>
+           
 
-            <MDivider></MDivider>
-        </MContainer>
-
+          
         break;
     case "notecards":
 
-        <MContainer Class="py-0 mt-3" Style="height:45px">
+       
+           
 
-            <MRow>
+                <div class="mx-0" style="display: grid; grid-template-columns: auto 1fr auto ; align-items: center;">
 
-                <div class="d-flex justify-content-between   align-items-center">
-
-                    <button class="btn btn-outline-primary  ms-1 my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("cards"))">
+                    <button class="btn btn-outline-primary   my-1 rounded-3" type="button" @onclick="@(() => SwitchMenu("cards"))">
                         <span class="bi bi-arrow-left"></span>
                     </button>
 
@@ -403,18 +242,20 @@
                     {
 
 
-                        <button class="btn btn-outline-primary me-1 my-1 rounded-3" type="button" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent))">
+                        <button class="btn btn-outline-primary  my-1 rounded-3" type="button" @onclick="@(()=>SelectSubPacket(dataSvs.SelectedCard.Parent))">
                             <span class="bi bi-arrow-up"></span>
                         </button>
                     }
                 </div>
-            </MRow>
-            <MDivider></MDivider>
-        </MContainer>
+           
+          
         break;
     default:
         break;
 }
+
+
+</div>
 
 @code {
 
@@ -422,7 +263,8 @@
     public EventCallback<string> GoToMenu { get; set; }
     private string textValue { get; set; }
     private bool _addItem { get; set; }
-
+    private bool isCollDropdownMenuOpen { get; set; } 
+    private bool isPacketDropdownMenuOpen { get; set; } 
    
     ElementReference inputTextRef;
 
@@ -435,8 +277,14 @@
     [CascadingParameter]
     public Error? Error { get; set; }
 
+
+
+
+
     protected override void OnInitialized()
     {
+        
+        
 
         NotesCollectionVM.OnChange += StateHasChanged;
         dataSvs.OnChange += StateHasChanged;
@@ -490,7 +338,8 @@
 
                     if (dataSvs.noteEdited)
                     {
-                        dataSvs.savenotedialog = true;
+                       // dataSvs.savenotedialog = true; 
+                        await ShowSaveNoteDialog();
 
 
                     }
@@ -499,8 +348,6 @@
                         await BackToCollections("collection");
 
                     }
-
-
 
                 }
                 else //Edit Note
@@ -519,45 +366,6 @@
                         
                     }
 
-                    
-
-
-/*
-                    if (dataSvs.noteEdited)
-                    {
-
-                        skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
-
-                        await NoteVM.UpdateNote();
-
-                       
-                        dataSvs.completedPolylines.Clear();
-
-                        dataSvs.noteEdited = false;
-
-                        await GoToMenu.InvokeAsync(menu);
-                        await NoteVM.GetNotesAsync();
-
-                    }
-                    else
-                    {
-                        dataSvs.completedPolylines.Clear();
-
-                        dataSvs.noteEdited = false;
-
-                        
-                    }
-                    if(PacketVM.editNotePacketNote){
-                        menu = "notecards";
-                        await PacketVM.GetPacket(dataSvs.SelectedCard);
-                        await PacketVM.GetPrevOrNextPackets(dataSvs.SelectedCard,false);
-                    
-                        dataSvs.SelectedNoteCard = dataSvs.SelectedCard.NotePackets.Find(nt => nt.NoteID == dataSvs.SelectedNoteCard.NoteID);
-                        PacketVM.NotesMenuSelected = true;  
-                        MessageService.SendMessage();               
-                        PacketVM.editNotePacketNote = false;
-                    }
-*/
                     
 
                 }
@@ -601,9 +409,48 @@
     }
 
 
+
+ private async Task ShowSaveNoteDialog()
+    {
+       
+
+        var options = new ConfirmDialogOptions
+            {
+                IsVerticallyCentered = true,
+                NoButtonColor = ButtonColor.Primary,
+                YesButtonColor = ButtonColor.Primary,
+                HeaderCssClass = "headerdialog",
+                DialogCssClass = "sn-dialog"
+            };
+        var confirmation = await NoteVM.saveNoteDialog.ShowAsync(
+        title: "Save Note",
+        message1: " Would you like to save note?",
+        confirmDialogOptions: options);
+
+        if (confirmation)
+        {
+            @if (dataSvs.editNote.Text is not null && dataSvs.editNote.Text.Length > 0 && dataSvs.editNote.Text.Length <= 1500)
+                    {
+                       await SaveNTAndBack("collection");
+                    }
+                    else
+                    {
+                       await FocusOnSummaryPannel();
+                    }
+
+        }
+        else
+        {
+            await BackToCollections("collection");
+        }
+
+        
+    }
+
+
     public async Task SaveNote()
     {
-
+        
         skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
         if (dataSvs.editNote.NoteID == 0)
         {
@@ -631,10 +478,9 @@
     }
 
 
-
-
     private async Task BackToCollections(string menu)
     {
+        await NoteVM.DeleteNoteImgFiles(dataSvs.editNote, true);
 
         dataSvs.savenotedialog = false;
         dataSvs.noteEdited = false;
@@ -665,6 +511,8 @@
         await NoteVM.GetNotesAsync();
         
     }
+
+
 
 private async Task RefreshEditedNote(){
     skiaSvs.CreateThumbImg(dataSvs.editNote.NotesCollectionFK.ToString());
@@ -737,6 +585,7 @@ private async Task HandlePacketNoteEdit(string menu)
                 _addItem = false;
                
             }
+            StateHasChanged();
         }
 
     }
@@ -783,11 +632,12 @@ private async Task HandlePacketNoteEdit(string menu)
 
     private async Task FocusOnSummaryPannel()
     {
-        await JSRuntime.InvokeVoidAsync("focusOnSummaryPannel");
+        await NoteVM.ScrollToSummaryPanel();
         dataSvs.savenotedialog = false;
     }
     private void EnableAddItem()
     {
+        isPacketDropdownMenuOpen = false;
         if (_addItem == true && textValue == "")
         {
             _addItem = false;
@@ -839,6 +689,8 @@ private async Task HandlePacketNoteEdit(string menu)
     }
 
 
+    
+  
 
     public void Dispose()
     {

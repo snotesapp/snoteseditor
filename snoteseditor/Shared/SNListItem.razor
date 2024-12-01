@@ -1,0 +1,33 @@
+﻿<li class="@(Class) snListItem font-listItem " style="@(Style) height: @(Height)px; "
+  @onclick="OnListItemClick"       >
+      
+        <i class="ps-1 @BtnIcon mdi-24px" /> <!-- MDI icon -->
+        <p  style="user-select: none; " class="text-start ms-2 my-1 truncate-text" >@Title</p>
+</li>
+
+
+
+@code {
+
+[Parameter] 
+public int Height { get; set; }
+
+[Parameter] 
+public string Title { get; set; } = String.Empty;
+[Parameter] 
+public string Style { get; set; } 
+[Parameter] 
+public string Class { get; set; } 
+
+[Parameter] 
+public string? BtnIcon { get; set; }
+
+[Parameter]
+public EventCallback OnClick { get; set; }
+private async Task OnListItemClick (){
+
+     await   OnClick.InvokeAsync();
+     
+}   
+
+}
