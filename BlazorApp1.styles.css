@@ -46,6 +46,7 @@ body[b-qrno289psk] {
     
 }
 
+
 /* /Pages/Components/CollectionsMenu.razor.rz.scp.css */
 body[b-vle9q6oerg] {
 }
@@ -153,10 +154,13 @@ ul.nclist-style[b-o60l30yyb9], li[b-o60l30yyb9]
         border-radius: 4px;
         border:1px solid darkgray;
         padding: 5px 0;
+        font-size:14px; 
+        font-weight: 600;
         /* Position the tooltip */
         position: absolute;
         z-index: 1;
         margin-left: -32px;
+       
     }
 
         /* Position the first tooltip */
@@ -255,6 +259,7 @@ background-image: linear-gradient(to right bottom, #ff7f50,#ff6b85,#ef6eba,#b880
     white-space:pre-wrap;
     
 }
+
 /* /Pages/Components/NoteTools.razor.rz.scp.css */
 body[b-bpqwveuwv6] {
 }
@@ -360,6 +365,72 @@ span[b-rfu6aujc7u] {
     background-color: #5e92f3;
     border-radius: 3px;
 }
+/* /Pages/Components/SNoteCard.razor.rz.scp.css */
+.card-container[b-xi8zpxhv53] {
+    
+    max-width: 350px; 
+    max-height: 197px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.1s ease;
+    border-radius: 5px;
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-container img[b-xi8zpxhv53] {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-container[b-xi8zpxhv53] {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 5px;
+    display: flex;
+    align-items: flex-start; /* Aligns text to the top */
+    justify-content: flex-start;
+    overflow: hidden;
+    transition: height 0.3s ease;
+    border-radius: 4px;
+    font-size: 14px;
+   
+}
+/* /Pages/Components/SNSearchTextField.razor.rz.scp.css */
+/* Wrapper to ensure both elements are inline */
+.search-wrapper[b-d73kilstlk] {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds spacing between the search container and the close button */
+    
+}
+
+/* search-container class */
+.search-container[b-d73kilstlk] {
+    background-color: #f3f3f3;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    height: 40px;
+    width: 45vw ;
+    
+   
+}
+
+/* search input field */
+.search-input[b-d73kilstlk] {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+}
+
+
+
 /* /Pages/Components/WelcomeScreen.razor.rz.scp.css */
 .snLabelBtn[b-74r5z3go28] {
     height:50px;
@@ -373,39 +444,24 @@ span[b-rfu6aujc7u] {
     background-color: rgb(212, 215, 255);
     transform: scale(0.98); /* Shrinks slightly when clicked */
 }
-/* /Pages/DropZonePg.razor.rz.scp.css */
-body[b-skfs493v7z] {
-}
-
-
-@media (min-width: 768px) {
-
-    .dropzone-style[b-skfs493v7z] {
-        overflow: auto;
-        white-space: nowrap;
-    }
-}
-
-
-
-
-
 /* /Pages/Index.razor.rz.scp.css */
 body[b-94th9x7r8o] {
+    
 }
 
-/* /Pages/NoteCardsPg.razor.rz.scp.css */
+/* /Pages/NoteEditorView.razor.rz.scp.css */
+/* /Pages/NotePacketView.razor.rz.scp.css */
 
-body[b-3hcsrndfyc] {
+body[b-t1ioee7xeq] {
 }
 
-ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc] 
+ul.nclist-style[b-t1ioee7xeq], li[b-t1ioee7xeq] 
 {
     display: inline-block;
     
 }
 
-.navbuttons[b-3hcsrndfyc] {
+.navbuttons[b-t1ioee7xeq] {
     /* Set the display property to flex to make the element a flex container */
     display: none;
     /* Set the flex-direction property to column to stack the child elements vertically */
@@ -418,26 +474,26 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
 
 
 
-.shownavbtns:hover + .navbuttons[b-3hcsrndfyc] {
+.shownavbtns:hover + .navbuttons[b-t1ioee7xeq] {
     display: flex;
 }
-.navbuttons:hover[b-3hcsrndfyc] {
+.navbuttons:hover[b-t1ioee7xeq] {
     display: flex;
 }
 
 
 
-.npnavbutton[b-3hcsrndfyc] {
+.npnavbutton[b-t1ioee7xeq] {
     width:32px;
     height:32px;
     background-color:#1565c0;
 }
 
-.npnavbutton-disabled[b-3hcsrndfyc] {
+.npnavbutton-disabled[b-t1ioee7xeq] {
     width: 32px;
     height: 32px;
 }
-.npnavbutton:hover[b-3hcsrndfyc] {
+.npnavbutton:hover[b-t1ioee7xeq] {
     width: 32px;
     height: 32px;
     background-color: #5e92f3;
@@ -445,20 +501,20 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
 }
 
 
-.npnavbutton:active[b-3hcsrndfyc] {
+.npnavbutton:active[b-t1ioee7xeq] {
     width: 32px;
     height: 32px;
     background-color: #003c8f;
 }
 
 /* Tooltip container */
-.sn-tooltip[b-3hcsrndfyc] {
+.sn-tooltip[b-t1ioee7xeq] {
     position: relative;
     display: inline-block;
 }
 
     /* Tooltip text */
-    .sn-tooltip .sn-tooltiptext[b-3hcsrndfyc] {
+    .sn-tooltip .sn-tooltiptext[b-t1ioee7xeq] {
         visibility: hidden;
         min-width: 200px;
         background-color: #1565c0;
@@ -474,26 +530,26 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     }
 
         /* Position the first tooltip */
-        .sn-tooltip .sn-tooltiptext.sn-tooltip-up[b-3hcsrndfyc] {
+        .sn-tooltip .sn-tooltiptext.sn-tooltip-up[b-t1ioee7xeq] {
             bottom: 115%;
             left: 100%;
         }
 
         /* Position the second tooltip */
-        .sn-tooltip .sn-tooltiptext.sn-tooltip-right[b-3hcsrndfyc] {
+        .sn-tooltip .sn-tooltiptext.sn-tooltip-right[b-t1ioee7xeq] {
             bottom: 0%;
             left: 210%;
         }
 
 /* Show tooltip on hover */
 
-    .sn-tooltip:hover .sn-tooltiptext[b-3hcsrndfyc],
-    .sn-tooltip:focus .sn-tooltiptext[b-3hcsrndfyc] {
+    .sn-tooltip:hover .sn-tooltiptext[b-t1ioee7xeq],
+    .sn-tooltip:focus .sn-tooltiptext[b-t1ioee7xeq] {
         visibility: visible;
     }
 
 
-.expander-style[b-3hcsrndfyc] {
+.expander-style[b-t1ioee7xeq] {
     width: 50%;
     left: 25%;
     position: absolute;
@@ -501,7 +557,7 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     background-color: white
 }
 @media (max-width: 600px) {
-    expander-style[b-3hcsrndfyc] {
+    expander-style[b-t1ioee7xeq] {
         width: 75%;
         left: 12%;
         position: absolute;
@@ -510,21 +566,35 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     }
 }
 
-.sn-container[b-3hcsrndfyc] {
+.sn-container[b-t1ioee7xeq] {
     position: relative;
     height: 100vh; /* Set a height to the container so it takes the full viewport height */
 }
 
-.sn-addnotebutton[b-3hcsrndfyc] {
+.sn-addnotebutton[b-t1ioee7xeq] {
     position: absolute;
     top: 39%;
     left: 50%;
-    transform: translate(-39%, -50%);
+    
+}
+/* /Shared/CircleIcon.razor.rz.scp.css */
+.icon-circle[b-b46uj75b7d] {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 50%; /* Makes the div circular */
+    
+  }
+
+  .icon-circle:active[b-b46uj75b7d] {
+    background-color: #97aaf6;
+    transform: scale(0.98); /* Shrinks slightly when clicked */
 }
 /* /Shared/SNButton.razor.rz.scp.css */
 
 .snButton[b-4oqcjmk7y8] {
-    height:50px;
+   
     background-color:#1565c0; 
     cursor: pointer; 
     border-radius: 6px;
@@ -535,103 +605,77 @@ ul.nclist-style[b-3hcsrndfyc], li[b-3hcsrndfyc]
     background-color: rgb(212, 215, 255);
     transform: scale(0.98); /* Shrinks slightly when clicked */
 }
-/* /Shared/SNMainLayout.razor.rz.scp.css */
+/* /Shared/SNCollectionListItem.razor.rz.scp.css */
 
 
-
-
-
-@media (min-width: 768px) {
-    .navbar .container-fluid[b-7dgyrkm5s7], .navbar-collapse[b-7dgyrkm5s7], .navbar-nav[b-7dgyrkm5s7] {
-        /*
-  flex-direction: column;
-        align-items: flex-start;
-       */
-    }
-
-   
-    .navbar-brand[b-7dgyrkm5s7]{
-        margin-left: .5rem;
-        
-    }
-
-    
+.selectedNCtListItem[b-hm4xe463a4] {
+    user-select: none;
+    height:50px;
+    cursor: pointer; 
+    border-radius: 6px;
+    transition: background-color 0.8s ease;
 }
 
-
-.navbar .navbar-nav .nav-link[b-7dgyrkm5s7] {
-    color: black;
-    font-size: 1.1em;
+.selectedNCtListItem:active[b-hm4xe463a4] {
+    background-color: rgb(212, 215, 255);
+    /* transform: scale(0.98);  Shrinks slightly when clicked */
 }
 
-.navbar-brand[b-7dgyrkm5s7] {
-    font-size: 1.5em;
-    font-weight: bold;
+.truncate_text[b-hm4xe463a4] {
+    white-space: nowrap;         /* Prevents text from wrapping to the next line */
+    overflow: hidden;            /* Hides the overflowed text */
+    text-overflow: ellipsis;     /* Adds "..." to the truncated text */
+      
 }
-
-
-
-body[b-7dgyrkm5s7] {
-
-}
-/* /Shared/SNmodal.razor.rz.scp.css */
-body[b-1cdtj998h0] {
-}
-
-
-.SNmodal[b-1cdtj998h0] {
-    position:  fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -70%);
-    display: none;
-    z-index: 10;
-    margin: auto;
-   
-    animation: popup-b-1cdtj998h0 0.4s ease-in-out;
-}
-
-@keyframes popup-b-1cdtj998h0 {
-    from {
-        transform: scale(0) translate(-50%, -50%);
-    }
-
-    to {
-        transform: scale(1) translate(-50%, -50%);
-    }
-}
-
-
-.SNmodal-container[b-1cdtj998h0] {
-    position: relative;
-    width: 600px;
-    height: 200px;
-    background-color: #fff;
-    margin: auto;
-    padding: 20px;
-   
-}
-
-.SNmodal-content[b-1cdtj998h0] {
-
-    margin-bottom: 20px;
-}
-
-.SNmodal-close[b-1cdtj998h0] {
-    position: absolute;
-    top: 0;
-    right: 0;
+/* /Shared/SNContextMenu.razor.rz.scp.css */
+.context-menu[b-ag1f7xndnv] {
+    background-color: #f0eeee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     padding: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
-.modal-backdrop[b-1cdtj998h0] {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index:9;
+/* /Shared/SNDropdownMenu.razor.rz.scp.css */
+.dropdown[b-h0dg423ao0] {
+    position: relative;
+    display: inline-block;
+}
+
+
+.dropdown-content[b-h0dg423ao0] {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a[b-h0dg423ao0] {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover[b-h0dg423ao0] {
+    background-color: #f1f1f1;
+}
+/* /Shared/SNListItem.razor.rz.scp.css */
+
+.snListItem[b-hv52u2lstc] {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center; 
+     width: auto ; background-color: #dbdbdb; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+     cursor: pointer;
+}
+
+.snListItem:hover[b-hv52u2lstc] {
+    background-color: #97aaf6;
+   
 }
 /* /Shared/SNNavMenu.razor.rz.scp.css */
 
@@ -691,3 +735,35 @@ body[b-5iz0rivyh9] {
     text-overflow: ellipsis;     /* Adds "..." to the truncated text */
       
 }
+/* /Shared/SNSideIconButton.razor.rz.scp.css */
+
+.snSideIconButton[b-zhnjc2zjf4] {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center;  
+     cursor: pointer; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+    
+     
+}
+
+.snSideIconButton:active[b-zhnjc2zjf4] {
+    background-color: #97aaf6;
+    transform: scale(0.98); /* Shrinks slightly when clicked */
+}
+
+.snSideIconButtonNClickable[b-zhnjc2zjf4] {
+    display: grid; grid-template-columns: auto 1fr ; align-items: center;  
+     cursor: pointer; 
+     border-radius: 5px;
+     box-shadow: 3px 3px rgb(207, 205, 205);
+    
+    
+     
+}
+
+.snSideIconButtonNClickable:hover[b-zhnjc2zjf4] {
+    background-color: #97aaf6;
+  
+   
+}
+

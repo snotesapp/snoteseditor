@@ -1,0 +1,119 @@
+/* Layout Container */
+.layout-container {
+    display: flex;
+    
+    /*height: 100vh;  Full viewport height */    
+   
+    }
+
+/* Side Section */
+.side-section {
+    background-image: linear-gradient(to right bottom, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff) ; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100vh;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.5,.2,.3,.5);
+    transition-property: transform,visibility,width;
+}
+
+/* Subsections within the Side Section */
+.brand-section, .navigation-section, .menu-section {
+    
+    border-bottom: 1px solid #ccc;
+}
+.brand-section{
+    height: 60px;
+    padding: 2px;
+    margin-top: 4px;
+    
+}
+.navigation-section {
+    height: 50px;
+   
+}
+
+.menu-section{
+    flex-grow: 1; /* This makes it fill the remaining space */
+    overflow-y: auto; /* Allows scrolling if content overflows */
+   
+   
+}
+
+
+
+/* Main Section */
+.main-section {
+    
+    padding:0% ;
+    
+    
+}
+
+.headeralertdialog {
+    background-image: linear-gradient(to right bottom, #ba000d, #de4e6e, #e58fbb, #e7caeb, #ffffff);
+
+}
+
+.headerdialog{
+    background-image: linear-gradient(to right bottom,#5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff);
+}
+
+.sn-dialog{ 
+    font-family: Readex Pro, Verdana, Cambria, Calibri, Helvetica, Tahoma, Arial;
+    font-size: medium;
+}
+
+/* Override btn-primary style within sn-dialog */
+
+.sn-dialog .btn-primary {
+    background-color: #1565c0; /* Example: Change background color */
+    color: #ffffff;            /* Example: Change text color */
+    border-color: #c6d3f5;      /* Example: Change border color */
+}
+
+
+/* Example overriding style using attribute selector */
+.list-group-item[b-jo00jd6nmv] {
+    /* Your custom styles */
+    padding: 0px;
+    background-color: transparent;
+    margin-bottom: 1px;
+   
+    
+}
+
+.responsive-summary {
+    height: calc(100% - 40px);
+    
+  }
+
+  /*
+  @media screen and (max-width: 960px) {
+    .responsive-summary {
+       height: 200px; // Height when screen width is 960px or smaller 
+     
+     
+    }
+
+}
+*/
+
+
+.font-b1{
+    font-size:14px; 
+    font-weight: 600; 
+   
+}
+
+.font-n1{
+    font-size:15px; 
+   
+}
+
+.font-listItem{
+    font-size:14px; 
+    font-weight: 500; 
+   
+}
