@@ -35,6 +35,12 @@
 
 </NavigationLock>
 
+    @if (dataSvs.MainProject.ProjectID == 0 && dataSvs.UserAgent is not null)
+    {
+        <WelcomeScreen />
+
+    }else{
+        
 @if (dataSvs.menustatus == "notetools")
 {
     <NoteEditorView />
@@ -194,10 +200,6 @@ else
 
     </div>
 </div>
-
-    @if (dataSvs.MainProject.ProjectID == 0 && dataSvs.UserAgent is not null)
-    {
-        <WelcomeScreen />
 
     }
 
