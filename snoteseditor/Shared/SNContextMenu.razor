@@ -33,27 +33,53 @@
     {
         ContextMenuService.Register(this);
     }
+    
     public async Task ShowAsync(double x, double y)
     {
-        PositionX = $"{x}px";
-        PositionY = $"{y}px";
-        IsVisible = true;
-        await JSRuntime.InvokeVoidAsync("addOutsideClickListener", contextMenuRef, DotNetObjectReference.Create(this));
+        try
+        {
+            PositionX = $"{x}px";
+            PositionY = $"{y}px";
+            IsVisible = true;
+            await JSRuntime.InvokeVoidAsync("addOutsideClickListener", contextMenuRef, DotNetObjectReference.Create(this));
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception as needed
+            Console.Error.WriteLine($"Error in ShowAsync: {ex.Message}");
+        }
     }
 
     public async Task HideAsync()
     {
-        IsVisible = false;
-        await JSRuntime.InvokeVoidAsync("removeOutsideClickListener");
-        ContextMenuService.Unregister(this);
+        try
+        {
+            IsVisible = false;
+            await JSRuntime.InvokeVoidAsync("removeOutsideClickListener");
+            ContextMenuService.Unregister(this);
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception as needed
+            Console.Error.WriteLine($"Error in HideAsync: {ex.Message}");
+        }
     }
 
     [JSInvokable]
     public async Task OutsideClick()
     {
-        if (IsVisible)
+        try
         {
-            await OnOutsideClick.InvokeAsync();
+            if (IsVisible)
+            {
+                await OnOutsideClick.InvokeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception as needed
+            Console.Error.WriteLine($"Error in OutsideClick: {ex.Message}");
         }
     }
+    
 }

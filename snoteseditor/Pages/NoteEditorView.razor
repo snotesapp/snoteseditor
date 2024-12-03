@@ -74,7 +74,7 @@
                                 @oncontextmenu:stopPropagation>
 
 
-                                    <img id="ncimage_@ncimg.NoteImageID" @onexclick="(() => UnSelectImage(ncimg))" title="image_@(ncimg.NoteImageID)"
+                                    <img id="ncimage_@ncimg.NoteImageID" @onclick="(() => UnSelectImage(ncimg))" title="image_@(ncimg.NoteImageID)"
                                  @onpointerdown="((de) => ImgDragStart(de,ncimg))"
                                  @onpointerup="((de) => ImgDragEnd(de,ncimg))"
                                          class="rounded mx-auto d-block  "
@@ -115,7 +115,7 @@
                     AdditionalAttributes="@(new Dictionary<string, object> 
                     {
                         { "id", "noteeditcanvas" },
-                        { "style", $"position: absolute; pointer-events:{dataSvs.PointerEvent}; width:{dataSvs.editNote.MainImgWidth}px; height:{dataSvs.editNote.MainImgHeight}px; position: absolute;top: 0;left: 50;background-color:transparent;" },
+                        { "style", $"position: absolute; touch-action: none; pointer-events:{dataSvs.PointerEvent}; width:{dataSvs.editNote.MainImgWidth}px; height:{dataSvs.editNote.MainImgHeight}px; position: absolute;top: 0;left: 50;background-color:transparent;" },
                         { "onpointerdown", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerDown) },
                         { "onpointermove", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerMove) },
                         { "onpointerup", EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerUp) },
