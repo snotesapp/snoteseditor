@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorApp1",
   "resources": {
-    "hash": "sha256-xy2H3uZEHz2+zqPMc5i4kieNonGYHP9zLaHjLaXYgUg=",
+    "hash": "sha256-EYyIBa4jlSCHeVHou4Z7FN2g96cZmT6921YmO4QoRE0=",
     "jsModuleNative": {
       "dotnet.native.8.0.11.6wr7wpd0zy.js": "sha256-NU2JUvr9ZG+0CPVESJUSqbInnQze6Ts+AB1J2vhPKa4="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "BlazorApp1.wasm": "sha256-Lddmt1l+tyRZseFlZVPnXh0QGSzkf9cI8PclEOrVFH0=",
+      "BlazorApp1.wasm": "sha256-zBhpkr6XaAymeQr+n/cphauUyP7xc5HxxhRo55yfpTQ=",
       "BlazorBootstrap.wasm": "sha256-lTz75VpKCvfnYXYDPZe8bSqnBgQcVzVbVaY+yohyBd8=",
       "Blazored.LocalStorage.wasm": "sha256-xHBGFCMjDjvvTwtMvgaMBNmQk9JdVhGmws2/GMZlxrI=",
       "Blazored.SessionStorage.wasm": "sha256-nQXuCGHos7iwp2WxRUgarKmWgJYChaVQp2NajgNU3V8=",
@@ -94,7 +94,7 @@
       "System.Runtime.Numerics.wasm": "sha256-qdRB6KnMj6G16yRnDI2bfUIGfiRGnbSJy5quF3yKYJw=",
       "System.Runtime.Serialization.Formatters.wasm": "sha256-juSDNvrkqLMtN86Utx9+9s1ZsAQ10qUuBB/Ifr4NS8E=",
       "System.Runtime.Serialization.Primitives.wasm": "sha256-w8iYGCSayrMX7G1M8pNfLL1moXfh19DQ1SI4cNaKFmg=",
-      "System.Runtime.wasm": "sha256-Gy3wlNxa7uKAdmo2BWD+cUhx0og2RK/8vrt1yFCL6FQ=",
+      "System.Runtime.wasm": "sha256-+BWQgnuxm6eXOOijP32jAsMos1irMUM6er2v6paUhNo=",
       "System.Security.Cryptography.wasm": "sha256-lmqN/pAYHqe/aq9xu0K4WBRhqcqR4F94tIWbRVMa+bw=",
       "System.Text.Encodings.Web.wasm": "sha256-KNlIvDIcBsKk8G3heuzNS1whLF8SnlcBdo/Nk/xSKrk=",
       "System.Text.Json.wasm": "sha256-s32Ay87nFndWvZ1u1a+gOVcf/k0XZS+s2zCyNoui3ec=",
