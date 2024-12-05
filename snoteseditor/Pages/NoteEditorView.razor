@@ -231,8 +231,8 @@
 
             //dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
 
-            dataSvs.editNote.MainImgWidth = dataSvs.Wdimension.Width;
-            dataSvs.editNote.MainImgHeight = dataSvs.Wdimension.Height;
+            dataSvs.editNote.MainImgWidth = Math.Max(dataSvs.Wdimension.Width,dataSvs.editNote.MainImgWidth);
+            dataSvs.editNote.MainImgHeight = Math.Max(dataSvs.Wdimension.Height,dataSvs.editNote.MainImgHeight);
 
             dataSvs.saveBitmap = new SKBitmap(dataSvs.Wdimension.Width, dataSvs.Wdimension.Height);
 

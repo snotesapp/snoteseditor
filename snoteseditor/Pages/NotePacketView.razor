@@ -39,8 +39,8 @@
             {
                 <div
                     style="position: absolute;top: 0;left: 50; 
-                                        height: @(dataSvs.SelectedNoteCard.Note.MainImgHeight)px; 
-                                        width: @(dataSvs.SelectedNoteCard.Note.MainImgWidth)px;  background-color: @dataSvs.SelectedNoteCard.Note.BackgroundColor;">
+                                        height: @(Math.Max(dataSvs.Wdimension.Height, dataSvs.SelectedNoteCard.Note.MainImgHeight))px; 
+                                        width: @(Math.Max(dataSvs.Wdimension.Width, dataSvs.SelectedNoteCard.Note.MainImgWidth))px;  background-color: @dataSvs.SelectedNoteCard.Note.BackgroundColor;">
 
                     <NoteCardsTemplate Items="dataSvs.SelectedNoteCard.Note.Images">
                         <ImgTemplate Context="ncimg">
@@ -61,7 +61,7 @@
                                                                     {
                                                                         { "id", "my-canvas" },
 
-                                                                        { "style", $"pointer-events:{PointerEvent}; width:{dataSvs.SelectedNoteCard.Note.MainImgWidth}px; height:{dataSvs.SelectedNoteCard.Note.MainImgHeight}px; position: absolute;top: 0;left: 50;background-color:transparent;"},
+                                                                        { "style", $"pointer-events:{PointerEvent}; width:{Math.Max(dataSvs.Wdimension.Width, dataSvs.SelectedNoteCard.Note.MainImgWidth)}px; height:{Math.Max(dataSvs.Wdimension.Height, dataSvs.SelectedNoteCard.Note.MainImgHeight)}px; position: absolute;top: 0;left: 50;background-color:transparent;"},
                                                                     })" OnPaintSurface="OnPaintSurface"
                     IgnorePixelScaling="true">
 
@@ -189,6 +189,14 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        /*
+             if(dataSvs.SelectedNoteCard is not null && dataSvs.SelectedNoteCard.Note is not null ){
+             dataSvs.SelectedNoteCard.Note.MainImgWidth = Math.Max(dataSvs.Wdimension.Width, dataSvs.SelectedNoteCard.Note.MainImgWidth);
+             dataSvs.SelectedNoteCard.Note.MainImgHeight = Math.Max(dataSvs.Wdimension.Height, dataSvs.SelectedNoteCard.Note.MainImgHeight);
+             StateHasChanged();
+             }
+
+        */
 
         if (dataSvs.SelectedNoteCard != null)
         {

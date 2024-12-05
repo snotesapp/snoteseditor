@@ -281,8 +281,10 @@ else
             //for load JS File
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/BootstrapModalInterop.js");
             _dropZoneJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./myjs/dropZone.js");
+            
             dataSvs.Wdimension = await _dropZoneJS.InvokeAsync<WindowDimension>("getWindowDimensions");
-
+            dataSvs.Wdimension.Width = Math.Max(dataSvs.Wdimension.Width, 1024);
+            Console.WriteLine($"the width of this windows is: {dataSvs.Wdimension.Width}");
 
             if (dataSvs.MainProject.ProjectID == 0)
             {
