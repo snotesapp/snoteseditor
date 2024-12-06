@@ -31,7 +31,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ContextMenuService.Register(this);
+       await ContextMenuService.Register(this);
     }
     
     public async Task ShowAsync(double x, double y)

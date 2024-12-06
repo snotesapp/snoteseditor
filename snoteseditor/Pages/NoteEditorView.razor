@@ -30,7 +30,7 @@
                  style="position: absolute;top: 0;left: 50; 
                         width: @(dataSvs.editNote.MainImgWidth)px;
                         height:@(dataSvs.editNote.MainImgHeight)px;
-                        touch-action:none;
+                        touch-action:@(touchaction);
                         background-color:@dataSvs.editNote.BackgroundColor;
                        z-index: 0   ;
                         "
@@ -48,6 +48,7 @@
                             {
                                 <div class="position-absolute" style="left:@(ncimg.X)px;
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
+                             
                              @oncontextmenu="@(args => ShowImgContextMenu(args,ncimg))"
                              @oncontextmenu:preventDefault="true"
                                 @oncontextmenu:stopPropagation>
@@ -69,14 +70,17 @@
                             {
                                 <div class="position-absolute" style="left:@(ncimg.X)px;
                                                                      top:@(ncimg.Y)px; height:@(ncimg.Height)px;width:@(ncimg.Width)px "
-                             @oncontextmenu="@(args =>  ShowImgContextMenu(args,ncimg))"
-                             @oncontextmenu:preventDefault="true"
+                                
+                               
+                                 
+                                @oncontextmenu="@(args =>  ShowImgContextMenu(args,ncimg))"
+                                @oncontextmenu:preventDefault="true"
                                 @oncontextmenu:stopPropagation>
 
 
                                     <img id="ncimage_@ncimg.NoteImageID" @onclick="(() => UnSelectImage(ncimg))" title="image_@(ncimg.NoteImageID)"
-                                 @onpointerdown="((de) => ImgDragStart(de,ncimg))"
-                                 @onpointerup="((de) => ImgDragEnd(de,ncimg))"
+                                        @onpointerdown="((de) => ImgDragStart(de,ncimg))"
+                                        @onpointerup="((de) => ImgDragEnd(de,ncimg))"
                                          class="rounded mx-auto d-block  "
                                          width="@ncimg.Width" height="@ncimg.Height"
                                          style="
@@ -202,6 +206,7 @@
     double X = 0;
     double Y = 0;
     
+    private string touchaction = "auto";
 
     protected override void OnInitialized()
     {
@@ -391,7 +396,7 @@
     }
     private void SelectImage(NoteImage _noteImage)
     {
-
+        touchaction ="none";
         dataSvs.editNote.Images.Where(s => s.Selected).Select(s => { s.Selected = false; return s; }).ToList();
         _noteImage.Selected = true;
 
@@ -399,7 +404,7 @@
     }
     private void UnSelectImage(NoteImage _noteImage)
     {
-
+         touchaction ="auto";
         _noteImage.Selected = false;
         skiaSvs.UpdateBitmap();
 
@@ -662,6 +667,9 @@
         }
         finally
         {
+            touchaction ="auto";
+             await HideCanvasContextMenu();
+             await HideImgContextMenu();
             ContextImg = null;
            
         }
@@ -767,10 +775,10 @@ private async Task ShowCanvasContextMenu(MouseEventArgs e)
 {
     try
     {
-        if (snImgcontextMenu is not null)
-        {
-            await HideImgContextMenu();
-        }
+        if(snCanvasContext is not null || snImgcontextMenu is not null ){
+                await HideCanvasContextMenu();
+                await HideImgContextMenu();
+            }
 
         // Get the bounding rectangle of the div 
         var containerRect = await  JSRuntime.InvokeAsync<BoundClientRect>("getBoundClientRect", dropZoneElement );
@@ -817,24 +825,31 @@ private async Task ShowImgContextMenu(MouseEventArgs e, NoteImage noteImage)
     {
         try
         {
-            if(snCanvasContext is not null){
-            await HideCanvasContextMenu();
-            }
+            if(snCanvasContext is not null || snImgcontextMenu is not null ){
+                await HideCanvasContextMenu();
+                await HideImgContextMenu();
 
-            ContextImg = noteImage; 
-            
-            // Get the bounding rectangle of the div
-            var containerRect = await  JSRuntime.InvokeAsync<BoundClientRect>("getBoundClientRect", dropZoneElement );
-            await Task.Delay(10);
-            // Adjust ClientX and ClientY to be relative to the container
-            var relativeX = e.ClientX - containerRect.Left;
-            var relativeY = e.ClientY - containerRect.Top;
+                 if(noteImage.Selected == false){
+                ContextImg = noteImage; 
+                
+                // Get the bounding rectangle of the div
+                var containerRect = await  JSRuntime.InvokeAsync<BoundClientRect>("getBoundClientRect", dropZoneElement );
+                await Task.Delay(10);
+                // Adjust ClientX and ClientY to be relative to the container
+                var relativeX = e.ClientX - containerRect.Left;
+                var relativeY = e.ClientY - containerRect.Top;
 
-            if(e.ClientY < dataSvs.Wdimension.Height - 150){
-            await snImgcontextMenu.ShowAsync(relativeX, relativeY); // Use adjusted values for correct positioning
-            }else{
-            await snImgcontextMenu.ShowAsync(relativeX, relativeY-144); // Use adjusted values for correct positioning
+                if(e.ClientY < dataSvs.Wdimension.Height - 150){
+                    await snImgcontextMenu.ShowAsync(relativeX, relativeY); // Use adjusted values for correct positioning
+                }else{
+                    await snImgcontextMenu.ShowAsync(relativeX, relativeY-144); // Use adjusted values for correct positioning
+                }
             }
+           
+
+            }
+           
+           
             
         }
         catch (Exception ex)
