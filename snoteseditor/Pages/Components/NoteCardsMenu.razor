@@ -13,12 +13,12 @@
 @inject IMessageService MessageService
 
 <div class="mb-1" style="display: flex;
-    flex-direction: column;
-    height: 100%" >
+    flex-direction: column;   
+    height: 100%; " >
 
 
 
-<div class="w-100 px-2 mt-2 "  style="flex: 1;">
+<div class="w-100 px-2 mt-2 "  style="flex: 1; overflow: auto;">
 
     @if (PacketVM.NotesMenuSelected)
     {
@@ -30,7 +30,7 @@
                     
                     <div class="p-0 mb " @oncontextmenu:preventDefault="true"
                         @oncontextmenu="@( (args) => ShowNotePacketContextMenu(args,notecard))">
-                        <SNoteCard Note="@notecard.Note"  Text="@notecard.Note.Text" 
+                        <SNoteCard Note="@notecard.Note"  Text="@notecard.Note.Text" Width="242"
                             ImageUrl="@notecard.Note.Thumbnail" />
                     </div>
                 
@@ -59,6 +59,7 @@
                     <div class="p-0 mb-1" @oncontextmenu:preventDefault="true"
                         @oncontextmenu="@( (args) => ShowNotePacketContextMenu(args,notecard))">
                         <SNoteCard Note="@notecard.Note"  Text="@notecard.Note.Text"
+                            Width="242"
                             ImageUrl="@notecard.Note.Thumbnail" OnClick="()=> SelectNoteCard(notecard)" />
                     </div>
                 

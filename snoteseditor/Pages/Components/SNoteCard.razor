@@ -1,7 +1,7 @@
 ﻿@using BlazorApp1.Data
 @* Card Component *@
 <div class="card-container " @onclick="OnClicSNoteCard"
-     style="border: @(Note.Selected ? "3px solid #1565c0":"1px solid #c7c7c7");  background-image:  @(Note.Selected ? "linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)":"linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"); " @onmouseover="ExpandText" @onmouseout="ShrinkText">
+     style="width: @(Width)px; height: @(Height)px; border: @(Note.Selected ? "3px solid #1565c0":"1px solid #c7c7c7");  background-image:  @(Note.Selected ? "linear-gradient(to left top, #ff7f50,#ff8c5a,#ff9965,#ffa571,#ffb07e)":"linear-gradient(to left top, #5e92f3,#97aaf6,#c0c4f8,#e2e1fb,#ffffff )"); " @onmouseover="ExpandText" @onmouseout="ShrinkText">
     <div class="image-container">
         <img src="@ImageUrl" alt="Card image">
     </div>
@@ -13,17 +13,26 @@
 @code {
     [Parameter] public string ImageUrl { get; set; } = string.Empty;
     [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public int Width { get; set; } = 350;
     [Parameter] public Note Note { get; set; }
     [Parameter] public EventCallback OnClick { get; set; }
 
 
-
+    
     private bool textExpanded = false;
+    private int Height;
 
     private void ExpandText() => textExpanded = true;
 
     private void ShrinkText() => textExpanded = false;
+    
+    protected override void OnParametersSet(){
+       
+        const double AspectRatio = 16.0 / 9.0;
+        // Perform the division
+        Height = (int)(Width / AspectRatio);
 
+    }
 
     private async Task OnClicSNoteCard (){
 

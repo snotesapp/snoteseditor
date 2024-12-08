@@ -102,7 +102,7 @@ else if (dataSvs.menustatus == "notecards")
 }
 else
 {
-<div  style="width: 100% ;  " >
+<div  style="width: 100%;  " >
 
     
     <div
@@ -119,7 +119,7 @@ else
             <NoteTemplate Context="note">
                     <div class="p-0 me-1 mb-1" @oncontextmenu:preventDefault="true"
                         @oncontextmenu="@( (args) => ShowNoteContextMenu(args,note))">
-                        <SNoteCard Note="@note" OnClick="() => NoteVM.StyleSelectNote(note)" Text="@note.Text"
+                        <SNoteCard  Note="@note" OnClick="() => NoteVM.StyleSelectNote(note)" Text="@note.Text"
                             ImageUrl="@note.Thumbnail" />
                     </div>
                 

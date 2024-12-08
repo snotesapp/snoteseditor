@@ -1,7 +1,6 @@
 .card-container {
     
-    width: 350px; 
-    height: 197px;
+    
     overflow: hidden;
     position: relative;
     transition: all 0.1s ease;
