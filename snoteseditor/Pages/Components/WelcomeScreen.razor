@@ -14,20 +14,21 @@
 <div class="w-100" >
 
     
-    <div id="center-container" class="w-100  position-absolute top-50 start-50 " style="text-align: center; transform: translate(-50%,-75%); ">
-        <div id="welcomeimage" class=" position-relative">
-            <img src="images/sNotes_brand.png" alt="Students Notes" />
+    <div id="center-container" class="mt-4 w-100  position-absolute top-50 start-50 " style="text-align: center; transform: translate(-50%,-100%); ">
+        <div id="welcomeimage" class="position-relative">
+            <img src="images/sNotes_brand.png" style="width: 150px;" alt="Students Notes" />
         
-          <div id="buttonsrows" class="position-absolute top-100 start-50  translate-middle-x" style=" margin-bottom: 20px; margin-top: 45px;">
+          <div id="buttonsrows" class="position-absolute top-100 start-50  translate-middle-x" 
+            style=" margin-bottom: 20px; margin-top: 20px;">
                
-                <div class="row gx-2 justify-content-center" >
+                <div class=" justify-content-center" >
                     @if (!(dataSvs.UserAgent.Contains("Firefox")) && !(dataSvs.UserAgent.Contains("Mobile"))){
                                     <div class="col-12 col-sm-auto mx-auto ">
                             <SNButton  BtnIcon ="mdi mdi-folder-open-outline" Width="200" Height="45" OnClick="() => OpenZipFile()" Spinner="@ProjectVM.Loader" />
                         </div>
                     }else{
 
-                        <div class="input-group col-12 col-sm-auto mx-auto ">
+                        <div class="input-group mx-auto ">
                             <label class=" snLabelBtn shadow fw-medium text-white mb-1 py-2 mx-3" for="sNotesFilePicker" style="width: 200px; height: 45px; text-align:center;line-height: 30px;">
                               @if(ProjectVM.Loader == false){
                                  <i class=" mdi mdi-folder-open-outline me-2" />
@@ -47,7 +48,7 @@
                    
 
                     
-                    <div class="col-12 col-sm-auto mx-auto">
+                    <div class="mt-2 mx-auto">
                         <SNButton BtnIcon = "mdi mdi-plus" Width="200" Height="45" OnClick="CreateProject" />
                     </div>
                 </div>
@@ -72,7 +73,8 @@
 </div>
 
 <span class="w-100 py-2 text-dark fixed-bottom" style="font-size:15px; text-align: center; ">
-    By using this app, you are accepting the
+    
+    Before using this app, please read the
    
     <span class="d-block d-md-inline">
          <a class="text-dark" href="TermsAndConditions">Terms and Conditions</a>
