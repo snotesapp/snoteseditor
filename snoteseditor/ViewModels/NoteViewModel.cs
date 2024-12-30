@@ -69,12 +69,13 @@ namespace BlazorApp1.ViewModels
                 NotePaths = new List<NotePath>(),
                 BackgroundColor = SharedDataService_service.noteBackgroundColor,
                 MainImgWidth = SharedDataService_service.Wdimension.Width,
-                MainImgHeight = SharedDataService_service.Wdimension.Height
+                MainImgHeight = SharedDataService_service.Wdimension.Height,
+                
             };
             SharedDataService_service.saveBitmap = new SKBitmap(SharedDataService_service.Wdimension.Width, SharedDataService_service.Wdimension.Height);
             // await GetNotes();
             SharedDataService_service.NotifyStateChanged();
-
+           
             
         }
 

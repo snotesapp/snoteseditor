@@ -94,4 +94,16 @@ else
         public bool ReadOnly { get; set; }
 
 
+        protected override void OnInitialized()
+        {
+                dataSvs.OnChange += StateHasChanged;
+                NoteVM.OnChange += StateHasChanged;
+        }
+       
+        public void Dispose()
+        {
+                NoteVM.OnChange -= StateHasChanged;
+                dataSvs.OnChange -= StateHasChanged;
+        }
+
 }
